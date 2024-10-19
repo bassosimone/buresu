@@ -3,7 +3,7 @@ package ast
 import (
 	"testing"
 
-	"github.com/bassosimone/buresu/token"
+	"github.com/bassosimone/buresu/pkg/token"
 )
 
 func TestBlockExpr(t *testing.T) {

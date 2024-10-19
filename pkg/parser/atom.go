@@ -5,7 +5,7 @@ package parser
 import (
 	"strings"
 
-	"github.com/bassosimone/buresu/ast"
+	"github.com/bassosimone/buresu/pkg/ast"
 )
 
 // parseSymbol parses an atom token into an AST node.

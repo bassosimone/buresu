@@ -5,7 +5,7 @@ package evaluator
 import (
 	"fmt"
 
-	"github.com/bassosimone/buresu/token"
+	"github.com/bassosimone/buresu/pkg/token"
 )
 
 // wrapError returns an error contextualized with the given token position.

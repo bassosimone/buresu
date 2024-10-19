@@ -9,8 +9,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/bassosimone/buresu/ast"
-	"github.com/bassosimone/buresu/runtime"
+	"github.com/bassosimone/buresu/pkg/ast"
+	"github.com/bassosimone/buresu/pkg/runtime"
 )
 
 // Eval evaluates a node in the AST and returns the result.

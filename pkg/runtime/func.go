@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/bassosimone/buresu/ast"
+	"github.com/bassosimone/buresu/pkg/ast"
 )
 
 // Callable is the common interface for callables types in the runtime.

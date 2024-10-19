@@ -12,7 +12,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bassosimone/buresu/token"
+	"github.com/bassosimone/buresu/pkg/token"
 )
 
 // Node represents a node in the AST.

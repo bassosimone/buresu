@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/bassosimone/buresu/parser"
-	"github.com/bassosimone/buresu/scanner"
+	"github.com/bassosimone/buresu/pkg/parser"
+	"github.com/bassosimone/buresu/pkg/scanner"
 )
 
 func TestParser(t *testing.T) {

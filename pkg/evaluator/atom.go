@@ -6,8 +6,8 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/bassosimone/buresu/ast"
-	"github.com/bassosimone/buresu/runtime"
+	"github.com/bassosimone/buresu/pkg/ast"
+	"github.com/bassosimone/buresu/pkg/runtime"
 )
 
 // evalFalseLiteral evaluates a FalseLiteral node and returns a BoolValue set to false.

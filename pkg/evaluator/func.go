@@ -6,8 +6,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/bassosimone/buresu/ast"
-	"github.com/bassosimone/buresu/runtime"
+	"github.com/bassosimone/buresu/pkg/ast"
+	"github.com/bassosimone/buresu/pkg/runtime"
 )
 
 func evalCallExpr(ctx context.Context,

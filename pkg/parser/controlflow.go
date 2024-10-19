@@ -3,8 +3,8 @@
 package parser
 
 import (
-	"github.com/bassosimone/buresu/ast"
-	"github.com/bassosimone/buresu/token"
+	"github.com/bassosimone/buresu/pkg/ast"
+	"github.com/bassosimone/buresu/pkg/token"
 )
 
 // parseBlock parses a block form into an AST node.

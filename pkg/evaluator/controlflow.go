@@ -5,9 +5,9 @@ package evaluator
 import (
 	"context"
 
-	"github.com/bassosimone/buresu/ast"
-	"github.com/bassosimone/buresu/runtime"
-	"github.com/bassosimone/buresu/token"
+	"github.com/bassosimone/buresu/pkg/ast"
+	"github.com/bassosimone/buresu/pkg/runtime"
+	"github.com/bassosimone/buresu/pkg/token"
 )
 
 // evalBlockExpr evaluates a block expression by evaluating each expression in

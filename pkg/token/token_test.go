@@ -5,7 +5,7 @@ package token_test
 import (
 	"testing"
 
-	"github.com/bassosimone/buresu/token"
+	"github.com/bassosimone/buresu/pkg/token"
 )
 
 func TestPositionString(t *testing.T) {

@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/bassosimone/buresu/ast"
-	"github.com/bassosimone/buresu/runtime"
+	"github.com/bassosimone/buresu/pkg/ast"
+	"github.com/bassosimone/buresu/pkg/runtime"
 )
 
 const (

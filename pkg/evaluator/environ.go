@@ -5,8 +5,8 @@ package evaluator
 import (
 	"context"
 
-	"github.com/bassosimone/buresu/ast"
-	"github.com/bassosimone/buresu/runtime"
+	"github.com/bassosimone/buresu/pkg/ast"
+	"github.com/bassosimone/buresu/pkg/runtime"
 )
 
 // evalDefineExpr evaluates a define expression.

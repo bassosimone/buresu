@@ -13,7 +13,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/bassosimone/buresu/token"
+	"github.com/bassosimone/buresu/pkg/token"
 )
 
 // Scan scans the given file and returns a slice of tokens or an error.

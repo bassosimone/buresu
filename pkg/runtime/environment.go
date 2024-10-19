@@ -6,7 +6,7 @@ import (
 	"context"
 	"io"
 
-	"github.com/bassosimone/buresu/ast"
+	"github.com/bassosimone/buresu/pkg/ast"
 )
 
 // Environment represents the runtime environment for the interpreter,

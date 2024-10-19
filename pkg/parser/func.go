@@ -3,8 +3,8 @@
 package parser
 
 import (
-	"github.com/bassosimone/buresu/ast"
-	"github.com/bassosimone/buresu/token"
+	"github.com/bassosimone/buresu/pkg/ast"
+	"github.com/bassosimone/buresu/pkg/token"
 )
 
 func (p *parser) parseCall(tok token.Token) (ast.Node, error) {

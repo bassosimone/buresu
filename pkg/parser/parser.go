@@ -5,8 +5,8 @@ package parser
 import (
 	"fmt"
 
-	"github.com/bassosimone/buresu/ast"
-	"github.com/bassosimone/buresu/token"
+	"github.com/bassosimone/buresu/pkg/ast"
+	"github.com/bassosimone/buresu/pkg/token"
 )
 
 // Parse processes the provided tokens and returns a slice

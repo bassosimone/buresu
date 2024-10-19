@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/bassosimone/buresu/scanner"
-	"github.com/bassosimone/buresu/token"
+	"github.com/bassosimone/buresu/pkg/scanner"
+	"github.com/bassosimone/buresu/pkg/token"
 )
 
 func TestErrorString(t *testing.T) {
