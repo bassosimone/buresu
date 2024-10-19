@@ -1,0 +1,81 @@
+-- input.ast --
+(block (define x 42) (return x))
+
+-- expected_output.json --
+[
+  {
+    "Type": "BlockExpr",
+    "Value": {
+      "Token": {
+        "TokenPos": {
+          "FileName": "input.ast",
+          "LineNumber": 1,
+          "LineColumn": 1
+        },
+        "TokenType": "OPEN",
+        "Value": "("
+      },
+      "Exprs": [
+        {
+          "Type": "DefineExpr",
+          "Value": {
+            "Token": {
+              "TokenPos": {
+                "FileName": "input.ast",
+                "LineNumber": 1,
+                "LineColumn": 8
+              },
+              "TokenType": "OPEN",
+              "Value": "("
+            },
+            "Symbol": "x",
+            "Expr": {
+              "Type": "IntLiteral",
+              "Value": {
+                "Token": {
+                  "TokenPos": {
+                    "FileName": "input.ast",
+                    "LineNumber": 1,
+                    "LineColumn": 18
+                  },
+                  "TokenType": "NUMBER",
+                  "Value": "42"
+                },
+                "Value": "42"
+              }
+            }
+          }
+        },
+        {
+          "Type": "ReturnStmt",
+          "Value": {
+            "Token": {
+              "TokenPos": {
+                "FileName": "input.ast",
+                "LineNumber": 1,
+                "LineColumn": 22
+              },
+              "TokenType": "OPEN",
+              "Value": "("
+            },
+            "Expr": {
+              "Type": "SymbolName",
+              "Value": {
+                "Token": {
+                  "TokenPos": {
+                    "FileName": "input.ast",
+                    "LineNumber": 1,
+                    "LineColumn": 30
+                  },
+                  "TokenType": "ATOM",
+                  "Value": "x"
+                },
+                "Value": "x"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+]

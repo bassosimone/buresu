@@ -209,7 +209,7 @@ func (intLit *IntLiteral) Clone() Node {
 type LambdaExpr struct {
 	Token  token.Token
 	Params []string
-	Docs   StringLiteral
+	Docs   string
 	Expr   Node
 }
 
@@ -219,7 +219,7 @@ func (lam *LambdaExpr) String() string {
 	for idx, param := range lam.Params {
 		params[idx] = param
 	}
-	docsBytes, _ := json.Marshal(lam.Docs.Value)
+	docsBytes, _ := json.Marshal(lam.Docs)
 	docs := fmt.Sprintf("%s", string(docsBytes))
 	return fmt.Sprintf("(lambda (%s) %s %s)", strings.Join(params, ", "), docs, lam.Expr.String())
 }
@@ -233,7 +233,7 @@ func (lam *LambdaExpr) Clone() Node {
 	return &LambdaExpr{
 		Token:  lam.Token.Clone(),
 		Params: params,
-		Docs:   *lam.Docs.Clone().(*StringLiteral),
+		Docs:   lam.Docs,
 		Expr:   lam.Expr.Clone(),
 	}
 }

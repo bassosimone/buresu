@@ -75,7 +75,7 @@ func (p *parser) parseLambda(tok token.Token) (ast.Node, error) {
 	rv := &ast.LambdaExpr{
 		Token:  tok,
 		Params: params,
-		Docs:   docs,
+		Docs:   docs.Value,
 		Expr:   expr,
 	}
 	return rv, nil

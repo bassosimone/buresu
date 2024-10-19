@@ -1,0 +1,67 @@
+-- input.ast --
+(call myFunction 42)
+
+-- expected_output.json --
+[
+  {
+    "Type": "CallExpr",
+    "Value": {
+      "Token": {
+        "TokenPos": {
+          "FileName": "input.ast",
+          "LineNumber": 1,
+          "LineColumn": 1
+        },
+        "TokenType": "OPEN",
+        "Value": "("
+      },
+      "Callable": {
+        "Type": "SymbolName",
+        "Value": {
+          "Token": {
+            "TokenPos": {
+              "FileName": "input.ast",
+              "LineNumber": 1,
+              "LineColumn": 2
+            },
+            "TokenType": "ATOM",
+            "Value": "call"
+          },
+          "Value": "call"
+        }
+      },
+      "Args": [
+        {
+          "Type": "SymbolName",
+          "Value": {
+            "Token": {
+              "TokenPos": {
+                "FileName": "input.ast",
+                "LineNumber": 1,
+                "LineColumn": 7
+              },
+              "TokenType": "ATOM",
+              "Value": "myFunction"
+            },
+            "Value": "myFunction"
+          }
+        },
+        {
+          "Type": "IntLiteral",
+          "Value": {
+            "Token": {
+              "TokenPos": {
+                "FileName": "input.ast",
+                "LineNumber": 1,
+                "LineColumn": 18
+              },
+              "TokenType": "NUMBER",
+              "Value": "42"
+            },
+            "Value": "42"
+          }
+        }
+      ]
+    }
+  }
+]

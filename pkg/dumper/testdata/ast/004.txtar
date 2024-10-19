@@ -1,0 +1,52 @@
+-- input.ast --
+(block (set x 3.14))
+
+-- expected_output.json --
+[
+  {
+    "Type": "BlockExpr",
+    "Value": {
+      "Token": {
+        "TokenPos": {
+          "FileName": "input.ast",
+          "LineNumber": 1,
+          "LineColumn": 1
+        },
+        "TokenType": "OPEN",
+        "Value": "("
+      },
+      "Exprs": [
+        {
+          "Type": "SetExpr",
+          "Value": {
+            "Token": {
+              "TokenPos": {
+                "FileName": "input.ast",
+                "LineNumber": 1,
+                "LineColumn": 8
+              },
+              "TokenType": "OPEN",
+              "Value": "("
+            },
+            "Symbol": "x",
+            "Expr": {
+              "Type": "FloatLiteral",
+              "Value": {
+                "Token": {
+                  "TokenPos": {
+                    "FileName": "input.ast",
+                    "LineNumber": 1,
+                    "LineColumn": 15
+                  },
+                  "TokenType": "NUMBER",
+                  "Value": "3.14"
+                },
+                "Value": "3.14"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+]

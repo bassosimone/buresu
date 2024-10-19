@@ -1,0 +1,103 @@
+-- condexpr_test.txtar --
+-- input.ast --
+(cond
+  (true "It's true!")
+  (false "It's false!")
+  (else "Neither true nor false!"))
+
+-- expected_output.json --
+[
+  {
+    "Type": "CondExpr",
+    "Value": {
+      "Token": {
+        "TokenPos": {
+          "FileName": "input.ast",
+          "LineNumber": 1,
+          "LineColumn": 1
+        },
+        "TokenType": "OPEN",
+        "Value": "("
+      },
+      "Cases": [
+        {
+          "Predicate": {
+            "Type": "TrueLiteral",
+            "Value": {
+              "Token": {
+                "TokenPos": {
+                  "FileName": "input.ast",
+                  "LineNumber": 2,
+                  "LineColumn": 4
+                },
+                "TokenType": "ATOM",
+                "Value": "true"
+              }
+            }
+          },
+          "Expr": {
+            "Type": "StringLiteral",
+            "Value": {
+              "Token": {
+                "TokenPos": {
+                  "FileName": "input.ast",
+                  "LineNumber": 2,
+                  "LineColumn": 9
+                },
+                "TokenType": "STRING",
+                "Value": "It's true!"
+              },
+              "Value": "It's true!"
+            }
+          }
+        },
+        {
+          "Predicate": {
+            "Type": "FalseLiteral",
+            "Value": {
+              "Token": {
+                "TokenPos": {
+                  "FileName": "input.ast",
+                  "LineNumber": 3,
+                  "LineColumn": 4
+                },
+                "TokenType": "ATOM",
+                "Value": "false"
+              }
+            }
+          },
+          "Expr": {
+            "Type": "StringLiteral",
+            "Value": {
+              "Token": {
+                "TokenPos": {
+                  "FileName": "input.ast",
+                  "LineNumber": 3,
+                  "LineColumn": 10
+                },
+                "TokenType": "STRING",
+                "Value": "It's false!"
+              },
+              "Value": "It's false!"
+            }
+          }
+        }
+      ],
+      "ElseExpr": {
+        "Type": "StringLiteral",
+        "Value": {
+          "Token": {
+            "TokenPos": {
+              "FileName": "input.ast",
+              "LineNumber": 4,
+              "LineColumn": 9
+            },
+            "TokenType": "STRING",
+            "Value": "Neither true nor false!"
+          },
+          "Value": "Neither true nor false!"
+        }
+      }
+    }
+  }
+]

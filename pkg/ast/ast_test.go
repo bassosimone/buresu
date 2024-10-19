@@ -89,11 +89,9 @@ func TestDefineExpr(t *testing.T) {
 
 func TestLambdaExpr(t *testing.T) {
 	tok := token.Token{TokenType: token.ATOM, Value: "lambda"}
-	docToken := token.Token{TokenType: token.STRING, Value: "\"This is a lambda function\""}
 	param := "x"
-	docs := &StringLiteral{Token: docToken, Value: "This is a lambda function"}
 	body := &IntLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "42"}, Value: "42"}
-	expr := &LambdaExpr{Token: tok, Params: []string{param}, Docs: *docs, Expr: body}
+	expr := &LambdaExpr{Token: tok, Params: []string{param}, Docs: "This is a lambda function", Expr: body}
 	expected := "(lambda (x) \"This is a lambda function\" 42)"
 	t.Run("serialization", func(t *testing.T) {
 		if expr.String() != expected {

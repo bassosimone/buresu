@@ -1,0 +1,156 @@
+-- lambda_test.txtar --
+-- input.ast --
+(lambda (x) "This is a test lambda" (block (false) (()) (while false (return x))))
+
+-- expected_output.json --
+[
+  {
+    "Type": "LambdaExpr",
+    "Value": {
+      "Token": {
+        "TokenPos": {
+          "FileName": "input.ast",
+          "LineNumber": 1,
+          "LineColumn": 1
+        },
+        "TokenType": "OPEN",
+        "Value": "("
+      },
+      "Params": [
+        "x"
+      ],
+      "Docs": "This is a test lambda",
+      "Expr": {
+        "Type": "BlockExpr",
+        "Value": {
+          "Token": {
+            "TokenPos": {
+              "FileName": "input.ast",
+              "LineNumber": 1,
+              "LineColumn": 37
+            },
+            "TokenType": "OPEN",
+            "Value": "("
+          },
+          "Exprs": [
+            {
+              "Type": "CallExpr",
+              "Value": {
+                "Token": {
+                  "TokenPos": {
+                    "FileName": "input.ast",
+                    "LineNumber": 1,
+                    "LineColumn": 44
+                  },
+                  "TokenType": "OPEN",
+                  "Value": "("
+                },
+                "Callable": {
+                  "Type": "FalseLiteral",
+                  "Value": {
+                    "Token": {
+                      "TokenPos": {
+                        "FileName": "input.ast",
+                        "LineNumber": 1,
+                        "LineColumn": 45
+                      },
+                      "TokenType": "ATOM",
+                      "Value": "false"
+                    }
+                  }
+                },
+                "Args": []
+              }
+            },
+            {
+              "Type": "CallExpr",
+              "Value": {
+                "Token": {
+                  "TokenPos": {
+                    "FileName": "input.ast",
+                    "LineNumber": 1,
+                    "LineColumn": 52
+                  },
+                  "TokenType": "OPEN",
+                  "Value": "("
+                },
+                "Callable": {
+                  "Type": "UnitExpr",
+                  "Value": {
+                    "Token": {
+                      "TokenPos": {
+                        "FileName": "input.ast",
+                        "LineNumber": 1,
+                        "LineColumn": 53
+                      },
+                      "TokenType": "OPEN",
+                      "Value": "("
+                    }
+                  }
+                },
+                "Args": []
+              }
+            },
+            {
+              "Type": "WhileExpr",
+              "Value": {
+                "Token": {
+                  "TokenPos": {
+                    "FileName": "input.ast",
+                    "LineNumber": 1,
+                    "LineColumn": 57
+                  },
+                  "TokenType": "OPEN",
+                  "Value": "("
+                },
+                "Predicate": {
+                  "Type": "FalseLiteral",
+                  "Value": {
+                    "Token": {
+                      "TokenPos": {
+                        "FileName": "input.ast",
+                        "LineNumber": 1,
+                        "LineColumn": 64
+                      },
+                      "TokenType": "ATOM",
+                      "Value": "false"
+                    }
+                  }
+                },
+                "Expr": {
+                  "Type": "ReturnStmt",
+                  "Value": {
+                    "Token": {
+                      "TokenPos": {
+                        "FileName": "input.ast",
+                        "LineNumber": 1,
+                        "LineColumn": 70
+                      },
+                      "TokenType": "OPEN",
+                      "Value": "("
+                    },
+                    "Expr": {
+                      "Type": "SymbolName",
+                      "Value": {
+                        "Token": {
+                          "TokenPos": {
+                            "FileName": "input.ast",
+                            "LineNumber": 1,
+                            "LineColumn": 78
+                          },
+                          "TokenType": "ATOM",
+                          "Value": "x"
+                        },
+                        "Value": "x"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+]
