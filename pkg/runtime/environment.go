@@ -60,7 +60,7 @@ func InitRootScope(env Environment) error {
 	if err := env.DefineValue(IntSumFunc.Name, IntSumFunc); err != nil {
 		return err
 	}
-	if err := env.DefineValue(FloatSumFunc.Name, FloatSumFunc); err != nil {
+	if err := env.DefineValue(Float64SumFunc.Name, Float64SumFunc); err != nil {
 		return err
 	}
 

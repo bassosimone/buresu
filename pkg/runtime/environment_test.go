@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 package runtime_test
 
 import (
@@ -78,7 +80,7 @@ func TestInitRootScope(t *testing.T) {
 		{"false", &runtime.BoolValue{Value: false}},
 		{"true", &runtime.BoolValue{Value: true}},
 		{"__intSum", runtime.IntSumFunc},
-		{"__floatSum", runtime.FloatSumFunc},
+		{"__float64Sum", runtime.Float64SumFunc},
 		{"display", runtime.DisplayFunc},
 	}
 
@@ -93,7 +95,7 @@ func TestInitRootScope(t *testing.T) {
 	}
 
 	// Test error during initialization for each symbol
-	symbols := []string{"false", "true", "__intSum", "__floatSum", "display"}
+	symbols := []string{"false", "true", "__intSum", "__float64Sum", "display"}
 	for _, symbol := range symbols {
 		envWithError := newInitRootScopeMockEnvironment(map[string]bool{symbol: true})
 		err = runtime.InitRootScope(envWithError)

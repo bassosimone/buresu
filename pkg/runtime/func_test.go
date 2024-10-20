@@ -46,7 +46,7 @@ func (env *funcMockEnvironment) Eval(ctx context.Context, node ast.Node) (runtim
 		if err != nil {
 			return nil, err
 		}
-		return &runtime.FloatValue{Value: float64(val)}, nil
+		return &runtime.Float64Value{Value: float64(val)}, nil
 	case *ast.StringLiteral:
 		return &runtime.StringValue{Value: n.Value}, nil
 	case *ast.TrueLiteral:
@@ -224,16 +224,16 @@ func TestBuiltInFuncValue(t *testing.T) {
 
 	t.Run("Test __floatSum built-in function", func(t *testing.T) {
 		args := []runtime.Value{
-			&runtime.FloatValue{Value: 0.5},
-			&runtime.FloatValue{Value: 0.5},
+			&runtime.Float64Value{Value: 0.5},
+			&runtime.Float64Value{Value: 0.5},
 		}
 
-		result, err := runtime.FloatSumFunc.Call(ctx, env, args...)
+		result, err := runtime.Float64SumFunc.Call(ctx, env, args...)
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 
-		floatResult, ok := result.(*runtime.FloatValue)
+		floatResult, ok := result.(*runtime.Float64Value)
 		if !ok {
 			t.Fatalf("expected *runtime.FloatValue, got %T", result)
 		}

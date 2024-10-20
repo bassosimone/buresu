@@ -33,7 +33,7 @@ func evalFloatLiteral(_ context.Context,
 	if err != nil {
 		return nil, wrapError(node.Token, err)
 	}
-	return &runtime.FloatValue{Value: value}, nil
+	return &runtime.Float64Value{Value: value}, nil
 }
 
 // evalStringLiteral evaluates a StringLiteral node and returns a StringValue with the node's value.
