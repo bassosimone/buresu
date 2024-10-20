@@ -9,7 +9,7 @@ import (
 )
 
 func TestUnitValue(t *testing.T) {
-	v := &runtime.UnitValue{}
+	v := runtime.NewUnitValue()
 	if v.String() != "()" {
 		t.Errorf("expected (), got %s", v.String())
 	}

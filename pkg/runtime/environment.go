@@ -74,5 +74,16 @@ func InitRootScope(env Environment) error {
 		return err
 	}
 
+	// define the car, cdr, and list functions
+	if err := env.DefineValue(CarFunc.Name, CarFunc); err != nil {
+		return err
+	}
+	if err := env.DefineValue(CdrFunc.Name, CdrFunc); err != nil {
+		return err
+	}
+	if err := env.DefineValue(ListFunc.Name, ListFunc); err != nil {
+		return err
+	}
+
 	return nil
 }

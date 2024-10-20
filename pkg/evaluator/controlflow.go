@@ -18,7 +18,7 @@ func evalBlockExpr(ctx context.Context,
 	env runtime.Environment, node *ast.BlockExpr) (runtime.Value, error) {
 	var (
 		err    error
-		result runtime.Value = &runtime.UnitValue{}
+		result runtime.Value = runtime.NewUnitValue()
 	)
 	env = env.PushBlockScope() // create a new environment for the block scope
 	for _, expr := range node.Exprs {
@@ -105,5 +105,5 @@ func evalWhileExpr(ctx context.Context, env runtime.Environment,
 			return nil, err
 		}
 	}
-	return &runtime.UnitValue{}, nil
+	return runtime.NewUnitValue(), nil
 }

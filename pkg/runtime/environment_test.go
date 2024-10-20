@@ -60,9 +60,12 @@ func TestInitRootScope(t *testing.T) {
 	symbols := []string{
 		"__intSum",
 		"__float64Sum",
+		"car",
+		"cdr",
 		"display",
 		"eval",
 		"false",
+		"list",
 		"true",
 	}
 	for _, symbol := range symbols {

@@ -51,5 +51,5 @@ func evalTrueLiteral(_ context.Context,
 // evalUnitExpr evaluates a UnitExpr node and returns a UnitValue.
 func evalUnitExpr(_ context.Context,
 	_ runtime.Environment, _ *ast.UnitExpr) (runtime.Value, error) {
-	return &runtime.UnitValue{}, nil
+	return runtime.NewUnitValue(), nil
 }

@@ -2,14 +2,8 @@
 
 package runtime
 
-// UnitValue represents a unit value in the runtime.
-// A unit value is typically used to represent the absence of a value.
-type UnitValue struct{}
-
-// Ensure *UnitValue implements Value interface.
-var _ Value = (*UnitValue)(nil)
-
-// String returns the string representation of the unit value.
-func (v *UnitValue) String() string {
-	return "()"
+// NewUnitValue returns a new unit value. The unit value is
+// equivalent to an empty list in this language.
+func NewUnitValue() Value {
+	return &ListValue{Car: nil, Cdr: nil}
 }

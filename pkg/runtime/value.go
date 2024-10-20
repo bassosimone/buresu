@@ -29,6 +29,6 @@ var DisplayFunc = &BuiltInFuncValue{
 			}
 		}
 		fmt.Fprintln(env.Output(), builder.String())
-		return &UnitValue{}, nil
+		return NewUnitValue(), nil
 	},
 }

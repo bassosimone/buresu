@@ -99,7 +99,7 @@ func (env *GlobalScope) GetValue(symbol string) (runtime.Value, bool) {
 	if env.parent != nil {
 		return env.parent.GetValue(symbol)
 	}
-	return &runtime.UnitValue{}, false
+	return runtime.NewUnitValue(), false
 }
 
 // DefineValue implements [runtime.Environment].
