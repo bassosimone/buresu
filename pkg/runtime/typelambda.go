@@ -9,11 +9,6 @@ import (
 	"github.com/bassosimone/buresu/pkg/ast"
 )
 
-// Callable is the common interface for callables types in the runtime.
-type Callable interface {
-	Call(ctx context.Context, env Environment, args ...Value) (Value, error)
-}
-
 // LambdaValue represents a user-defined lambda function in the source code.
 type LambdaValue struct {
 	// Closure is the environment in which the lambda was defined.
@@ -53,30 +48,4 @@ func (fx *LambdaValue) Call(ctx context.Context, _ Environment, args ...Value) (
 
 	// 3. evaluate the body of the lambda function in the new environment
 	return closure.Eval(ctx, fx.Node.Expr)
-}
-
-// BuiltInFuncValue is a function that is built-in in the runtime.
-//
-// The zero value is not ready for use.
-type BuiltInFuncValue struct {
-	// Name is the name of the built-in function.
-	Name string
-
-	// Fx is the actual function that implements the built-in function.
-	Fx func(ctx context.Context, env Environment, args ...Value) (Value, error)
-}
-
-var (
-	_ Callable = (*BuiltInFuncValue)(nil)
-	_ Value    = (*BuiltInFuncValue)(nil)
-)
-
-// String returns the `<builtin: %p>` string representation of the built-in function.
-func (fx *BuiltInFuncValue) String() string {
-	return fmt.Sprintf("<builtin: %s>", fx.Name)
-}
-
-// Call calls the built-in function with the given arguments.
-func (fx *BuiltInFuncValue) Call(ctx context.Context, env Environment, args ...Value) (Value, error) {
-	return fx.Fx(ctx, env, args...)
 }
