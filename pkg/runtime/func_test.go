@@ -10,92 +10,82 @@ import (
 
 	"github.com/bassosimone/buresu/pkg/ast"
 	"github.com/bassosimone/buresu/pkg/runtime"
+	"github.com/bassosimone/buresu/pkg/runtimemock"
 	"github.com/bassosimone/buresu/pkg/token"
 )
 
-// Mock environment for testing purposes
-type funcMockEnvironment struct {
-	output bytes.Buffer
-	values map[string]runtime.Value
-}
+func newMockEnvironmentForLambdaValue() *runtimemock.MockEnvironment {
+	values := map[string]runtime.Value{}
 
-func newFuncMockEnvironment() *funcMockEnvironment {
-	return &funcMockEnvironment{
-		values: make(map[string]runtime.Value),
+	env := &runtimemock.MockEnvironment{
+		MockDefineValue: func(symbol string, value runtime.Value) error {
+			if _, ok := values[symbol]; ok {
+				return fmt.Errorf("symbol %s already defined", symbol)
+			}
+			values[symbol] = value
+			return nil
+		},
+		MockEval: func(ctx context.Context, node ast.Node) (runtime.Value, error) {
+			switch n := node.(type) {
+			case *ast.IntLiteral:
+				val, err := strconv.Atoi(n.Value)
+				if err != nil {
+					return nil, err
+				}
+				return &runtime.IntValue{Value: int(val)}, nil
+			case *ast.FloatLiteral:
+				val, err := strconv.ParseFloat(n.Value, 64)
+				if err != nil {
+					return nil, err
+				}
+				return &runtime.Float64Value{Value: float64(val)}, nil
+			case *ast.StringLiteral:
+				return &runtime.StringValue{Value: n.Value}, nil
+			case *ast.TrueLiteral:
+				return &runtime.BoolValue{Value: true}, nil
+			case *ast.FalseLiteral:
+				return &runtime.BoolValue{Value: false}, nil
+			case *ast.SymbolName:
+				value, ok := values[n.Value]
+				if !ok {
+					return nil, fmt.Errorf("undefined symbol: %s", n.Value)
+				}
+				return value, nil
+			default:
+				return nil, fmt.Errorf("unsupported AST node: %T", node)
+			}
+		},
+		MockGetValue: func(symbol string) (runtime.Value, bool) {
+			value, ok := values[symbol]
+			return value, ok
+		},
+		MockIsInsideFunc: func() bool {
+			return false
+		},
+		MockOutput: func() io.Writer {
+			return &bytes.Buffer{}
+		},
+		MockPushBlockScope: func() runtime.Environment {
+			return nil
+		},
+		MockPushFunctionScope: nil, // set below
+		MockSetValue: func(symbol string, value runtime.Value) error {
+			if _, ok := values[symbol]; !ok {
+				return fmt.Errorf("undefined symbol: %s", symbol)
+			}
+			values[symbol] = value
+			return nil
+		},
 	}
-}
-
-func (env *funcMockEnvironment) DefineValue(symbol string, value runtime.Value) error {
-	if _, ok := env.values[symbol]; ok {
-		return fmt.Errorf("symbol %s already defined", symbol)
+	env.MockPushFunctionScope = func() runtime.Environment {
+		return env
 	}
-	env.values[symbol] = value
-	return nil
-}
-
-func (env *funcMockEnvironment) Eval(ctx context.Context, node ast.Node) (runtime.Value, error) {
-	switch n := node.(type) {
-	case *ast.IntLiteral:
-		val, err := strconv.Atoi(n.Value)
-		if err != nil {
-			return nil, err
-		}
-		return &runtime.IntValue{Value: int(val)}, nil
-	case *ast.FloatLiteral:
-		val, err := strconv.ParseFloat(n.Value, 64)
-		if err != nil {
-			return nil, err
-		}
-		return &runtime.Float64Value{Value: float64(val)}, nil
-	case *ast.StringLiteral:
-		return &runtime.StringValue{Value: n.Value}, nil
-	case *ast.TrueLiteral:
-		return &runtime.BoolValue{Value: true}, nil
-	case *ast.FalseLiteral:
-		return &runtime.BoolValue{Value: false}, nil
-	case *ast.SymbolName:
-		value, ok := env.values[n.Value]
-		if !ok {
-			return nil, fmt.Errorf("undefined symbol: %s", n.Value)
-		}
-		return value, nil
-	default:
-		return nil, fmt.Errorf("unsupported AST node: %T", node)
-	}
-}
-
-func (env *funcMockEnvironment) GetValue(symbol string) (runtime.Value, bool) {
-	value, ok := env.values[symbol]
-	return value, ok
-}
-
-func (env *funcMockEnvironment) IsInsideFunc() bool {
-	return false
-}
-
-func (env *funcMockEnvironment) Output() io.Writer {
-	return &env.output
-}
-
-func (env *funcMockEnvironment) PushBlockScope() runtime.Environment {
 	return env
-}
-
-func (env *funcMockEnvironment) PushFunctionScope() runtime.Environment {
-	return env
-}
-
-func (env *funcMockEnvironment) SetValue(symbol string, value runtime.Value) error {
-	if _, ok := env.values[symbol]; !ok {
-		return fmt.Errorf("symbol %s not defined", symbol)
-	}
-	env.values[symbol] = value
-	return nil
 }
 
 func TestLambdaValue(t *testing.T) {
 	ctx := context.Background()
-	env := newFuncMockEnvironment()
+	env := newMockEnvironmentForLambdaValue()
 
 	t.Run("Test LambdaValue with correct arguments", func(t *testing.T) {
 		// Mock AST node for lambda expression
@@ -197,9 +187,39 @@ func TestLambdaValue(t *testing.T) {
 	})
 }
 
+func newMockEnvironmentForBuiltInFuncValue() *runtimemock.MockEnvironment {
+	var output bytes.Buffer
+	return &runtimemock.MockEnvironment{
+		MockDefineValue: func(symbol string, value runtime.Value) error {
+			return nil
+		},
+		MockEval: func(ctx context.Context, node ast.Node) (runtime.Value, error) {
+			return nil, nil
+		},
+		MockGetValue: func(symbol string) (runtime.Value, bool) {
+			return nil, false
+		},
+		MockIsInsideFunc: func() bool {
+			return false
+		},
+		MockOutput: func() io.Writer {
+			return &output
+		},
+		MockPushBlockScope: func() runtime.Environment {
+			return nil
+		},
+		MockPushFunctionScope: func() runtime.Environment {
+			return nil
+		},
+		MockSetValue: func(symbol string, value runtime.Value) error {
+			return nil
+		},
+	}
+}
+
 func TestBuiltInFuncValue(t *testing.T) {
 	ctx := context.Background()
-	env := newFuncMockEnvironment()
+	env := newMockEnvironmentForBuiltInFuncValue()
 
 	t.Run("Test __intSum built-in function", func(t *testing.T) {
 		args := []runtime.Value{
@@ -222,7 +242,7 @@ func TestBuiltInFuncValue(t *testing.T) {
 		}
 	})
 
-	t.Run("Test __floatSum built-in function", func(t *testing.T) {
+	t.Run("Test __float64Sum built-in function", func(t *testing.T) {
 		args := []runtime.Value{
 			&runtime.Float64Value{Value: 0.5},
 			&runtime.Float64Value{Value: 0.5},
@@ -276,8 +296,8 @@ func TestBuiltInFuncValue(t *testing.T) {
 		}
 
 		expectedOutput := "\"hello\" 42\n"
-		if env.output.String() != expectedOutput {
-			t.Errorf("expected %q, got %q", expectedOutput, env.output.String())
+		if env.Output().(*bytes.Buffer).String() != expectedOutput {
+			t.Errorf("expected %q, got %q", expectedOutput, env.Output().(*bytes.Buffer).String())
 		}
 	})
 }

@@ -3,66 +3,28 @@
 package runtime_test
 
 import (
-	"context"
 	"fmt"
-	"io"
 	"testing"
 
-	"github.com/bassosimone/buresu/pkg/ast"
 	"github.com/bassosimone/buresu/pkg/runtime"
+	"github.com/bassosimone/buresu/pkg/runtimemock"
 )
 
-type initRootScopeMockEnvironment struct {
-	values      map[string]runtime.Value
-	errOnDefine map[string]bool
-}
-
-func newInitRootScopeMockEnvironment(errOnDefine map[string]bool) *initRootScopeMockEnvironment {
-	return &initRootScopeMockEnvironment{
-		values:      make(map[string]runtime.Value),
-		errOnDefine: errOnDefine,
+func newInitRootScopeMockEnvironment(errOnDefine map[string]bool) *runtimemock.MockEnvironment {
+	values := make(map[string]runtime.Value)
+	return &runtimemock.MockEnvironment{
+		MockDefineValue: func(symbol string, value runtime.Value) error {
+			if errOnDefine[symbol] {
+				return fmt.Errorf("error defining value for symbol %s", symbol)
+			}
+			values[symbol] = value
+			return nil
+		},
+		MockGetValue: func(symbol string) (runtime.Value, bool) {
+			value, ok := values[symbol]
+			return value, ok
+		},
 	}
-}
-
-func (env *initRootScopeMockEnvironment) DefineValue(symbol string, value runtime.Value) error {
-	if env.errOnDefine[symbol] {
-		return fmt.Errorf("error defining value for symbol %s", symbol)
-	}
-	env.values[symbol] = value
-	return nil
-}
-
-func (env *initRootScopeMockEnvironment) Eval(ctx context.Context, node ast.Node) (runtime.Value, error) {
-	return nil, nil
-}
-
-func (env *initRootScopeMockEnvironment) GetValue(symbol string) (runtime.Value, bool) {
-	value, ok := env.values[symbol]
-	return value, ok
-}
-
-func (env *initRootScopeMockEnvironment) IsInsideFunc() bool {
-	return false
-}
-
-func (env *initRootScopeMockEnvironment) Output() io.Writer {
-	return nil
-}
-
-func (env *initRootScopeMockEnvironment) PushBlockScope() runtime.Environment {
-	return env
-}
-
-func (env *initRootScopeMockEnvironment) PushFunctionScope() runtime.Environment {
-	return env
-}
-
-func (env *initRootScopeMockEnvironment) SetValue(symbol string, value runtime.Value) error {
-	if _, ok := env.values[symbol]; !ok {
-		return fmt.Errorf("symbol %s not defined", symbol)
-	}
-	env.values[symbol] = value
-	return nil
 }
 
 func TestInitRootScope(t *testing.T) {

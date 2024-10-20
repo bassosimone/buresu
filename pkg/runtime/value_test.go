@@ -5,66 +5,46 @@ package runtime_test
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"io"
 	"testing"
 
 	"github.com/bassosimone/buresu/pkg/ast"
 	"github.com/bassosimone/buresu/pkg/runtime"
+	"github.com/bassosimone/buresu/pkg/runtimemock"
 )
 
-// Mock environment for testing purposes
-type builtinMockEnvironment struct {
-	output bytes.Buffer
-	values map[string]runtime.Value
-}
-
-func newBuiltinMockEnvironment() *builtinMockEnvironment {
-	return &builtinMockEnvironment{
-		values: make(map[string]runtime.Value),
+func newMockEnvironmentForDisplayFunc() *runtimemock.MockEnvironment {
+	output := &bytes.Buffer{}
+	return &runtimemock.MockEnvironment{
+		MockDefineValue: func(symbol string, value runtime.Value) error {
+			return nil
+		},
+		MockEval: func(ctx context.Context, node ast.Node) (runtime.Value, error) {
+			return nil, nil
+		},
+		MockGetValue: func(symbol string) (runtime.Value, bool) {
+			return nil, false
+		},
+		MockIsInsideFunc: func() bool {
+			return false
+		},
+		MockOutput: func() io.Writer {
+			return output
+		},
+		MockPushBlockScope: func() runtime.Environment {
+			return nil
+		},
+		MockPushFunctionScope: func() runtime.Environment {
+			return nil
+		},
+		MockSetValue: func(symbol string, value runtime.Value) error {
+			return nil
+		},
 	}
-}
-
-func (env *builtinMockEnvironment) DefineValue(symbol string, value runtime.Value) error {
-	env.values[symbol] = value
-	return nil
-}
-
-func (env *builtinMockEnvironment) Eval(ctx context.Context, node ast.Node) (runtime.Value, error) {
-	return nil, nil
-}
-
-func (env *builtinMockEnvironment) GetValue(symbol string) (runtime.Value, bool) {
-	value, ok := env.values[symbol]
-	return value, ok
-}
-
-func (env *builtinMockEnvironment) IsInsideFunc() bool {
-	return false
-}
-
-func (env *builtinMockEnvironment) Output() io.Writer {
-	return &env.output
-}
-
-func (env *builtinMockEnvironment) PushBlockScope() runtime.Environment {
-	return env
-}
-
-func (env *builtinMockEnvironment) PushFunctionScope() runtime.Environment {
-	return env
-}
-
-func (env *builtinMockEnvironment) SetValue(symbol string, value runtime.Value) error {
-	if _, ok := env.values[symbol]; !ok {
-		return fmt.Errorf("symbol %s not defined", symbol)
-	}
-	env.values[symbol] = value
-	return nil
 }
 
 func TestDisplayFunc(t *testing.T) {
-	env := newBuiltinMockEnvironment()
+	env := newMockEnvironmentForDisplayFunc()
 	ctx := context.Background()
 
 	t.Run("valid arguments", func(t *testing.T) {
@@ -79,8 +59,8 @@ func TestDisplayFunc(t *testing.T) {
 		}
 
 		expectedOutput := "\"hello\" 42\n"
-		if env.output.String() != expectedOutput {
-			t.Errorf("expected %q, got %q", expectedOutput, env.output.String())
+		if env.Output().(*bytes.Buffer).String() != expectedOutput {
+			t.Errorf("expected %q, got %q", expectedOutput, env.Output().(*bytes.Buffer).String())
 		}
 	})
 
