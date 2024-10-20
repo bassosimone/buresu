@@ -129,7 +129,23 @@ func (s *scanner) Scan() ([]token.Token, error) {
 			s.skipComment()
 			continue
 
-		case chr == '-' || unicode.IsDigit(chr):
+		case chr == '-':
+			if s.lookaheadIsDigit() {
+				token, err := s.scanNumber(pos)
+				if err != nil {
+					return nil, err
+				}
+				tokens = append(tokens, token)
+				continue
+			}
+			token, err := s.scanSymbolicAtom(pos)
+			if err != nil {
+				return nil, err
+			}
+			tokens = append(tokens, token)
+			continue
+
+		case unicode.IsDigit(chr):
 			token, err := s.scanNumber(pos)
 			if err != nil {
 				return nil, err
@@ -146,11 +162,20 @@ func (s *scanner) Scan() ([]token.Token, error) {
 			continue
 
 		case unicode.IsLetter(chr) || chr == '_':
-			token, err := s.scanAtom(pos)
+			token, err := s.scanAlphabeticAtom(pos)
 			if err != nil {
 				return nil, err
 			}
 			tokens = append(tokens, token)
+			continue
+
+		case strings.ContainsRune("+*/<=>:.", chr): // `-` already handled above
+			token, err := s.scanSymbolicAtom(pos)
+			if err != nil {
+				return nil, err
+			}
+			tokens = append(tokens, token)
+			continue
 
 		default:
 			err := newError(pos, fmt.Sprintf("unexpected char at top level: %U '%c'", chr, chr))
@@ -259,8 +284,8 @@ func (s *scanner) scanEscapeSequence(pos token.Position) (string, error) {
 	}
 }
 
-// scanAtom scans an atom token from the input.
-func (s *scanner) scanAtom(pos token.Position) (token.Token, error) {
+// scanAlphabeticAtom scans an alphabetic atom token from the input.
+func (s *scanner) scanAlphabeticAtom(pos token.Position) (token.Token, error) {
 	var value strings.Builder
 	value.WriteRune(s.current)
 	s.advance()
@@ -270,8 +295,15 @@ func (s *scanner) scanAtom(pos token.Position) (token.Token, error) {
 		if chr == 0 {
 			break
 		}
-		if !unicode.IsLetter(chr) && !unicode.IsDigit(chr) && chr != '_' {
-			if !unicode.IsSpace(chr) && !strings.ContainsRune("()", chr) {
+		if !unicode.IsLetter(chr) && !unicode.IsDigit(chr) && chr != '_' && chr != '-' {
+			if chr == '!' || chr == '?' {
+				value.WriteRune(chr)
+				s.advance()
+				// Check if the next character is a valid separator
+				// after the legitimate `?!` ending rune
+				chr = s.current
+			}
+			if chr != 0 && !unicode.IsSpace(chr) && !strings.ContainsRune("()", chr) {
 				err := newError(pos, fmt.Sprintf("expected [ ()], found: %U '%c'", chr, chr))
 				return token.Token{}, err
 			}
@@ -282,4 +314,86 @@ func (s *scanner) scanAtom(pos token.Position) (token.Token, error) {
 	}
 
 	return s.newToken(token.ATOM, pos, value.String()), nil
+}
+
+// scanSymbolicAtom scans a symbolic atom token from the input.
+func (s *scanner) scanSymbolicAtom(pos token.Position) (token.Token, error) {
+	var value strings.Builder
+	value.WriteRune(s.current)
+	s.advance()
+
+	var tok token.Token
+	switch value.String() {
+	case "+":
+		tok = s.newToken(token.ATOM, pos, "+")
+	case "-":
+		tok = s.newToken(token.ATOM, pos, "-")
+	case "*":
+		tok = s.newToken(token.ATOM, pos, "*")
+	case "/":
+		tok = s.newToken(token.ATOM, pos, "/")
+	case ".":
+		tok = s.newToken(token.ATOM, pos, ".")
+
+	case "=":
+		if s.current == '=' {
+			value.WriteRune(s.current)
+			s.advance()
+			tok = s.newToken(token.ATOM, pos, "==")
+		} else {
+			tok = s.newToken(token.ATOM, pos, "=")
+		}
+
+	case "<":
+		if s.current == '=' {
+			value.WriteRune(s.current)
+			s.advance()
+			if s.current == '>' {
+				value.WriteRune(s.current)
+				s.advance()
+				tok = s.newToken(token.ATOM, pos, "<=>")
+			} else {
+				tok = s.newToken(token.ATOM, pos, "<=")
+			}
+		} else {
+			tok = s.newToken(token.ATOM, pos, "<")
+		}
+
+	case ">":
+		if s.current == '=' {
+			value.WriteRune(s.current)
+			s.advance()
+			tok = s.newToken(token.ATOM, pos, ">=")
+		} else {
+			tok = s.newToken(token.ATOM, pos, ">")
+		}
+
+	case ":":
+		if s.current == ':' {
+			value.WriteRune(s.current)
+			s.advance()
+			tok = s.newToken(token.ATOM, pos, "::")
+		} else {
+			tok = s.newToken(token.ATOM, pos, ":")
+		}
+	default:
+		return token.Token{}, newError(pos, fmt.Sprintf("unexpected symbolic atom: %s", value.String()))
+	}
+
+	if s.current != 0 && !unicode.IsSpace(s.current) && !strings.ContainsRune("()", s.current) {
+		err := newError(pos, fmt.Sprintf("expected [ ()], found: %U '%c'", s.current, s.current))
+		return token.Token{}, err
+	}
+
+	return tok, nil
+}
+
+// lookaheadIsDigit checks if the next character is a digit.
+func (s *scanner) lookaheadIsDigit() bool {
+	r, _, err := s.reader.ReadRune()
+	if err != nil {
+		return false
+	}
+	defer s.reader.UnreadRune()
+	return unicode.IsDigit(r)
 }
