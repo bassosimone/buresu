@@ -221,7 +221,7 @@ func (lam *LambdaExpr) String() string {
 	}
 	docsBytes, _ := json.Marshal(lam.Docs)
 	docs := fmt.Sprintf("%s", string(docsBytes))
-	return fmt.Sprintf("(lambda (%s) %s %s)", strings.Join(params, ", "), docs, lam.Expr.String())
+	return fmt.Sprintf("(lambda (%s) %s %s)", strings.Join(params, " "), docs, lam.Expr.String())
 }
 
 // Clone creates a deep copy of the LambdaExpr node.

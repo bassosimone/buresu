@@ -8,8 +8,8 @@ import (
 	"strings"
 )
 
-// displayFunc implements the `display` built-in function.
-var displayFunc = &BuiltInFuncValue{
+// DisplayFunc implements the `display` built-in function.
+var DisplayFunc = &BuiltInFuncValue{
 	Name: "display",
 	Fx: func(_ context.Context, env Environment, args ...Value) (Value, error) {
 		var builder strings.Builder
@@ -28,8 +28,8 @@ var displayFunc = &BuiltInFuncValue{
 	},
 }
 
-// intSumFunc implements the `__intSum` built-in function for integers.
-var intSumFunc = &BuiltInFuncValue{
+// IntSumFunc implements the `__intSum` built-in function for integers.
+var IntSumFunc = &BuiltInFuncValue{
 	Name: "__intSum",
 	Fx: func(_ context.Context, _ Environment, args ...Value) (Value, error) {
 		if len(args) != 2 {
@@ -50,8 +50,8 @@ var intSumFunc = &BuiltInFuncValue{
 	},
 }
 
-// floatSumFunc implements the `__floatSum` built-in function for integers.
-var floatSumFunc = &BuiltInFuncValue{
+// FloatSumFunc implements the `__floatSum` built-in function for integers.
+var FloatSumFunc = &BuiltInFuncValue{
 	Name: "__floatSum",
 	Fx: func(_ context.Context, _ Environment, args ...Value) (Value, error) {
 		if len(args) != 2 {
@@ -72,8 +72,8 @@ var floatSumFunc = &BuiltInFuncValue{
 	},
 }
 
-// intLtFunc implements the `__intLt` built-in function for integers.
-var intLtFunc = &BuiltInFuncValue{
+// IntLtFunc implements the `__intLt` built-in function for integers.
+var IntLtFunc = &BuiltInFuncValue{
 	Name: "__intLt",
 	Fx: func(_ context.Context, _ Environment, args ...Value) (Value, error) {
 		if len(args) != 2 {

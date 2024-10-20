@@ -57,15 +57,15 @@ func InitRootScope(env Environment) error {
 	}
 
 	// define the sumInt and sumFloat functions
-	if err := env.DefineValue(intSumFunc.Name, intSumFunc); err != nil {
+	if err := env.DefineValue(IntSumFunc.Name, IntSumFunc); err != nil {
 		return err
 	}
-	if err := env.DefineValue(floatSumFunc.Name, floatSumFunc); err != nil {
+	if err := env.DefineValue(FloatSumFunc.Name, FloatSumFunc); err != nil {
 		return err
 	}
 
 	// define the display function
-	if err := env.DefineValue(displayFunc.Name, displayFunc); err != nil {
+	if err := env.DefineValue(DisplayFunc.Name, DisplayFunc); err != nil {
 		return err
 	}
 
