@@ -106,14 +106,14 @@ func (cmd command) Main(_ context.Context, argv ...string) error {
 				resetBufferAndPrompt()
 				continue
 			}
-			fmt.Fprintf(os.Stderr, "buresu repl: error reading input: %s\n", err.Error())
+			fmt.Fprintf(os.Stderr, "error reading input: %s\n", err.Error())
 			continue
 		}
 
 		buffer += line
 		tokens, err := scanner.Scan("<stdin>", strings.NewReader(buffer))
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "buresu repl: error scanning input: %s\n", err.Error())
+			fmt.Fprintf(os.Stderr, "error scanning input: %s\n", err.Error())
 			resetBufferAndPrompt()
 			continue
 		}
@@ -124,7 +124,7 @@ func (cmd command) Main(_ context.Context, argv ...string) error {
 				prompt = "... "
 				continue
 			}
-			fmt.Fprintf(os.Stderr, "buresu repl: syntax error: %s\n", err.Error())
+			fmt.Fprintf(os.Stderr, "syntax error: %s\n", err.Error())
 			resetBufferAndPrompt()
 			continue
 		}
@@ -155,7 +155,7 @@ func evaluate(rootScope *evaluator.GlobalScope, nodes []ast.Node) {
 	for _, node := range nodes {
 		value, err := evaluator.Eval(ctx, rootScope, node)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "buresu repl: evaluation error: %s\n", err.Error())
+			fmt.Fprintf(os.Stderr, "evaluation error: %s\n", err.Error())
 			return
 		}
 		fmt.Printf("%s\n", value.String())

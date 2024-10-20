@@ -2,17 +2,21 @@
 
 package runtime
 
-import "github.com/bassosimone/buresu/pkg/ast"
+import (
+	"fmt"
 
-// QuoteValue is the type of a quoted value.
-type QuoteValue struct {
+	"github.com/bassosimone/buresu/pkg/ast"
+)
+
+// QuotedValue is the type of a quoted value.
+type QuotedValue struct {
 	Value ast.Node
 }
 
 // Ensure *BoolValue implements Value interface.
-var _ Value = (*QuoteValue)(nil)
+var _ Value = (*QuotedValue)(nil)
 
 // String implements Value.
-func (q *QuoteValue) String() string {
-	return q.Value.String()
+func (q *QuotedValue) String() string {
+	return fmt.Sprintf("(quote %s)", q.Value.String())
 }

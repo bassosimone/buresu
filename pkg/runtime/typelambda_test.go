@@ -158,7 +158,7 @@ func TestLambdaValue(t *testing.T) {
 			Node:    node,
 		}
 
-		expectedString := "{:0:0 ATOM lambda}: (lambda (x y) \"\" x)"
+		expectedString := "(lambda (x y) \"\" x)"
 		if lambda.String() != expectedString {
 			t.Errorf("expected %s, got %s", expectedString, lambda.String())
 		}

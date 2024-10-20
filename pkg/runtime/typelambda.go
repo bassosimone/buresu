@@ -25,7 +25,7 @@ var (
 
 // String implements Value.
 func (fx *LambdaValue) String() string {
-	return fmt.Sprintf("%s: %s", fx.Node.Token, fx.Node.String())
+	return fmt.Sprintf("%s", fx.Node.String())
 }
 
 // Call invokes the user-defined function within the given environment, including the

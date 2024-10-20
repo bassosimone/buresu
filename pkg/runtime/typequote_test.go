@@ -12,7 +12,7 @@ import (
 func TestQuoteValue(t *testing.T) {
 	t.Run("String representation", func(t *testing.T) {
 		node := &ast.StringLiteral{Value: "hello"}
-		quote := &runtime.QuoteValue{Value: node}
+		quote := &runtime.QuotedValue{Value: node}
 
 		expected := "\"hello\""
 		if quote.String() != expected {
@@ -23,7 +23,7 @@ func TestQuoteValue(t *testing.T) {
 	t.Run("Nested quote", func(t *testing.T) {
 		innerNode := &ast.StringLiteral{Value: "inner"}
 		outerNode := &ast.QuoteExpr{Expr: innerNode}
-		quote := &runtime.QuoteValue{Value: outerNode}
+		quote := &runtime.QuotedValue{Value: outerNode}
 
 		expected := "(quote \"inner\")"
 		if quote.String() != expected {
