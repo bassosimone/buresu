@@ -143,7 +143,7 @@ func TestQuoteExpr(t *testing.T) {
 func TestReturnStmt(t *testing.T) {
 	tok := token.Token{TokenType: token.ATOM, Value: "return!"}
 	expr := &ReturnStmt{Token: tok, Expr: &IntLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "42"}, Value: "42"}}
-	expected := "(return 42)"
+	expected := "(return! 42)"
 	t.Run("serialization", func(t *testing.T) {
 		if expr.String() != expected {
 			t.Errorf("expected %s, got %s", expected, expr.String())
@@ -160,7 +160,7 @@ func TestReturnStmt(t *testing.T) {
 func TestSetExpr(t *testing.T) {
 	tok := token.Token{TokenType: token.ATOM, Value: "set!"}
 	expr := &SetExpr{Token: tok, Symbol: "x", Expr: &IntLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "42"}, Value: "42"}}
-	expected := "(set x 42)"
+	expected := "(set! x 42)"
 	t.Run("serialization", func(t *testing.T) {
 		if expr.String() != expected {
 			t.Errorf("expected %s, got %s", expected, expr.String())

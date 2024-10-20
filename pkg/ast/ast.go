@@ -266,7 +266,7 @@ type ReturnStmt struct {
 
 // String converts the ReturnStmt node back to lisp source code.
 func (ret *ReturnStmt) String() string {
-	return fmt.Sprintf("(return %s)", ret.Expr.String())
+	return fmt.Sprintf("(return! %s)", ret.Expr.String())
 }
 
 // Clone creates a deep copy of the ReturnStmt node.
@@ -287,7 +287,7 @@ type SetExpr struct {
 
 // String converts the SetExpr node back to lisp source code.
 func (set *SetExpr) String() string {
-	return fmt.Sprintf("(set %s %s)", set.Symbol, set.Expr.String())
+	return fmt.Sprintf("(set! %s %s)", set.Symbol, set.Expr.String())
 }
 
 // Clone creates a deep copy of the SetExpr node.

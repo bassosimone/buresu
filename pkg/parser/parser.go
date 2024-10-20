@@ -94,15 +94,15 @@ func (p *parser) parseForm() (ast.Node, error) {
 	form := p.currentToken()
 	if form.TokenType == token.ATOM {
 		specialForms := map[string]func(token.Token) (ast.Node, error){
-			"block":  p.parseBlock,
-			"cond":   p.parseCond,
-			"if":     p.parseIf,
-			"define": p.parseDefine,
-			"lambda": p.parseLambda,
-			"quote":  p.parseQuote,
-			"return": p.parseReturn,
-			"set":    p.parseSet,
-			"while":  p.parseWhile,
+			"block":   p.parseBlock,
+			"cond":    p.parseCond,
+			"if":      p.parseIf,
+			"define":  p.parseDefine,
+			"lambda":  p.parseLambda,
+			"quote":   p.parseQuote,
+			"return!": p.parseReturn,
+			"set!":    p.parseSet,
+			"while":   p.parseWhile,
 		}
 		if parseFunc, found := specialForms[form.Value]; found {
 			p.advance() // consume the special form name

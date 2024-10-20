@@ -1,5 +1,5 @@
 -- input.ast --
-(block (set x 3.14))
+(block (set! x 3.14))
 
 -- expected_output.json --
 [
@@ -36,7 +36,7 @@
                   "TokenPos": {
                     "FileName": "input.ast",
                     "LineNumber": 1,
-                    "LineColumn": 15
+                    "LineColumn": 16
                   },
                   "TokenType": "NUMBER",
                   "Value": "3.14"

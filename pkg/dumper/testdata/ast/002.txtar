@@ -1,4 +1,3 @@
--- condexpr_test.txtar --
 -- input.ast --
 (cond
   (true "It's true!")

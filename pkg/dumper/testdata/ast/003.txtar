@@ -1,6 +1,6 @@
 -- lambda_test.txtar --
 -- input.ast --
-(lambda (x) "This is a test lambda" (block (false) (()) (while false (return x))))
+(lambda (x) "This is a test lambda" (block (false) (()) (while false (return! x))))
 
 -- expected_output.json --
 [
@@ -136,7 +136,7 @@
                           "TokenPos": {
                             "FileName": "input.ast",
                             "LineNumber": 1,
-                            "LineColumn": 78
+                            "LineColumn": 79
                           },
                           "TokenType": "ATOM",
                           "Value": "x"

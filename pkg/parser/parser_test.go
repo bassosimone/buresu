@@ -112,8 +112,8 @@ func TestParser(t *testing.T) {
 
 		// define & set tests
 		{
-			input:          "(set x 42)",
-			expectedOutput: "(set x 42)",
+			input:          "(set! x 42)",
+			expectedOutput: "(set! x 42)",
 			shouldFail:     false,
 		},
 		{
@@ -246,21 +246,21 @@ func TestParser(t *testing.T) {
 
 		// return tests
 		{
-			input:          "(return 42)",
-			expectedOutput: "(return 42)",
+			input:          "(return! 42)",
+			expectedOutput: "(return! 42)",
 			shouldFail:     false,
 		},
 		{
-			input:          "(return",
+			input:          "(return!",
 			expectedOutput: "",
 			shouldFail:     true,
-			expectedError:  "<stdin>:1:7: parser: unexpected token EOF",
+			expectedError:  "<stdin>:1:8: parser: unexpected token EOF",
 		},
 		{
-			input:          "(return 42",
+			input:          "(return! 42",
 			expectedOutput: "",
 			shouldFail:     true,
-			expectedError:  "<stdin>:1:10: parser: expected token CLOSE, found EOF",
+			expectedError:  "<stdin>:1:11: parser: expected token CLOSE, found EOF",
 		},
 
 		// while tests

@@ -1,5 +1,5 @@
 -- input.ast --
-(block (define x 42) (return x))
+(block (define x 42) (return! x))
 
 -- expected_output.json --
 [
@@ -65,7 +65,7 @@
                   "TokenPos": {
                     "FileName": "input.ast",
                     "LineNumber": 1,
-                    "LineColumn": 30
+                    "LineColumn": 31
                   },
                   "TokenType": "ATOM",
                   "Value": "x"
