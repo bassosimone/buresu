@@ -7,6 +7,7 @@ import (
 	_ "embed"
 	"os"
 
+	"github.com/bassosimone/buresu/cmd/buresu/internal/repl"
 	"github.com/bassosimone/buresu/cmd/buresu/internal/run"
 	"github.com/bassosimone/buresu/cmd/internal/climain"
 	"github.com/bassosimone/buresu/cmd/internal/cliutils"
@@ -24,6 +25,7 @@ var readme string
 // newCommand constructs a new [cliutils.Command] for the `buresu` command.
 func newCommand() cliutils.Command {
 	return cliutils.NewCommandWithSubCommands("buresu", readme, map[string]cliutils.Command{
-		"run": run.NewCommand(),
+		"repl": repl.NewCommand(),
+		"run":  run.NewCommand(),
 	})
 }

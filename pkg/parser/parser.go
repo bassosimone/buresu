@@ -3,39 +3,9 @@
 package parser
 
 import (
-	"fmt"
-
 	"github.com/bassosimone/buresu/pkg/ast"
 	"github.com/bassosimone/buresu/pkg/token"
 )
-
-// Parse processes the provided tokens and returns a slice
-// of AST nodes or an error if parsing fails.
-func Parse(tokens []token.Token) (nodes []ast.Node, err error) {
-	return newParser(tokens).Parse()
-}
-
-// Error represents a parsing error with position and message.
-type Error struct {
-	Tok     token.Token
-	Message string
-}
-
-// Error returns the error message with file position details.
-func (e *Error) Error() string {
-	return fmt.Sprintf(
-		"%s:%d:%d: parser: %s",
-		e.Tok.TokenPos.FileName,
-		e.Tok.TokenPos.LineNumber,
-		e.Tok.TokenPos.LineColumn,
-		e.Message,
-	)
-}
-
-// newError formats and returns a new parser error including the token context.
-func newError(tok token.Token, format string, args ...any) *Error {
-	return &Error{Tok: tok, Message: fmt.Sprintf(format, args...)}
-}
 
 // parser is a structure that holds the tokens to be parsed and
 // the current position in the token list.
@@ -81,6 +51,9 @@ func (p *parser) consumeTokenWithType(tt token.TokenType) (token.Token, error) {
 	tok := p.currentToken()
 	if tok.TokenType != tt {
 		err := newError(tok, "expected token %s, found %s", tt, tok.TokenType)
+		if tok.TokenType == token.EOF {
+			err = ErrIncompleteInput{err}
+		}
 		return token.Token{}, err
 	}
 	p.advance()
@@ -99,7 +72,11 @@ func (p *parser) parseAtomOrForm() (ast.Node, error) {
 	case token.OPEN:
 		return p.parseForm()
 	default:
-		return nil, newError(tp, "unexpected token %s", tp.TokenType)
+		err := newError(tp, "unexpected token %s", tp.TokenType)
+		if tp.TokenType == token.EOF {
+			err = ErrIncompleteInput{err}
+		}
+		return nil, err
 	}
 }
 

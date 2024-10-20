@@ -6,6 +6,7 @@ the namesake Lisp-like, hobby programming language.
 
 We support these commands:
 
-    run      Runs a Buresu program.
+    repl     Starts the Read-Eval-Print Loop (REPL).
+    run      Runs a Buresu script file.
 
 Run `buresu COMMAND --help` for more information about `COMMAND`.

@@ -10,6 +10,7 @@ import (
 	"github.com/bassosimone/buresu/pkg/runtime"
 )
 
+// evalCallExpr evaluates a call expression.
 func evalCallExpr(ctx context.Context,
 	env runtime.Environment, node *ast.CallExpr) (runtime.Value, error) {
 	// 1. evaluate the arguments in the current environment
