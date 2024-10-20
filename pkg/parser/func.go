@@ -57,9 +57,9 @@ func (p *parser) parseLambda(tok token.Token) (ast.Node, error) {
 	_, _ = p.consumeTokenWithType(token.CLOSE) // cannot fail
 
 	// 2. [STRING]
-	var docs ast.StringLiteral
+	var docs string
 	if p.currentToken().TokenType == token.STRING {
-		docs = ast.StringLiteral{Token: p.currentToken(), Value: p.currentToken().Value}
+		docs = p.currentToken().Value
 		p.advance()
 	}
 
@@ -75,7 +75,7 @@ func (p *parser) parseLambda(tok token.Token) (ast.Node, error) {
 	rv := &ast.LambdaExpr{
 		Token:  tok,
 		Params: params,
-		Docs:   docs.Value,
+		Docs:   docs,
 		Expr:   expr,
 	}
 	return rv, nil
