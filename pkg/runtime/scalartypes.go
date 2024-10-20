@@ -1,18 +1,14 @@
-// SPDX-License-Identifier: GPL-3.0-or-later
-
 package runtime
 
 import "fmt"
-
-// Value is a generic value managed by the runtime.
-type Value interface {
-	String() string
-}
 
 // BoolValue represents a boolean value in the runtime.
 type BoolValue struct {
 	Value bool
 }
+
+// Ensure *BoolValue implements Value interface.
+var _ Value = (*BoolValue)(nil)
 
 // String returns the string representation of the boolean value.
 func (v *BoolValue) String() string {
@@ -24,6 +20,9 @@ type FloatValue struct {
 	Value float64
 }
 
+// Ensure *FloatValue implements Value interface.
+var _ Value = (*FloatValue)(nil)
+
 // String returns the string representation of the floating-point value.
 func (v *FloatValue) String() string {
 	return fmt.Sprintf("%f", v.Value)
@@ -33,6 +32,9 @@ func (v *FloatValue) String() string {
 type IntValue struct {
 	Value int
 }
+
+// Ensure *IntValue implements Value interface.
+var _ Value = (*IntValue)(nil)
 
 // String returns the string representation of the integer value.
 func (v *IntValue) String() string {
@@ -44,6 +46,9 @@ type StringValue struct {
 	Value string
 }
 
+// Ensure *StringValue implements Value interface.
+var _ Value = (*StringValue)(nil)
+
 // String returns the string representation of the string value.
 func (v *StringValue) String() string {
 	return fmt.Sprintf("%q", v.Value)
@@ -52,6 +57,9 @@ func (v *StringValue) String() string {
 // UnitValue represents a unit value in the runtime.
 // A unit value is typically used to represent the absence of a value.
 type UnitValue struct{}
+
+// Ensure *UnitValue implements Value interface.
+var _ Value = (*UnitValue)(nil)
 
 // String returns the string representation of the unit value.
 func (v *UnitValue) String() string {

@@ -238,6 +238,25 @@ func (lam *LambdaExpr) Clone() Node {
 	}
 }
 
+// QuoteExpr represents a quoted expression.
+type QuoteExpr struct {
+	Token token.Token
+	Expr  Node
+}
+
+// String converts the QuoteExpr node back to lisp source code.
+func (quote *QuoteExpr) String() string {
+	return fmt.Sprintf("(quote %s)", quote.Expr.String())
+}
+
+// Clone creates a deep copy of the QuoteExpr node.
+func (quote *QuoteExpr) Clone() Node {
+	return &QuoteExpr{
+		Token: quote.Token.Clone(),
+		Expr:  quote.Expr.Clone(),
+	}
+}
+
 // ReturnStmt represents a return statement to interrupt
 // the current function and return a value.
 type ReturnStmt struct {

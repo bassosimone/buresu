@@ -87,12 +87,46 @@ func TestDefineExpr(t *testing.T) {
 	})
 }
 
+func TestFloatLiteral(t *testing.T) {
+	tok := token.Token{TokenType: token.NUMBER, Value: "3.14"}
+	expr := &FloatLiteral{Token: tok, Value: "3.14"}
+	expected := "3.14"
+	t.Run("serialization", func(t *testing.T) {
+		if expr.String() != expected {
+			t.Errorf("expected %s, got %s", expected, expr.String())
+		}
+	})
+	t.Run("cloning", func(t *testing.T) {
+		clonedExpr := expr.Clone()
+		if clonedExpr.String() != expected {
+			t.Errorf("expected %s, got %s", expected, clonedExpr.String())
+		}
+	})
+}
+
 func TestLambdaExpr(t *testing.T) {
 	tok := token.Token{TokenType: token.ATOM, Value: "lambda"}
 	param := "x"
 	body := &IntLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "42"}, Value: "42"}
 	expr := &LambdaExpr{Token: tok, Params: []string{param}, Docs: "This is a lambda function", Expr: body}
 	expected := "(lambda (x) \"This is a lambda function\" 42)"
+	t.Run("serialization", func(t *testing.T) {
+		if expr.String() != expected {
+			t.Errorf("expected %s, got %s", expected, expr.String())
+		}
+	})
+	t.Run("cloning", func(t *testing.T) {
+		clonedExpr := expr.Clone()
+		if clonedExpr.String() != expected {
+			t.Errorf("expected %s, got %s", expected, clonedExpr.String())
+		}
+	})
+}
+
+func TestQuoteExpr(t *testing.T) {
+	tok := token.Token{TokenType: token.ATOM, Value: "quote"}
+	expr := &QuoteExpr{Token: tok, Expr: &IntLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "42"}, Value: "42"}}
+	expected := "(quote 42)"
 	t.Run("serialization", func(t *testing.T) {
 		if expr.String() != expected {
 			t.Errorf("expected %s, got %s", expected, expr.String())
@@ -140,46 +174,29 @@ func TestSetExpr(t *testing.T) {
 	})
 }
 
+func TestUnitExpr(t *testing.T) {
+	tok := token.Token{TokenType: token.ATOM, Value: "()"}
+	expr := &UnitExpr{Token: tok}
+	expected := "()"
+	t.Run("serialization", func(t *testing.T) {
+		if expr.String() != expected {
+			t.Errorf("expected %s, got %s", expected, expr.String())
+		}
+	})
+	t.Run("cloning", func(t *testing.T) {
+		clonedExpr := expr.Clone()
+		if clonedExpr.String() != expected {
+			t.Errorf("expected %s, got %s", expected, clonedExpr.String())
+		}
+	})
+}
+
 func TestWhileExpr(t *testing.T) {
 	tok := token.Token{TokenType: token.ATOM, Value: "while"}
 	predicate := &TrueLiteral{Token: token.Token{TokenType: token.ATOM, Value: "true"}}
 	body := &IntLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "42"}, Value: "42"}
 	expr := &WhileExpr{Token: tok, Predicate: predicate, Expr: body}
 	expected := "(while true 42)"
-	t.Run("serialization", func(t *testing.T) {
-		if expr.String() != expected {
-			t.Errorf("expected %s, got %s", expected, expr.String())
-		}
-	})
-	t.Run("cloning", func(t *testing.T) {
-		clonedExpr := expr.Clone()
-		if clonedExpr.String() != expected {
-			t.Errorf("expected %s, got %s", expected, clonedExpr.String())
-		}
-	})
-}
-
-func TestFloatLiteral(t *testing.T) {
-	tok := token.Token{TokenType: token.NUMBER, Value: "3.14"}
-	expr := &FloatLiteral{Token: tok, Value: "3.14"}
-	expected := "3.14"
-	t.Run("serialization", func(t *testing.T) {
-		if expr.String() != expected {
-			t.Errorf("expected %s, got %s", expected, expr.String())
-		}
-	})
-	t.Run("cloning", func(t *testing.T) {
-		clonedExpr := expr.Clone()
-		if clonedExpr.String() != expected {
-			t.Errorf("expected %s, got %s", expected, clonedExpr.String())
-		}
-	})
-}
-
-func TestUnitExpr(t *testing.T) {
-	tok := token.Token{TokenType: token.ATOM, Value: "()"}
-	expr := &UnitExpr{Token: tok}
-	expected := "()"
 	t.Run("serialization", func(t *testing.T) {
 		if expr.String() != expected {
 			t.Errorf("expected %s, got %s", expected, expr.String())

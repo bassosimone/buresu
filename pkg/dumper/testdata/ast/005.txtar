@@ -1,0 +1,129 @@
+-- input.ast --
+(quote (if (lt x 0) 0 x))
+
+-- expected_output.json --
+[
+  {
+    "Type": "QuoteExpr",
+    "Value": {
+      "Token": {
+        "TokenPos": {
+          "FileName": "input.ast",
+          "LineNumber": 1,
+          "LineColumn": 1
+        },
+        "TokenType": "OPEN",
+        "Value": "("
+      },
+      "Expr": {
+        "Type": "CondExpr",
+        "Value": {
+          "Token": {
+            "TokenPos": {
+              "FileName": "input.ast",
+              "LineNumber": 1,
+              "LineColumn": 8
+            },
+            "TokenType": "OPEN",
+            "Value": "("
+          },
+          "Cases": [
+            {
+              "Predicate": {
+                "Type": "CallExpr",
+                "Value": {
+                  "Token": {
+                    "TokenPos": {
+                      "FileName": "input.ast",
+                      "LineNumber": 1,
+                      "LineColumn": 12
+                    },
+                    "TokenType": "OPEN",
+                    "Value": "("
+                  },
+                  "Callable": {
+                    "Type": "SymbolName",
+                    "Value": {
+                      "Token": {
+                        "TokenPos": {
+                          "FileName": "input.ast",
+                          "LineNumber": 1,
+                          "LineColumn": 13
+                        },
+                        "TokenType": "ATOM",
+                        "Value": "lt"
+                      },
+                      "Value": "lt"
+                    }
+                  },
+                  "Args": [
+                    {
+                      "Type": "SymbolName",
+                      "Value": {
+                        "Token": {
+                          "TokenPos": {
+                            "FileName": "input.ast",
+                            "LineNumber": 1,
+                            "LineColumn": 16
+                          },
+                          "TokenType": "ATOM",
+                          "Value": "x"
+                        },
+                        "Value": "x"
+                      }
+                    },
+                    {
+                      "Type": "IntLiteral",
+                      "Value": {
+                        "Token": {
+                          "TokenPos": {
+                            "FileName": "input.ast",
+                            "LineNumber": 1,
+                            "LineColumn": 18
+                          },
+                          "TokenType": "NUMBER",
+                          "Value": "0"
+                        },
+                        "Value": "0"
+                      }
+                    }
+                  ]
+                }
+              },
+              "Expr": {
+                "Type": "IntLiteral",
+                "Value": {
+                  "Token": {
+                    "TokenPos": {
+                      "FileName": "input.ast",
+                      "LineNumber": 1,
+                      "LineColumn": 21
+                    },
+                    "TokenType": "NUMBER",
+                    "Value": "0"
+                  },
+                  "Value": "0"
+                }
+              }
+            }
+          ],
+          "ElseExpr": {
+            "Type": "SymbolName",
+            "Value": {
+              "Token": {
+                "TokenPos": {
+                  "FileName": "input.ast",
+                  "LineNumber": 1,
+                  "LineColumn": 23
+                },
+                "TokenType": "ATOM",
+                "Value": "x"
+              },
+              "Value": "x"
+            }
+          }
+        }
+      }
+    }
+  }
+]

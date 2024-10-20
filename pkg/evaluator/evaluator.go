@@ -39,6 +39,8 @@ func Eval(ctx context.Context, env runtime.Environment, node ast.Node) (runtime.
 		return evalIntLiteral(ctx, env, node)
 	case *ast.LambdaExpr:
 		return evalLambdaExpr(ctx, env, node)
+	case *ast.QuoteExpr:
+		return evalQuoteExpr(ctx, env, node)
 	case *ast.ReturnStmt:
 		return evalReturnStmt(ctx, env, node)
 	case *ast.SetExpr:

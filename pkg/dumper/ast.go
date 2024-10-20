@@ -130,6 +130,14 @@ func wrapNode(node ast.Node) ast.Node {
 				Expr:   wrapNode(n.Expr),
 			},
 		}
+	case *ast.QuoteExpr:
+		return &nodeWrapper{
+			Type: "QuoteExpr",
+			Value: &ast.QuoteExpr{
+				Token: n.Token,
+				Expr:  wrapNode(n.Expr),
+			},
+		}
 	case *ast.ReturnStmt:
 		return &nodeWrapper{
 			Type: "ReturnStmt",

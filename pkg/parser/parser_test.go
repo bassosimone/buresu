@@ -33,6 +33,25 @@ func TestParser(t *testing.T) {
 			shouldFail:     false,
 		},
 
+		// call tests
+		{
+			input:          "(sum 1 2 3)",
+			expectedOutput: "(sum 1 2 3)",
+			shouldFail:     false,
+		},
+		{
+			input:          "(sum 1 2 3))",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:12: parser: unexpected token CLOSE",
+		},
+		{
+			input:          "(sum",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:4: parser: unexpected token EOF",
+		},
+
 		// cond tests
 		{
 			input:          "(cond (true \"It's true!\") (false \"It's false!\") (else \"Neither true nor false!\"))",
@@ -91,6 +110,36 @@ func TestParser(t *testing.T) {
 			shouldFail:     false,
 		},
 
+		// define & set tests
+		{
+			input:          "(set x 42)",
+			expectedOutput: "(set x 42)",
+			shouldFail:     false,
+		},
+		{
+			input:          "(define x 42)",
+			expectedOutput: "(define x 42)",
+			shouldFail:     false,
+		},
+		{
+			input:          "(define",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:7: parser: expected token ATOM, found EOF",
+		},
+		{
+			input:          "(define x",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:9: parser: unexpected token EOF",
+		},
+		{
+			input:          "(define x 42",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:12: parser: expected token CLOSE, found EOF",
+		},
+
 		// if tests
 		{
 			input:          "(if true 1 0)",
@@ -131,109 +180,6 @@ func TestParser(t *testing.T) {
 			expectedOutput: "",
 			shouldFail:     true,
 			expectedError:  "<stdin>:1:15: parser: unexpected token EOF",
-		},
-
-		// return tests
-		{
-			input:          "(return 42)",
-			expectedOutput: "(return 42)",
-			shouldFail:     false,
-		},
-		{
-			input:          "(return",
-			expectedOutput: "",
-			shouldFail:     true,
-			expectedError:  "<stdin>:1:7: parser: unexpected token EOF",
-		},
-		{
-			input:          "(return 42",
-			expectedOutput: "",
-			shouldFail:     true,
-			expectedError:  "<stdin>:1:10: parser: expected token CLOSE, found EOF",
-		},
-
-		// define & set tests
-		{
-			input:          "(set x 42)",
-			expectedOutput: "(set x 42)",
-			shouldFail:     false,
-		},
-		{
-			input:          "(define x 42)",
-			expectedOutput: "(define x 42)",
-			shouldFail:     false,
-		},
-		{
-			input:          "(define",
-			expectedOutput: "",
-			shouldFail:     true,
-			expectedError:  "<stdin>:1:7: parser: expected token ATOM, found EOF",
-		},
-		{
-			input:          "(define x",
-			expectedOutput: "",
-			shouldFail:     true,
-			expectedError:  "<stdin>:1:9: parser: unexpected token EOF",
-		},
-		{
-			input:          "(define x 42",
-			expectedOutput: "",
-			shouldFail:     true,
-			expectedError:  "<stdin>:1:12: parser: expected token CLOSE, found EOF",
-		},
-
-		// while tests
-		{
-			input:          "(while true 42)",
-			expectedOutput: "(while true 42)",
-			shouldFail:     false,
-		},
-		{
-			input:          "(while true 42.42)",
-			expectedOutput: "(while true 42.42)",
-			shouldFail:     false,
-		},
-		{
-			input:          "(while true ())",
-			expectedOutput: "(while true ())",
-			shouldFail:     false,
-		},
-		{
-			input:          "(while",
-			expectedOutput: "",
-			shouldFail:     true,
-			expectedError:  "<stdin>:1:6: parser: unexpected token EOF",
-		},
-		{
-			input:          "(while true",
-			expectedOutput: "",
-			shouldFail:     true,
-			expectedError:  "<stdin>:1:11: parser: unexpected token EOF",
-		},
-		{
-			input:          "(while true ()",
-			expectedOutput: "",
-			shouldFail:     true,
-			expectedError:  "<stdin>:1:14: parser: expected token CLOSE, found EOF",
-		},
-
-		// call tests
-		{
-			input:          "(sum 1 2 3)",
-			expectedOutput: "(sum 1 2 3)",
-			shouldFail:     false,
-		},
-		{
-			input:          "(sum 1 2 3))",
-			expectedOutput: "",
-			shouldFail:     true,
-			expectedError:  "<stdin>:1:12: parser: unexpected token CLOSE",
-		},
-		{
-			input:          "(sum",
-			expectedOutput: "",
-			shouldFail:     true,
-			expectedError:  "<stdin>:1:4: parser: unexpected token EOF",
 		},
 
 		// lambda tests
@@ -277,6 +223,79 @@ func TestParser(t *testing.T) {
 			expectedOutput: "",
 			shouldFail:     true,
 			expectedError:  "<stdin>:1:13: parser: expected token CLOSE, found EOF",
+		},
+
+		// quote tests
+		{
+			input:          "(quote (1 2 3))",
+			expectedOutput: "(quote (1 2 3))",
+			shouldFail:     false,
+		},
+		{
+			input:          "(quote",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:6: parser: unexpected token EOF",
+		},
+		{
+			input:          "(quote (1 2 3)",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:14: parser: expected token CLOSE, found EOF",
+		},
+
+		// return tests
+		{
+			input:          "(return 42)",
+			expectedOutput: "(return 42)",
+			shouldFail:     false,
+		},
+		{
+			input:          "(return",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:7: parser: unexpected token EOF",
+		},
+		{
+			input:          "(return 42",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:10: parser: expected token CLOSE, found EOF",
+		},
+
+		// while tests
+		{
+			input:          "(while true 42)",
+			expectedOutput: "(while true 42)",
+			shouldFail:     false,
+		},
+		{
+			input:          "(while true 42.42)",
+			expectedOutput: "(while true 42.42)",
+			shouldFail:     false,
+		},
+		{
+			input:          "(while true ())",
+			expectedOutput: "(while true ())",
+			shouldFail:     false,
+		},
+		{
+			input:          "(while",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:6: parser: unexpected token EOF",
+		},
+		{
+			input:          "(while true",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:11: parser: unexpected token EOF",
+		},
+		{
+			input:          "(while true ()",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:14: parser: expected token CLOSE, found EOF",
 		},
 	}
 

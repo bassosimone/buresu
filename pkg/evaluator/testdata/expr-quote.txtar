@@ -1,0 +1,4 @@
+-- input.code --
+(quote (if (lt x 0) 0 x))
+-- expected_output.txt --
+(cond ((lt x 0) 0) (else x))

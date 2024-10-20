@@ -122,6 +122,7 @@ func (p *parser) parseForm() (ast.Node, error) {
 			"if":     p.parseIf,
 			"define": p.parseDefine,
 			"lambda": p.parseLambda,
+			"quote":  p.parseQuote,
 			"return": p.parseReturn,
 			"set":    p.parseSet,
 			"while":  p.parseWhile,
