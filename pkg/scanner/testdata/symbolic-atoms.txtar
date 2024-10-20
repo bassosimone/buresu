@@ -1,0 +1,141 @@
+-- input.txt --
+< <= = == <=> >= > + - * / . :: :
+
+-- expected_tokens.json --
+[
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 1
+    },
+    "TokenType": "ATOM",
+    "Value": "\u003c"
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 3
+    },
+    "TokenType": "ATOM",
+    "Value": "\u003c="
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 6
+    },
+    "TokenType": "ATOM",
+    "Value": "="
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 8
+    },
+    "TokenType": "ATOM",
+    "Value": "=="
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 11
+    },
+    "TokenType": "ATOM",
+    "Value": "\u003c=\u003e"
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 15
+    },
+    "TokenType": "ATOM",
+    "Value": "\u003e="
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 18
+    },
+    "TokenType": "ATOM",
+    "Value": "\u003e"
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 20
+    },
+    "TokenType": "ATOM",
+    "Value": "+"
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 22
+    },
+    "TokenType": "ATOM",
+    "Value": "-"
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 24
+    },
+    "TokenType": "ATOM",
+    "Value": "*"
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 26
+    },
+    "TokenType": "ATOM",
+    "Value": "/"
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 28
+    },
+    "TokenType": "ATOM",
+    "Value": "."
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 30
+    },
+    "TokenType": "ATOM",
+    "Value": "::"
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 33
+    },
+    "TokenType": "ATOM",
+    "Value": ":"
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 3,
+      "LineColumn": 0
+    },
+    "TokenType": "EOF",
+    "Value": ""
+  }
+]

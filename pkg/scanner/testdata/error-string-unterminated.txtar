@@ -1,0 +1,5 @@
+-- input.txt --
+"hello
+
+-- expected_error.txt --
+input.txt:1:1: scanner: expected '"', found: EOF

@@ -1,0 +1,5 @@
+-- input.txt --
+"hello\q"
+
+-- expected_error.txt --
+input.txt:1:1: scanner: unknown escape sequence: \U+0071 'q'

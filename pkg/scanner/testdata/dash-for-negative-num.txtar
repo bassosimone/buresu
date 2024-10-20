@@ -1,0 +1,24 @@
+-- input.txt --
+-314
+
+-- expected_tokens.json --
+[
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 1
+    },
+    "TokenType": "NUMBER",
+    "Value": "-314"
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 3,
+      "LineColumn": 0
+    },
+    "TokenType": "EOF",
+    "Value": ""
+  }
+]

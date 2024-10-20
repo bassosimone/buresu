@@ -1,0 +1,69 @@
+-- input.txt --
+(if true 1 0)
+
+-- expected_tokens.json --
+[
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 1
+    },
+    "TokenType": "OPEN",
+    "Value": "("
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 2
+    },
+    "TokenType": "ATOM",
+    "Value": "if"
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 5
+    },
+    "TokenType": "ATOM",
+    "Value": "true"
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 10
+    },
+    "TokenType": "NUMBER",
+    "Value": "1"
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 12
+    },
+    "TokenType": "NUMBER",
+    "Value": "0"
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 13
+    },
+    "TokenType": "CLOSE",
+    "Value": ")"
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 3,
+      "LineColumn": 0
+    },
+    "TokenType": "EOF",
+    "Value": ""
+  }
+]
