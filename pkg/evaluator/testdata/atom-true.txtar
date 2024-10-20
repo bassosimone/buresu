@@ -1,0 +1,4 @@
+-- input.code --
+true
+-- expected_output.txt --
+true
