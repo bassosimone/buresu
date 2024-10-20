@@ -57,7 +57,14 @@ func TestInitRootScope(t *testing.T) {
 	}
 
 	// Test error during initialization for each symbol
-	symbols := []string{"false", "true", "__intSum", "__float64Sum", "display"}
+	symbols := []string{
+		"__intSum",
+		"__float64Sum",
+		"display",
+		"eval",
+		"false",
+		"true",
+	}
 	for _, symbol := range symbols {
 		envWithError := newInitRootScopeMockEnvironment(map[string]bool{symbol: true})
 		err = runtime.InitRootScope(envWithError)

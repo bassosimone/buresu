@@ -14,7 +14,7 @@ func TestQuoteValue(t *testing.T) {
 		node := &ast.StringLiteral{Value: "hello"}
 		quote := &runtime.QuotedValue{Value: node}
 
-		expected := "\"hello\""
+		expected := "(quote \"hello\")"
 		if quote.String() != expected {
 			t.Errorf("expected %s, got %s", expected, quote.String())
 		}
@@ -25,7 +25,7 @@ func TestQuoteValue(t *testing.T) {
 		outerNode := &ast.QuoteExpr{Expr: innerNode}
 		quote := &runtime.QuotedValue{Value: outerNode}
 
-		expected := "(quote \"inner\")"
+		expected := "(quote (quote \"inner\"))"
 		if quote.String() != expected {
 			t.Errorf("expected %s, got %s", expected, quote.String())
 		}
