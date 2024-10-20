@@ -74,7 +74,7 @@ func InitRootScope(env Environment) error {
 		return err
 	}
 
-	// define the car, cdr, and list functions
+	// define the list-specific functions
 	if err := env.DefineValue(CarFunc.Name, CarFunc); err != nil {
 		return err
 	}
@@ -82,6 +82,21 @@ func InitRootScope(env Environment) error {
 		return err
 	}
 	if err := env.DefineValue(ListFunc.Name, ListFunc); err != nil {
+		return err
+	}
+	if err := env.DefineValue(NullFunc.Name, NullFunc); err != nil {
+		return err
+	}
+	if err := env.DefineValue(LengthFunc.Name, LengthFunc); err != nil {
+		return err
+	}
+	if err := env.DefineValue(ConsFunc.Name, ConsFunc); err != nil {
+		return err
+	}
+	if err := env.DefineValue(AppendFunc.Name, AppendFunc); err != nil {
+		return err
+	}
+	if err := env.DefineValue(ReverseFunc.Name, ReverseFunc); err != nil {
 		return err
 	}
 
