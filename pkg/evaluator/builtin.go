@@ -17,11 +17,14 @@ type BuiltInFuncValue struct {
 
 	// Fx is the function itself.
 	Fx BuiltInFunc
+
+	// Prefix is the type annotation prefix.
+	Prefix string
 }
 
 // NewBuiltInFuncValue creates a new built-in function value.
-func NewBuiltInFuncValue(name string, fx BuiltInFunc) *BuiltInFuncValue {
-	return &BuiltInFuncValue{Name: name, Fx: fx}
+func NewBuiltInFuncValue(name, prefix string, fx BuiltInFunc) *BuiltInFuncValue {
+	return &BuiltInFuncValue{Name: name, Fx: fx, Prefix: prefix}
 }
 
 var (
@@ -50,6 +53,5 @@ func (bf *BuiltInFuncValue) Type() string {
 
 // TypeAnnotationPrefix implements CallableTrait.
 func (bf *BuiltInFuncValue) TypeAnnotationPrefix() string {
-	// TODO(bassosimone): add type annotations prefix for built-in functions
-	return ""
+	return bf.Prefix
 }
