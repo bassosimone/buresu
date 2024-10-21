@@ -18,7 +18,7 @@ import (
 	"github.com/bassosimone/buresu/pkg/scanner"
 )
 
-func TestEvaluator(t *testing.T) {
+func TestEval(t *testing.T) {
 	testdataDir := "testdata"
 	files, err := os.ReadDir(testdataDir)
 	if err != nil {

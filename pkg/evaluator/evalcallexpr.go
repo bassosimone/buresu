@@ -42,10 +42,3 @@ func evalCallExpr(ctx context.Context,
 	// 4. actually invoke the callable
 	return callable.Call(ctx, env, args...)
 }
-
-// evalLambdaExpr packages a LambdaValue capturing the current scope and returns the value.
-func evalLambdaExpr(_ context.Context,
-	env runtime.Environment, node *ast.LambdaExpr) (runtime.Value, error) {
-	value := &runtime.LambdaValue{Closure: env, Node: node}
-	return value, nil
-}
