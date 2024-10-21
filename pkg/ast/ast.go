@@ -8,6 +8,7 @@
 package ast
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -219,9 +220,16 @@ func (lam *LambdaExpr) String() string {
 	for idx, param := range lam.Params {
 		params[idx] = param
 	}
-	docsBytes, _ := json.Marshal(lam.Docs)
-	docs := fmt.Sprintf("%s", string(docsBytes))
+	docs := jsonMarshalWithoutEscaping(lam.Docs)
 	return fmt.Sprintf("(lambda (%s) %s %s)", strings.Join(params, " "), docs, lam.Expr.String())
+}
+
+func jsonMarshalWithoutEscaping(v string) string {
+	var buff bytes.Buffer
+	enc := json.NewEncoder(&buff)
+	enc.SetEscapeHTML(false)
+	_ = enc.Encode(v)
+	return strings.TrimSpace(buff.String())
 }
 
 // Clone creates a deep copy of the LambdaExpr node.
@@ -307,8 +315,7 @@ type StringLiteral struct {
 
 // String converts the StringLiteral node back to lisp source code.
 func (strLit *StringLiteral) String() string {
-	valueBytes, _ := json.Marshal(strLit.Value)
-	return string(valueBytes)
+	return jsonMarshalWithoutEscaping(strLit.Value)
 }
 
 // Clone creates a deep copy of the StringLiteral node.

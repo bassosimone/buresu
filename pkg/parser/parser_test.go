@@ -224,6 +224,30 @@ func TestParser(t *testing.T) {
 			shouldFail:     true,
 			expectedError:  "<stdin>:1:13: parser: expected token CLOSE, found EOF",
 		},
+		{
+			input:          "(lambda (x y) \":: Int -> Int => Int\" x)",
+			expectedOutput: "(lambda (x y) \":: Int -> Int => Int\" x)",
+			shouldFail:     false,
+			expectedError:  "",
+		},
+		{
+			input:          "(lambda (x x) x)",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:1: parser: lambda parameter \"x\" is duplicated",
+		},
+		{
+			input:          "(lambda (x y) \":: Int => Int\" x)",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:1: parser: lambda has 2 params, annotation has 1",
+		},
+		{
+			input:          "(lambda (x y) \":: => Int\" x)",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:1: parser: type annotation: empty parameter type",
+		},
 
 		// quote tests
 		{
