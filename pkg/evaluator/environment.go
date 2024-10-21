@@ -91,11 +91,71 @@ func (env *Environment) GetValue(symbol string) (Value, bool) {
 	return NewUnitValue(), false
 }
 
+// GetCallable is like GetValue but is aware of overloaded callables
+// and constructs the list of callables based on searching the environment
+// including the parent environments. A false return value means that
+// either the symbol is not found or it is not a callable.
+func (env *Environment) GetCallable(symbol string) (CallableTrait, bool) {
+	// search all matching symbols in the current environment
+	var candidates []Value
+	if value, ok := env.symbols[symbol]; ok {
+		candidates = append(candidates, value)
+	}
+
+	// search in parent environments
+	if env.parent != nil {
+		if callable, ok := env.parent.GetCallable(symbol); ok {
+			candidates = append(candidates, callable)
+		}
+	}
+
+	// walk the list and stop at the first non-callable
+	var callables []CallableTrait
+	for _, candidate := range candidates {
+		callable, ok := candidate.(CallableTrait)
+		if !ok {
+			break
+		}
+		callables = append(callables, callable)
+	}
+
+	// bail if we have not find anything
+	if len(callables) <= 0 {
+		return nil, false
+	}
+
+	// walk the list in reverse order to build a new overloaded callable
+	//
+	// by walking in reverse order, more recent frames win
+	//
+	// we know from above that all candidates are callables
+	result := newOverloadedCallable()
+	for i := len(callables) - 1; i >= 0; i-- {
+		result.Add(callables[i].(CallableTrait))
+	}
+	return result, true
+}
+
 // DefineValue defines a new symbol in the current environment.
 func (env *Environment) DefineValue(symbol string, value Value) error {
-	if _, found := env.symbols[symbol]; found {
+
+	// ensure we handle lambda overloads
+	if entry, found := env.symbols[symbol]; found {
+		if callable, ok := value.(CallableTrait); ok {
+			if overloaded, ok := entry.(*overloadedCallable); ok {
+				return overloaded.Add(callable)
+			}
+		}
 		return fmt.Errorf("symbol %s already defined", symbol)
 	}
+
+	// ensure we create overloads
+	if callable, ok := value.(CallableTrait); ok {
+		overloaded := newOverloadedCallable()
+		overloaded.Add(callable)
+		value = overloaded
+	}
+
 	env.symbols[symbol] = value
 	return nil
 }

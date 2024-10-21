@@ -22,3 +22,8 @@ func NewFloat64Value(value float64) *Float64Value {
 func (v *Float64Value) String() string {
 	return fmt.Sprintf("%f", v.Value)
 }
+
+// Type implements Value.
+func (*Float64Value) Type() string {
+	return "Float64"
+}

@@ -18,3 +18,8 @@ func NewUnitValue() *UnitValue {
 func (*UnitValue) String() string {
 	return "()"
 }
+
+// Type implements Value.
+func (*UnitValue) Type() string {
+	return "Unit"
+}

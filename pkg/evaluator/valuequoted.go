@@ -26,3 +26,8 @@ func NewQuotedValue(value ast.Node) *QuotedValue {
 func (q *QuotedValue) String() string {
 	return fmt.Sprintf("(quote %s)", q.Value.String())
 }
+
+// Type implements Value.
+func (*QuotedValue) Type() string {
+	return "<quoted value>"
+}

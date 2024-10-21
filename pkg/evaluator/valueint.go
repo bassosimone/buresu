@@ -22,3 +22,8 @@ func NewIntValue(value int) *IntValue {
 func (v *IntValue) String() string {
 	return fmt.Sprintf("%d", v.Value)
 }
+
+// Type implements Value.
+func (*IntValue) Type() string {
+	return "Int"
+}

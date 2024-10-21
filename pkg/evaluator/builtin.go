@@ -42,3 +42,14 @@ func (bf *BuiltInFuncValue) Call(ctx context.Context, env *Environment, args ...
 func (bf *BuiltInFuncValue) String() string {
 	return fmt.Sprintf("<built-in function %s>", bf.Name)
 }
+
+// Type implements Value.
+func (bf *BuiltInFuncValue) Type() string {
+	return "<built-in function>"
+}
+
+// TypeAnnotationPrefix implements CallableTrait.
+func (bf *BuiltInFuncValue) TypeAnnotationPrefix() string {
+	// TODO(bassosimone): add type annotations prefix for built-in functions
+	return ""
+}

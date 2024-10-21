@@ -7,12 +7,16 @@ import (
 	"fmt"
 
 	"github.com/bassosimone/buresu/pkg/ast"
+	"github.com/bassosimone/buresu/pkg/typeannotation"
 )
 
 // IntValue represents a lambda value.
 //
 // Construct using NewLambdaValue.
 type LambdaValue struct {
+	// AnnotationPrefix is the type annotation prefix of the lambda function.
+	AnnotationPrefix string
+
 	// Closure is the environment in which the lambda function was defined.
 	Closure *Environment
 
@@ -24,7 +28,11 @@ var _ Value = (*LambdaValue)(nil)
 
 // NewLambdaValue creates a new [*LambdaValue] instance.
 func NewLambdaValue(env *Environment, node *ast.LambdaExpr) *LambdaValue {
-	return &LambdaValue{env, node}
+	var annotation string
+	if ap, err := typeannotation.Parse(node.Docs); err == nil && ap != nil {
+		annotation = ap.ArgumentsAnnotationPrefix()
+	}
+	return &LambdaValue{annotation, env, node}
 }
 
 var _ CallableTrait = (*LambdaValue)(nil)
@@ -53,4 +61,14 @@ func (lv *LambdaValue) Call(ctx context.Context, env *Environment, args ...Value
 // String implements Value.
 func (fx *LambdaValue) String() string {
 	return fmt.Sprintf("%s", fx.Node.String())
+}
+
+// TypeAnnotationPrefix implements CallableTrait.
+func (fx *LambdaValue) TypeAnnotationPrefix() string {
+	return fx.AnnotationPrefix
+}
+
+// Type implements Value.
+func (fx *LambdaValue) Type() string {
+	return "<lambda>"
 }

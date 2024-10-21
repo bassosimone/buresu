@@ -22,3 +22,8 @@ func NewBoolValue(value bool) *BoolValue {
 func (v *BoolValue) String() string {
 	return fmt.Sprintf("%t", v.Value)
 }
+
+// Type implements Value.
+func (*BoolValue) Type() string {
+	return "Bool"
+}

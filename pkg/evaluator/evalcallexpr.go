@@ -21,7 +21,17 @@ func evalCallExpr(ctx context.Context, env *Environment, node *ast.CallExpr) (Va
 		args = append(args, value)
 	}
 
-	// 2. fetch the actual callable value
+	// 2. if the callable node is a name, try overloaded search
+	if symbol, ok := node.Callable.(*ast.SymbolName); ok {
+		callable, ok := env.GetCallable(symbol.Value)
+		if !ok {
+			return nil, newError(node.Token, fmt.Sprintf("callable %s: not found", symbol.Value))
+		}
+		return callable.Call(ctx, env, args...)
+	}
+
+	// 3. fallback to fetching the actual callable value without
+	// any overloaded name-based search
 	maybeCallable, err := Eval(ctx, env, node.Callable)
 	if err != nil {
 		return nil, err
@@ -30,7 +40,5 @@ func evalCallExpr(ctx context.Context, env *Environment, node *ast.CallExpr) (Va
 	if !ok {
 		return nil, newError(node.Token, fmt.Sprintf("cannot call a %T", maybeCallable))
 	}
-
-	// 3. actually invoke the callable
 	return callable.Call(ctx, env, args...)
 }

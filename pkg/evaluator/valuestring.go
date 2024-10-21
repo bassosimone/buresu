@@ -26,3 +26,8 @@ func (v *StringValue) String() string {
 	repr, _ := json.Marshal(v.Value)
 	return fmt.Sprintf("%s", repr)
 }
+
+// Type implements Value.
+func (*StringValue) Type() string {
+	return "String"
+}
