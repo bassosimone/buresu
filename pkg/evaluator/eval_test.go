@@ -5,6 +5,7 @@ package evaluator_test
 import (
 	"bytes"
 	"context"
+	"io"
 	"os"
 	"path/filepath"
 	"testing"
@@ -14,7 +15,6 @@ import (
 
 	"github.com/bassosimone/buresu/pkg/evaluator"
 	"github.com/bassosimone/buresu/pkg/parser"
-	"github.com/bassosimone/buresu/pkg/runtime"
 	"github.com/bassosimone/buresu/pkg/scanner"
 )
 
@@ -68,8 +68,8 @@ func TestEval(t *testing.T) {
 
 			// Evaluate the parsed nodes
 			ctx := context.Background()
-			env := evaluator.NewGlobalScope(nil)
-			var result runtime.Value
+			env := evaluator.NewEnvironment(io.Discard)
+			var result evaluator.Value
 			for _, node := range nodes {
 				result, err = evaluator.Eval(ctx, env, node)
 				if err != nil {

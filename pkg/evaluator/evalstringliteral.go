@@ -6,11 +6,9 @@ import (
 	"context"
 
 	"github.com/bassosimone/buresu/pkg/ast"
-	"github.com/bassosimone/buresu/pkg/runtime"
 )
 
 // evalStringLiteral evaluates a StringLiteral node and returns a StringValue with the node's value.
-func evalStringLiteral(_ context.Context,
-	_ runtime.Environment, node *ast.StringLiteral) (runtime.Value, error) {
-	return &runtime.StringValue{Value: node.Value}, nil
+func evalStringLiteral(_ context.Context, _ *Environment, node *ast.StringLiteral) (Value, error) {
+	return NewStringValue(node.Value), nil
 }

@@ -6,12 +6,10 @@ import (
 	"context"
 
 	"github.com/bassosimone/buresu/pkg/ast"
-	"github.com/bassosimone/buresu/pkg/runtime"
 )
 
 // evalDefineExpr evaluates a define expression.
-func evalDefineExpr(ctx context.Context,
-	env runtime.Environment, node *ast.DefineExpr) (runtime.Value, error) {
+func evalDefineExpr(ctx context.Context, env *Environment, node *ast.DefineExpr) (Value, error) {
 	value, err := Eval(ctx, env, node.Expr)
 	if err != nil {
 		return nil, err

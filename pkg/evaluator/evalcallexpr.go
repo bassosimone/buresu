@@ -7,14 +7,12 @@ import (
 	"fmt"
 
 	"github.com/bassosimone/buresu/pkg/ast"
-	"github.com/bassosimone/buresu/pkg/runtime"
 )
 
 // evalCallExpr evaluates a call expression.
-func evalCallExpr(ctx context.Context,
-	env runtime.Environment, node *ast.CallExpr) (runtime.Value, error) {
+func evalCallExpr(ctx context.Context, env *Environment, node *ast.CallExpr) (Value, error) {
 	// 1. evaluate the arguments in the current environment
-	var args []runtime.Value
+	var args []Value
 	for _, arg := range node.Args {
 		value, err := Eval(ctx, env, arg)
 		if err != nil {
@@ -28,17 +26,11 @@ func evalCallExpr(ctx context.Context,
 	if err != nil {
 		return nil, err
 	}
-	callable, ok := maybeCallable.(runtime.Callable)
+	callable, ok := maybeCallable.(CallableTrait)
 	if !ok {
 		return nil, newError(node.Token, fmt.Sprintf("cannot call a %T", maybeCallable))
 	}
 
-	// 3. closures create their own stack frame, while builtin functions
-	// shouldn't need a stack, but let's create one anyway.
-	if _, ok := callable.(*runtime.BuiltInFuncValue); ok {
-		env = env.PushFunctionScope()
-	}
-
-	// 4. actually invoke the callable
+	// 3. actually invoke the callable
 	return callable.Call(ctx, env, args...)
 }

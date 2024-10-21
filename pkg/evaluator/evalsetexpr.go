@@ -6,12 +6,10 @@ import (
 	"context"
 
 	"github.com/bassosimone/buresu/pkg/ast"
-	"github.com/bassosimone/buresu/pkg/runtime"
 )
 
 // evalSetExpr evaluates a set expression.
-func evalSetExpr(ctx context.Context,
-	env runtime.Environment, node *ast.SetExpr) (runtime.Value, error) {
+func evalSetExpr(ctx context.Context, env *Environment, node *ast.SetExpr) (Value, error) {
 	value, err := Eval(ctx, env, node.Expr)
 	if err != nil {
 		return nil, err

@@ -17,7 +17,6 @@ import (
 	"github.com/bassosimone/buresu/pkg/ast"
 	"github.com/bassosimone/buresu/pkg/evaluator"
 	"github.com/bassosimone/buresu/pkg/parser"
-	"github.com/bassosimone/buresu/pkg/runtime"
 	"github.com/bassosimone/buresu/pkg/scanner"
 	"github.com/chzyer/readline"
 	"github.com/kballard/go-shellquote"
@@ -83,8 +82,7 @@ func (cmd command) Main(_ context.Context, argv ...string) error {
 	defer rl.Close()
 
 	// 6. create the runtime environment
-	rootScope := evaluator.NewGlobalScope(os.Stdout)
-	runtime.InitRootScope(rootScope)
+	rootScope := evaluator.NewGlobalEnvironment(os.Stdout)
 
 	// 7. arrange for buffer and prompt reset
 	buffer := ""
@@ -134,7 +132,7 @@ func (cmd command) Main(_ context.Context, argv ...string) error {
 	}
 }
 
-func evaluate(rootScope *evaluator.GlobalScope, nodes []ast.Node) {
+func evaluate(rootScope *evaluator.Environment, nodes []ast.Node) {
 	// 1. create cancellable context for interrupt evaluation
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

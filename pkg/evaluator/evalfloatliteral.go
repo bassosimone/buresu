@@ -7,15 +7,13 @@ import (
 	"strconv"
 
 	"github.com/bassosimone/buresu/pkg/ast"
-	"github.com/bassosimone/buresu/pkg/runtime"
 )
 
-// evalFloatLiteral evaluates a FloatLiteral node and returns a FloatValue with the parsed float.
-func evalFloatLiteral(_ context.Context,
-	_ runtime.Environment, node *ast.FloatLiteral) (runtime.Value, error) {
+// evalFloatLiteral evaluates a FloatLiteral node and returns a Float64Value with the parsed float.
+func evalFloatLiteral(_ context.Context, _ *Environment, node *ast.FloatLiteral) (Value, error) {
 	value, err := strconv.ParseFloat(node.Value, 64)
 	if err != nil {
 		return nil, wrapError(node.Token, err)
 	}
-	return &runtime.Float64Value{Value: value}, nil
+	return NewFloat64Value(value), nil
 }

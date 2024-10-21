@@ -13,7 +13,6 @@ import (
 	"github.com/bassosimone/buresu/pkg/dumper"
 	"github.com/bassosimone/buresu/pkg/evaluator"
 	"github.com/bassosimone/buresu/pkg/parser"
-	"github.com/bassosimone/buresu/pkg/runtime"
 	"github.com/bassosimone/buresu/pkg/scanner"
 	"github.com/kballard/go-shellquote"
 	"github.com/spf13/pflag"
@@ -104,8 +103,7 @@ func (cmd command) Main(ctx context.Context, argv ...string) error {
 	}
 
 	// 8. create the runtime environment
-	rootScope := evaluator.NewGlobalScope(os.Stdout)
-	runtime.InitRootScope(rootScope)
+	rootScope := evaluator.NewGlobalEnvironment(os.Stdout)
 
 	// 9. evaluate the AST
 	for _, node := range nodes {

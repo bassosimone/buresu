@@ -7,11 +7,10 @@ import (
 	"fmt"
 
 	"github.com/bassosimone/buresu/pkg/ast"
-	"github.com/bassosimone/buresu/pkg/runtime"
 )
 
 // Eval evaluates a node in the AST and returns the result.
-func Eval(ctx context.Context, env runtime.Environment, node ast.Node) (runtime.Value, error) {
+func Eval(ctx context.Context, env *Environment, node ast.Node) (Value, error) {
 	// make sure we check for context cancellation before
 	// evaluating any instruction
 	if ctx.Err() != nil {
