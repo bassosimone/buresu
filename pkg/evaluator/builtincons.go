@@ -5,14 +5,15 @@ package evaluator
 import (
 	"context"
 
+	"github.com/bassosimone/buresu/internal/optional"
 	"github.com/bassosimone/buresu/internal/rtx"
 	"github.com/bassosimone/buresu/pkg/typeannotation"
 )
 
-var builtInConsTypeAnnotation = &typeannotation.Annotation{
+var builtInConsTypeAnnotation = optional.Some(&typeannotation.Annotation{
 	Params:     []typeannotation.Type{{Name: "Value"}, {Name: "Value"}},
 	ReturnType: typeannotation.Type{Name: "Value"},
-}
+})
 
 // BuiltInCons is a built-in function that creates cons cells.
 func BuiltInCons(ctx context.Context, env *Environment, args ...Value) (Value, error) {

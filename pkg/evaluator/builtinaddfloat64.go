@@ -5,14 +5,15 @@ package evaluator
 import (
 	"context"
 
+	"github.com/bassosimone/buresu/internal/optional"
 	"github.com/bassosimone/buresu/internal/rtx"
 	"github.com/bassosimone/buresu/pkg/typeannotation"
 )
 
-var builtInAddFloat64TypeAnnotation = &typeannotation.Annotation{
+var builtInAddFloat64TypeAnnotation = optional.Some(&typeannotation.Annotation{
 	Params:     []typeannotation.Type{{Name: "Float64"}, {Name: "Float64"}},
 	ReturnType: typeannotation.Type{Name: "Float64"},
-}
+})
 
 // BuiltInAddFloat64 is a built-in function that adds float64.
 func BuiltInAddFloat64(ctx context.Context, env *Environment, args ...Value) (Value, error) {

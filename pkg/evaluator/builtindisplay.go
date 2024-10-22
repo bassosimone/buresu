@@ -7,8 +7,12 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/bassosimone/buresu/internal/optional"
 	"github.com/bassosimone/buresu/internal/rtx"
+	"github.com/bassosimone/buresu/pkg/typeannotation"
 )
+
+var builtInDisplayTypeAnnotation = optional.None[*typeannotation.Annotation]()
 
 // BuiltInDisplay is a built-in function that displays its argument.
 func BuiltInDisplay(ctx context.Context, env *Environment, args ...Value) (Value, error) {

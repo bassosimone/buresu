@@ -5,6 +5,7 @@ package evaluator
 import (
 	"io"
 
+	"github.com/bassosimone/buresu/internal/optional"
 	"github.com/bassosimone/buresu/internal/rtx"
 	"github.com/bassosimone/buresu/pkg/typeannotation"
 )
@@ -31,12 +32,17 @@ func NewGlobalEnvironment(output io.Writer) *Environment {
 	rtx.Must(defineBuiltIn(global, "+", builtInAddFloat64TypeAnnotation, BuiltInAddFloat64))
 	rtx.Must(defineBuiltIn(global, "cons", builtInConsTypeAnnotation, BuiltInCons))
 	rtx.Must(defineBuiltIn(global, "length", builtInLengthTypeAnnotation, BuiltInLength))
-	rtx.Must(defineBuiltIn(global, "display", &typeannotation.Annotation{}, BuiltInDisplay))
+	rtx.Must(defineBuiltIn(global, "display", builtInDisplayTypeAnnotation, BuiltInDisplay))
 
 	return global
 }
 
 // defineBuiltIn is a helper function to define a built-in function in the environment.
-func defineBuiltIn(env *Environment, name string, annotation *typeannotation.Annotation, fx BuiltInFunc) error {
-	return env.DefineValue(name, NewBuiltInFuncValue(name, annotation.String(), fx))
+func defineBuiltIn(env *Environment, name string,
+	annotation optional.Value[*typeannotation.Annotation], fx BuiltInFunc) error {
+	var annotationString string
+	if annotation.IsSome() {
+		annotationString = annotation.Unwrap().String()
+	}
+	return env.DefineValue(name, NewBuiltInFuncValue(name, annotationString, fx))
 }
