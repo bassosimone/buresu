@@ -4,21 +4,18 @@ package evaluator
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/bassosimone/buresu/internal/rtx"
 	"github.com/bassosimone/buresu/pkg/typeannotation"
 )
 
 var builtInConsTypeAnnotation = &typeannotation.Annotation{
-	Params:     []string{"Value", "Value"},
-	ReturnType: "Value",
+	Params:     []typeannotation.Type{{Name: "Value"}, {Name: "Value"}},
+	ReturnType: typeannotation.Type{Name: "Value"},
 }
 
-// BuiltInCons is a built-in function that creates a cons cells.
+// BuiltInCons is a built-in function that creates cons cells.
 func BuiltInCons(ctx context.Context, env *Environment, args ...Value) (Value, error) {
-	// make sure we gracefully handle type checking bugs
-	if len(args) != 2 {
-		return nil, fmt.Errorf("BUG: expected 2 arguments, got %d", len(args))
-	}
+	rtx.Assert(len(args) == 2, "expected 2 arguments")
 	return NewConsCellValue(args[0], args[1]), nil
 }
