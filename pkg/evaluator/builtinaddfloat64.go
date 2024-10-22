@@ -19,7 +19,8 @@ var builtInAddFloat64TypeAnnotation = optional.Some(&typeannotation.Annotation{
 func BuiltInAddFloat64(ctx context.Context, env *Environment, args ...Value) (Value, error) {
 	var sum float64
 	for _, arg := range args {
-		rtx.Assert(arg.Type() == "Float64", "expected Float64")
+		_, ok := arg.(*Float64Value)
+		rtx.Assert(ok, "expected Float64")
 		sum += arg.(*Float64Value).Value
 	}
 	return NewFloat64Value(sum), nil

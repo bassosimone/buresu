@@ -18,6 +18,7 @@ var builtInLengthTypeAnnotation = optional.Some(&typeannotation.Annotation{
 // BuiltInLength is a built-in function that returns the length of a sequence.
 func BuiltInLength(ctx context.Context, env *Environment, args ...Value) (Value, error) {
 	rtx.Assert(len(args) == 1, "expected 1 argument")
-	rtx.Assert(args[0].Type() == "Sequence", "expected Sequence")
+	_, ok := args[0].(SequenceTrait)
+	rtx.Assert(ok, "expected Sequence")
 	return NewIntValue(args[0].(SequenceTrait).Length()), nil
 }

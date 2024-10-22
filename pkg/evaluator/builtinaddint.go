@@ -19,7 +19,8 @@ var builtInAddIntTypeAnnotation = optional.Some(&typeannotation.Annotation{
 func BuiltInAddInt(ctx context.Context, env *Environment, args ...Value) (Value, error) {
 	var sum int
 	for _, arg := range args {
-		rtx.Assert(arg.Type() == "Int", "expected Int")
+		_, ok := arg.(*IntValue)
+		rtx.Assert(ok, "expected Int")
 		sum += arg.(*IntValue).Value
 	}
 	return NewIntValue(sum), nil
