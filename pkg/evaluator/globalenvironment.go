@@ -23,6 +23,12 @@ func NewGlobalEnvironment(output io.Writer) *Environment {
 		BuiltInAddFloat64,
 	))
 
+	_ = global.DefineValue("cons", NewBuiltInFuncValue(
+		"cons",
+		builtInConsTypeAnnotation.String(),
+		BuiltInCons,
+	))
+
 	_ = global.DefineValue("display", NewBuiltInFuncValue("display", "", BuiltInDisplay))
 
 	return global

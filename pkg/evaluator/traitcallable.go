@@ -12,6 +12,6 @@ type CallableTrait interface {
 	// TypeAnnotationPrefix returns the type annotation prefix of the callable.
 	TypeAnnotationPrefix() string
 
-	// An overloaded callable is also a Value.
+	// A callable is also a Value.
 	Value
 }

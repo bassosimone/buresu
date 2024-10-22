@@ -31,3 +31,10 @@ func (v *StringValue) String() string {
 func (*StringValue) Type() string {
 	return "String"
 }
+
+var _ SequenceTrait = (*StringValue)(nil)
+
+// Length returns the length of the string value.
+func (v *StringValue) Length() int {
+	return len(v.Value)
+}
