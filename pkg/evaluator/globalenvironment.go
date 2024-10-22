@@ -29,6 +29,7 @@ func NewGlobalEnvironment(output io.Writer) *Environment {
 	rtx.Assert(global.SetImplements("Unit", "Sequence"), "failed to set Unit implements Sequence")
 
 	rtx.Must(defineBuiltIn(global, "+", builtInAddIntTypeAnnotation, BuiltInAddInt))
+	rtx.Must(defineBuiltIn(global, "and", builtInAndTypeAnnotation, BuiltInAnd))
 	rtx.Must(defineBuiltIn(global, "+", builtInAddFloat64TypeAnnotation, BuiltInAddFloat64))
 	rtx.Must(defineBuiltIn(global, "cons", builtInConsTypeAnnotation, BuiltInCons))
 	rtx.Must(defineBuiltIn(global, "length", builtInLengthTypeAnnotation, BuiltInLength))
