@@ -14,8 +14,8 @@ import (
 //
 // Construct using NewLambdaValue.
 type LambdaValue struct {
-	// AnnotationPrefix is the type annotation prefix of the lambda function.
-	AnnotationPrefix string
+	// Annotation is the type annotation of the lambda function.
+	Annotation string
 
 	// Closure is the environment in which the lambda function was defined.
 	Closure *Environment
@@ -29,8 +29,8 @@ var _ Value = (*LambdaValue)(nil)
 // NewLambdaValue creates a new [*LambdaValue] instance.
 func NewLambdaValue(env *Environment, node *ast.LambdaExpr) *LambdaValue {
 	var annotation string
-	if ap, err := typeannotation.Parse(node.Docs); err == nil && ap != nil {
-		annotation = ap.ArgumentsAnnotationPrefix()
+	if ap, err := typeannotation.ParseDocs(node.Docs); err == nil && ap != nil {
+		annotation = ap.String()
 	}
 	return &LambdaValue{annotation, env, node}
 }
@@ -65,7 +65,7 @@ func (fx *LambdaValue) String() string {
 
 // TypeAnnotationPrefix implements CallableTrait.
 func (fx *LambdaValue) TypeAnnotationPrefix() string {
-	return fx.AnnotationPrefix
+	return fx.Annotation
 }
 
 // Type implements Value.

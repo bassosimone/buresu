@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestParse(t *testing.T) {
+func TestParseDocs(t *testing.T) {
 	tests := []struct {
 		input    string
 		expected *Annotation
@@ -29,7 +29,7 @@ func TestParse(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result, err := Parse(test.input)
+		result, err := ParseDocs(test.input)
 		if err != nil {
 			if test.err == "" || err.Error() != test.err {
 				t.Errorf("Parse(%q) returned error %q, expected %q", test.input, err, test.err)

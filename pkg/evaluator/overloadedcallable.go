@@ -73,15 +73,28 @@ func (oc *overloadedCallable) Call(ctx context.Context, env *Environment, args .
 }
 
 func (oc *overloadedCallable) findCallable(prefix string) (CallableTrait, bool) {
-	// 1. attempt to match the prefix literally
-	callable, ok := oc.callables[prefix]
-	if ok {
-		return callable, true
+	// 1. attempt to match the prefix literally with the full
+	// type annotation prefix of the callable.
+	//
+	// TODO(bassosimone): if we know the desired return type (how?)
+	// here we can match with the full prefix as well.
+	for _, callable := range oc.callables {
+
+		// 1.1. attempt an exact match between args and params
+		ta, err := typeannotation.ParseString(callable.TypeAnnotationPrefix())
+		if err != nil {
+			continue
+		}
+		if ta.MatchesArgumentsAnnotationPrefix(prefix) {
+			return callable, true
+		}
+
+		// TODO(bassosimone): attempt to match via type traits
 	}
 
 	// 2. fallback to the default callable without prefix
 	// which implies generic arguments
-	callable, ok = oc.callables[""]
+	callable, ok := oc.callables[""]
 	return callable, ok
 }
 

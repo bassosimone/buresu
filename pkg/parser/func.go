@@ -73,7 +73,7 @@ func (p *parser) parseLambda(tok token.Token) (ast.Node, error) {
 		docs = p.currentToken().Value
 		p.advance()
 	}
-	annot, err := typeannotation.Parse(docs)
+	annot, err := typeannotation.ParseDocs(docs)
 	if err != nil && !errors.Is(err, typeannotation.ErrNoTypeAnnotationFound) {
 		return nil, newError(tok, "type annotation: %v", err)
 	}

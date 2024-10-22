@@ -4,8 +4,6 @@ package evaluator
 
 import (
 	"io"
-
-	"github.com/bassosimone/buresu/pkg/typeannotation"
 )
 
 // NewGlobalEnvironment creates a new global [*Environment] instance
@@ -15,13 +13,13 @@ func NewGlobalEnvironment(output io.Writer) *Environment {
 
 	_ = global.DefineValue("+", NewBuiltInFuncValue(
 		"+",
-		(&typeannotation.Annotation{Params: []string{"Int", "Int"}}).ArgumentsAnnotationPrefix(),
+		builtInAddIntTypeAnnotation.String(),
 		BuiltInAddInt,
 	))
 
 	_ = global.DefineValue("+", NewBuiltInFuncValue(
 		"+",
-		(&typeannotation.Annotation{Params: []string{"Float64", "Float64"}}).ArgumentsAnnotationPrefix(),
+		builtInAddFloat64TypeAnnotation.String(),
 		BuiltInAddFloat64,
 	))
 

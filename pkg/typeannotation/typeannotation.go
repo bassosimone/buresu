@@ -61,8 +61,8 @@ type Annotation struct {
 // ErrNoTypeAnnotationFound is returned when no type annotations are found.
 var ErrNoTypeAnnotationFound = errors.New("no type annotation found")
 
-// Parse parses a string containing a type annotation into an [*Annotation].
-func Parse(docs string) (*Annotation, error) {
+// ParseDocs parses the documentation string searching for a type annotation.
+func ParseDocs(docs string) (*Annotation, error) {
 	// for each line search for a line starting with `::`
 	// if found, parse the annotation, then make sure there
 	// are no more annotations in the documentation.
@@ -77,7 +77,7 @@ func Parse(docs string) (*Annotation, error) {
 		if annotation != nil {
 			return nil, errors.New("multiple type annotations found")
 		}
-		annotation, err = parse(strings.TrimPrefix(line, "::"))
+		annotation, err = ParseString(strings.TrimPrefix(line, "::"))
 		if err != nil {
 			return nil, err
 		}
@@ -88,7 +88,9 @@ func Parse(docs string) (*Annotation, error) {
 	return annotation, nil
 }
 
-func parse(annotation string) (*Annotation, error) {
+// ParseString parses a type annotation string after the `::` prefix
+// has been stripped from the string itself.
+func ParseString(annotation string) (*Annotation, error) {
 	annotation = strings.TrimSpace(annotation)
 	if annotation == "" {
 		return nil, errors.New("annotation is empty")
