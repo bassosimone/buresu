@@ -23,3 +23,10 @@ func (*UnitValue) String() string {
 func (*UnitValue) Type() string {
 	return "Unit"
 }
+
+var _ SequenceTrait = (*UnitValue)(nil)
+
+// Length implements SequenceTrait.
+func (*UnitValue) Length() int {
+	return 0
+}

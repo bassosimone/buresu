@@ -63,7 +63,7 @@ func (oc *overloadedCallable) Call(ctx context.Context, env *Environment, args .
 	prefix := annot.ArgumentsAnnotationPrefix()
 
 	// find the callable with the given prefix
-	callable, ok := oc.findCallable(prefix)
+	callable, ok := oc.findCallable(prefix, args...)
 	if !ok {
 		return nil, fmt.Errorf("no callable found for prefix: %q", prefix)
 	}
@@ -72,7 +72,7 @@ func (oc *overloadedCallable) Call(ctx context.Context, env *Environment, args .
 	return callable.Call(ctx, env, args...)
 }
 
-func (oc *overloadedCallable) findCallable(prefix string) (CallableTrait, bool) {
+func (oc *overloadedCallable) findCallable(prefix string, args ...Value) (CallableTrait, bool) {
 	// 1. attempt to match the prefix literally with the full
 	// type annotation prefix of the callable.
 	//
@@ -97,15 +97,14 @@ func (oc *overloadedCallable) findCallable(prefix string) (CallableTrait, bool) 
 		// representation of types and annotations.
 		prefix += "Value"
 
-		// 1.3. for now, the only trait for which we need
-		// matching is Value, which is implemented by every
-		// type by definition, therefore we keep it quite
-		// simple here. In the future, we will want to either
-		// have a traits registry in the environment or use
-		// Go approach of duck typing.
+		// 1.3. for now, we hand write checks to match with
+		// type traits that matter, but it won't scale.
 		//
 		// TODO(bassosimone): implement more comprehensive
 		// approach to type traits inference here.
+		if oc.matchWithSequence(ta, prefix, args...) {
+			return callable, true
+		}
 		if oc.matchWithValue(ta, prefix) {
 			return callable, true
 		}
@@ -117,9 +116,45 @@ func (oc *overloadedCallable) findCallable(prefix string) (CallableTrait, bool) 
 	return callable, ok
 }
 
+// matchWithSequence just replaces the first argument in callable type
+// annotation, if any, with Sequence and checks whether we actually implement
+// sequence. In this case, we return true. This custom check is what we need
+// to implement the `length` built-in function.
+func (oc *overloadedCallable) matchWithSequence(
+	ta *typeannotation.Annotation, fullproto string, args ...Value) bool {
+	// TODO(bassosimone): implement more comprehensive
+	// approach to type traits inference here.
+	argta, err := typeannotation.ParseString(fullproto)
+	if err != nil {
+		return false
+	}
+
+	// ensure we actually have a sequence
+	//
+	// TODO(bassosimone): this should somehow be encoded into the type system
+	// either in Go style or in Haskell style.
+	if len(args) < 1 {
+		return false
+	}
+	if _, ok := args[0].(SequenceTrait); !ok {
+		return false
+	}
+
+	// we need at least one parameter to rewrite
+	if len(argta.Params) < 1 {
+		return false
+	}
+
+	// rewrite the param and retry matching
+	argta.Params[0] = "Sequence"
+	return ta.MatchesArgumentsAnnotationPrefix(argta.ArgumentsAnnotationPrefix())
+}
+
 // matchWithValue tries to make the fullproto with a type annotation containing
-// all values, which the requirement to implement `cons`.
+// all values, which is a custom check to implement `cons`.
 func (oc *overloadedCallable) matchWithValue(ta *typeannotation.Annotation, fullproto string) bool {
+	// TODO(bassosimone): implement more comprehensive
+	// approach to type traits inference here.
 	argta, err := typeannotation.ParseString(fullproto)
 	if err != nil {
 		return false

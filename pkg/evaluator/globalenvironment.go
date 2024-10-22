@@ -31,5 +31,11 @@ func NewGlobalEnvironment(output io.Writer) *Environment {
 
 	_ = global.DefineValue("display", NewBuiltInFuncValue("display", "", BuiltInDisplay))
 
+	_ = global.DefineValue("length", NewBuiltInFuncValue(
+		"length",
+		builtInLengthTypeAnnotation.String(),
+		BuiltInLength,
+	))
+
 	return global
 }
