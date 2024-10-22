@@ -49,13 +49,18 @@ import (
 	"strings"
 )
 
+// Type represents a type in the type annotation.
+type Type struct {
+	Name string
+}
+
 // Annotation is a parsed type annotation.
 type Annotation struct {
 	// Params is the list of types of the parameters.
-	Params []string
+	Params []Type
 
 	// ReturnType is the return type.
-	ReturnType string
+	ReturnType Type
 }
 
 // ErrNoTypeAnnotationFound is returned when no type annotations are found.
@@ -66,20 +71,17 @@ func ParseDocs(docs string) (*Annotation, error) {
 	// for each line search for a line starting with `::`
 	// if found, parse the annotation, then make sure there
 	// are no more annotations in the documentation.
-	var (
-		annotation *Annotation
-		err        error
-	)
+	var annotation *Annotation
 	for _, line := range strings.Split(docs, "\n") {
-		if !strings.HasPrefix(line, "::") {
-			continue
-		}
-		if annotation != nil {
-			return nil, errors.New("multiple type annotations found")
-		}
-		annotation, err = ParseString(strings.TrimPrefix(line, "::"))
-		if err != nil {
-			return nil, err
+		if strings.HasPrefix(line, "::") {
+			if annotation != nil {
+				return nil, errors.New("multiple type annotations found")
+			}
+			var err error
+			annotation, err = ParseString(strings.TrimPrefix(line, "::"))
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 	if annotation == nil {
@@ -88,8 +90,7 @@ func ParseDocs(docs string) (*Annotation, error) {
 	return annotation, nil
 }
 
-// ParseString parses a type annotation string after the `::` prefix
-// has been stripped from the string itself.
+// ParseString parses a type annotation string after the `::` prefix has been stripped.
 func ParseString(annotation string) (*Annotation, error) {
 	annotation = strings.TrimSpace(annotation)
 	if annotation == "" {
@@ -102,13 +103,13 @@ func ParseString(annotation string) (*Annotation, error) {
 	}
 
 	rawParams := strings.Split(parts[0], "->")
-	params := make([]string, 0, len(rawParams))
+	params := make([]Type, 0, len(rawParams))
 	for _, param := range rawParams {
 		param = strings.TrimSpace(param)
 		if param == "" {
 			return nil, errors.New("empty parameter type")
 		}
-		params = append(params, param)
+		params = append(params, Type{Name: param})
 	}
 
 	rt := strings.TrimSpace(parts[1])
@@ -119,24 +120,36 @@ func ParseString(annotation string) (*Annotation, error) {
 		return nil, errors.New("return type contains `->`")
 	}
 
-	result := &Annotation{Params: params, ReturnType: rt}
-	return result, nil
+	return &Annotation{Params: params, ReturnType: Type{Name: rt}}, nil
 }
 
 // String returns the string representation of the annotation.
 func (ap *Annotation) String() string {
-	params := strings.Join(ap.Params, " -> ")
-	return params + " => " + ap.ReturnType
+	var params []string
+	for _, param := range ap.Params {
+		params = append(params, param.Name)
+	}
+	return strings.Join(params, " -> ") + " => " + ap.ReturnType.Name
 }
 
 // ArgumentsAnnotationPrefix returns the arguments annotation prefix.
 func (ap *Annotation) ArgumentsAnnotationPrefix() string {
-	params := strings.Join(ap.Params, " -> ")
-	return params + " => "
+	var params []string
+	for _, param := range ap.Params {
+		params = append(params, param.Name)
+	}
+	return strings.Join(params, " -> ") + " => "
 }
 
-// MatchesArgumentsAnnotationPrefix returns true if the annotation matches the
-// given arguments annotation prefix string.
-func (ap *Annotation) MatchesArgumentsAnnotationPrefix(prefix string) bool {
-	return strings.HasPrefix(ap.String(), prefix)
+// MatchesArgumentsAnnotationPrefix returns true if the annotation matches the given arguments annotation prefix.
+func (ap *Annotation) MatchesArgumentsAnnotationPrefix(prefix *Annotation) bool {
+	if len(ap.Params) != len(prefix.Params) {
+		return false
+	}
+	for i, param := range ap.Params {
+		if param.Name != prefix.Params[i].Name {
+			return false
+		}
+	}
+	return true
 }

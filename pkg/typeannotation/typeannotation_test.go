@@ -15,13 +15,13 @@ func TestParseDocs(t *testing.T) {
 	}{
 		{":: ", nil, "annotation is empty"},
 		{":: foo", nil, "annotation is missing the `=>` separator"},
-		{":: Int -> Int => Int", &Annotation{Params: []string{"Int", "Int"}, ReturnType: "Int"}, ""},
-		{":: Int => Int", &Annotation{Params: []string{"Int"}, ReturnType: "Int"}, ""},
+		{":: Int -> Int => Int", &Annotation{Params: []Type{{Name: "Int"}, {Name: "Int"}}, ReturnType: Type{Name: "Int"}}, ""},
+		{":: Int => Int", &Annotation{Params: []Type{{Name: "Int"}}, ReturnType: Type{Name: "Int"}}, ""},
 		{":: => Int", nil, "empty parameter type"},
 		{":: Int -> => Int", nil, "empty parameter type"},
 		{":: Int -> Int =>", nil, "empty return type"},
 		{":: Int -> Int => Int -> Int", nil, "return type contains `->`"},
-		{":: InvalidType -> Int => Int", &Annotation{Params: []string{"InvalidType", "Int"}, ReturnType: "Int"}, ""},
+		{":: InvalidType -> Int => Int", &Annotation{Params: []Type{{Name: "InvalidType"}, {Name: "Int"}}, ReturnType: Type{Name: "Int"}}, ""},
 		{"", nil, "no type annotation found"},
 		{":: Int -> Int => Int\n:: Float -> Float => Float", nil, "multiple type annotations found"},
 		{":: Int ->  => Int", nil, "empty parameter type"},
@@ -46,7 +46,7 @@ func TestParseDocs(t *testing.T) {
 }
 
 func TestString(t *testing.T) {
-	annotation := &Annotation{Params: []string{"Int", "Int"}, ReturnType: "Int"}
+	annotation := &Annotation{Params: []Type{{Name: "Int"}, {Name: "Int"}}, ReturnType: Type{Name: "Int"}}
 	expected := "Int -> Int => Int"
 	result := annotation.String()
 	if result != expected {
@@ -55,7 +55,7 @@ func TestString(t *testing.T) {
 }
 
 func TestArgumentsAnnotationPrefix(t *testing.T) {
-	annotation := &Annotation{Params: []string{"Int", "Int"}, ReturnType: "Int"}
+	annotation := &Annotation{Params: []Type{{Name: "Int"}, {Name: "Int"}}, ReturnType: Type{Name: "Int"}}
 	expected := "Int -> Int => "
 	result := annotation.ArgumentsAnnotationPrefix()
 	if result != expected {
@@ -64,13 +64,21 @@ func TestArgumentsAnnotationPrefix(t *testing.T) {
 }
 
 func TestMatchesArgumentsAnnotationPrefix(t *testing.T) {
-	annotation := &Annotation{Params: []string{"Int", "Int"}, ReturnType: "Int"}
-	prefix := "Int -> Int => "
+	annotation := &Annotation{Params: []Type{{Name: "Int"}, {Name: "Int"}}, ReturnType: Type{Name: "Int"}}
+	prefix := &Annotation{Params: []Type{{Name: "Int"}, {Name: "Int"}}, ReturnType: Type{Name: ""}}
 	if !annotation.MatchesArgumentsAnnotationPrefix(prefix) {
 		t.Errorf("MatchesArgumentsAnnotationPrefix(%v) = false, expected true", prefix)
 	}
-	prefix = "Int -> Float => "
+	prefix = &Annotation{Params: []Type{{Name: "Int"}, {Name: "Float"}}, ReturnType: Type{Name: ""}}
 	if annotation.MatchesArgumentsAnnotationPrefix(prefix) {
 		t.Errorf("MatchesArgumentsAnnotationPrefix(%v) = true, expected false", prefix)
 	}
+
+	t.Run("Different Lengths", func(t *testing.T) {
+		annotation := &Annotation{Params: []Type{{Name: "Int"}, {Name: "Int"}}, ReturnType: Type{Name: "Int"}}
+		prefix := &Annotation{Params: []Type{{Name: "Int"}}, ReturnType: Type{Name: ""}}
+		if annotation.MatchesArgumentsAnnotationPrefix(prefix) {
+			t.Errorf("MatchesArgumentsAnnotationPrefix(%v) = true, expected false", prefix)
+		}
+	})
 }
