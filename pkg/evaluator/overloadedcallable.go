@@ -89,7 +89,33 @@ func (oc *overloadedCallable) findCallable(prefix string) (CallableTrait, bool) 
 			return callable, true
 		}
 
-		// TODO(bassosimone): attempt to match via type traits
+		// 1.2. turn the prefix into a full type annotation
+		// pending a more exhaustive search for a match
+		//
+		// TODO(bassosimone): we should probably refactor this
+		// code to avoid string manipulation and using better
+		// representation of types and annotations.
+		prefix += "Value"
+
+		// 1.3. for now, the only trait for which we need
+		// matching is Value, which is implemented by every
+		// type by definition, therefore we keep it quite
+		// simple here. In the future, we will want to either
+		// have a traits registry in the environment or use
+		// Go approach of duck typing.
+		//
+		// TODO(bassosimone): implement more comprehensive
+		// approach to type traits inference here.
+		argta, err := typeannotation.ParseString(prefix)
+		if err != nil {
+			continue
+		}
+		for idx := 0; idx < len(argta.Params); idx++ {
+			argta.Params[idx] = "Value"
+		}
+		if ta.MatchesArgumentsAnnotationPrefix(argta.ArgumentsAnnotationPrefix()) {
+			return callable, true
+		}
 	}
 
 	// 2. fallback to the default callable without prefix
