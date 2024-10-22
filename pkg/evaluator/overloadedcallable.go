@@ -106,14 +106,7 @@ func (oc *overloadedCallable) findCallable(prefix string) (CallableTrait, bool) 
 		//
 		// TODO(bassosimone): implement more comprehensive
 		// approach to type traits inference here.
-		argta, err := typeannotation.ParseString(prefix)
-		if err != nil {
-			continue
-		}
-		for idx := 0; idx < len(argta.Params); idx++ {
-			argta.Params[idx] = "Value"
-		}
-		if ta.MatchesArgumentsAnnotationPrefix(argta.ArgumentsAnnotationPrefix()) {
+		if oc.matchWithValue(ta, prefix) {
 			return callable, true
 		}
 	}
@@ -122,6 +115,19 @@ func (oc *overloadedCallable) findCallable(prefix string) (CallableTrait, bool) 
 	// which implies generic arguments
 	callable, ok := oc.callables[""]
 	return callable, ok
+}
+
+// matchWithValue tries to make the fullproto with a type annotation containing
+// all values, which the requirement to implement `cons`.
+func (oc *overloadedCallable) matchWithValue(ta *typeannotation.Annotation, fullproto string) bool {
+	argta, err := typeannotation.ParseString(fullproto)
+	if err != nil {
+		return false
+	}
+	for idx := 0; idx < len(argta.Params); idx++ {
+		argta.Params[idx] = "Value"
+	}
+	return ta.MatchesArgumentsAnnotationPrefix(argta.ArgumentsAnnotationPrefix())
 }
 
 // TypeAnnotationPrefix implements CallableTrait.
