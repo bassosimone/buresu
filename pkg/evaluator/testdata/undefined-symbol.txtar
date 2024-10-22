@@ -1,0 +1,4 @@
+-- input.code --
+y
+-- expected_error.txt --
+input.code:1:1: interpreter: symbol y not defined

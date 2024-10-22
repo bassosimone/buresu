@@ -1,0 +1,4 @@
+-- input.code --
+(block (define x 1) (block (define y 2) (+ x y)))
+-- expected_output.txt --
+3

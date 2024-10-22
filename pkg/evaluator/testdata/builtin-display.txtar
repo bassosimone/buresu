@@ -1,0 +1,4 @@
+-- input.code --
+(display "Hello, World!")
+-- expected_output.txt --
+()

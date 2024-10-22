@@ -1,0 +1,4 @@
+-- input.code --
+(+ 1.1 2.2)
+-- expected_output.txt --
+3.300000

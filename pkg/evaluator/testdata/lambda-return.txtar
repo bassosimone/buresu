@@ -1,0 +1,4 @@
+-- input.code --
+((lambda (x) (return! x)) 5)
+-- expected_output.txt --
+5
