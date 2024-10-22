@@ -4,6 +4,7 @@ package evaluator
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/bassosimone/buresu/pkg/ast"
@@ -40,5 +41,12 @@ func evalCallExpr(ctx context.Context, env *Environment, node *ast.CallExpr) (Va
 	if !ok {
 		return nil, newError(node.Token, fmt.Sprintf("cannot call a %T", maybeCallable))
 	}
-	return callable.Call(ctx, env, args...)
+	result, err := callable.Call(ctx, env, args...)
+
+	// 4. handle early return
+	var retErr *errReturn
+	if errors.As(err, &retErr) {
+		return retErr.value, nil
+	}
+	return result, err
 }

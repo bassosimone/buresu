@@ -8,9 +8,6 @@ import (
 	"github.com/bassosimone/buresu/pkg/ast"
 )
 
-// TODO(bassosimone): we need to handle the return statement
-// inside the block or the function expression.
-
 // errReturn is a special value that is returned when a return statement is
 // encountered. It is used to signal the interpreter that the current function
 // has returned early. This type also carries the value to return.
