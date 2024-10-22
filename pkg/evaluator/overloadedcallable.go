@@ -63,17 +63,26 @@ func (oc *overloadedCallable) Call(ctx context.Context, env *Environment, args .
 	prefix := annot.ArgumentsAnnotationPrefix()
 
 	// find the callable with the given prefix
-	callable, ok := oc.callables[prefix]
+	callable, ok := oc.findCallable(prefix)
 	if !ok {
-		// fallback to the default callable without prefix
-		callable, ok = oc.callables[""]
-		if !ok {
-			return nil, fmt.Errorf("no callable found for prefix: %q", prefix)
-		}
+		return nil, fmt.Errorf("no callable found for prefix: %q", prefix)
 	}
 
 	// call the callable
 	return callable.Call(ctx, env, args...)
+}
+
+func (oc *overloadedCallable) findCallable(prefix string) (CallableTrait, bool) {
+	// 1. attempt to match the prefix literally
+	callable, ok := oc.callables[prefix]
+	if ok {
+		return callable, true
+	}
+
+	// 2. fallback to the default callable without prefix
+	// which implies generic arguments
+	callable, ok = oc.callables[""]
+	return callable, ok
 }
 
 // TypeAnnotationPrefix implements CallableTrait.
