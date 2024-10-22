@@ -95,17 +95,17 @@ func (oc *overloadedCallable) findCallable(prefix string, args ...Value) (Callab
 		// TODO(bassosimone): we should probably refactor this
 		// code to avoid string manipulation and using better
 		// representation of types and annotations.
-		prefix += "Value"
+		fullproto := prefix + "Value"
 
 		// 1.3. for now, we hand write checks to match with
 		// type traits that matter, but it won't scale.
 		//
 		// TODO(bassosimone): implement more comprehensive
 		// approach to type traits inference here.
-		if oc.matchWithSequence(ta, prefix, args...) {
+		if oc.matchWithSequence(ta, fullproto, args...) {
 			return callable, true
 		}
-		if oc.matchWithValue(ta, prefix) {
+		if oc.matchWithValue(ta, fullproto) {
 			return callable, true
 		}
 	}
