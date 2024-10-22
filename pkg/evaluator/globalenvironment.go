@@ -11,6 +11,19 @@ import (
 func NewGlobalEnvironment(output io.Writer) *Environment {
 	global := NewEnvironment(output)
 
+	global.SetImplements("Bool", "Value")
+	global.SetImplements("ConsCell", "Value")
+	global.SetImplements("Float64", "Value")
+	global.SetImplements("Int", "Value")
+	global.SetImplements("Lambda", "Value")
+	global.SetImplements("Quoted", "Value")
+	global.SetImplements("String", "Value")
+	global.SetImplements("Unit", "Value")
+
+	global.SetImplements("String", "Sequence")
+	global.SetImplements("ConsCell", "Sequence")
+	global.SetImplements("Unit", "Sequence")
+
 	_ = global.DefineValue("+", NewBuiltInFuncValue(
 		"+",
 		builtInAddIntTypeAnnotation.String(),

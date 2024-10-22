@@ -4,6 +4,7 @@ package evaluator
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -63,8 +64,8 @@ func (oc *overloadedCallable) Call(ctx context.Context, env *Environment, args .
 	prefix := annot.ArgumentsAnnotationPrefix()
 
 	// find the callable with the given prefix
-	callable, ok := oc.findCallable(prefix, args...)
-	if !ok {
+	callable, err := oc.findCallable(env, prefix)
+	if err != nil {
 		return nil, fmt.Errorf("no callable found for prefix: %q", prefix)
 	}
 
@@ -72,7 +73,7 @@ func (oc *overloadedCallable) Call(ctx context.Context, env *Environment, args .
 	return callable.Call(ctx, env, args...)
 }
 
-func (oc *overloadedCallable) findCallable(prefix string, args ...Value) (CallableTrait, bool) {
+func (oc *overloadedCallable) findCallable(env *Environment, prefix string) (CallableTrait, error) {
 	// 1. attempt to match the prefix literally with the full
 	// type annotation prefix of the callable.
 	//
@@ -86,7 +87,7 @@ func (oc *overloadedCallable) findCallable(prefix string, args ...Value) (Callab
 			continue
 		}
 		if ta.MatchesArgumentsAnnotationPrefix(prefix) {
-			return callable, true
+			return callable, nil
 		}
 
 		// 1.2. turn the prefix into a full type annotation
@@ -97,72 +98,56 @@ func (oc *overloadedCallable) findCallable(prefix string, args ...Value) (Callab
 		// representation of types and annotations.
 		fullproto := prefix + "Value"
 
-		// 1.3. for now, we hand write checks to match with
-		// type traits that matter, but it won't scale.
-		//
-		// TODO(bassosimone): implement more comprehensive
-		// approach to type traits inference here.
-		if oc.matchWithSequence(ta, fullproto, args...) {
-			return callable, true
-		}
-		if oc.matchWithValue(ta, fullproto) {
-			return callable, true
+		// 1.3. run algorithm that checks whether each type
+		// in the call matches the type in the callable through
+		// type traits promotion (e.g., say we have `Sequence`
+		// and `String`, we can replace `Sequence` with `String`
+		// because `String` implements `Sequence`).
+		if oc.matchWithTraits(env, ta, fullproto) {
+			return callable, nil
 		}
 	}
 
 	// 2. fallback to the default callable without prefix
 	// which implies generic arguments
 	callable, ok := oc.callables[""]
-	return callable, ok
+	if !ok {
+		var buffer strings.Builder
+		fmt.Fprintf(&buffer, "no callable found for prefix: %q\n", prefix)
+		fmt.Fprintf(&buffer, "candidate callables:\n")
+		for _, callable := range oc.callables {
+			fmt.Fprintf(&buffer, "  %s\n", callable.String())
+		}
+		return nil, errors.New(buffer.String())
+	}
+	return callable, nil
 }
 
-// matchWithSequence just replaces the first argument in callable type
-// annotation, if any, with Sequence and checks whether we actually implement
-// sequence. In this case, we return true. This custom check is what we need
-// to implement the `length` built-in function.
-func (oc *overloadedCallable) matchWithSequence(
-	ta *typeannotation.Annotation, fullproto string, args ...Value) bool {
-	// TODO(bassosimone): implement more comprehensive
-	// approach to type traits inference here.
+// matchWithTraits checks whether each argument in the callable type
+// can become a type trait in the type annotation. If so, we return true.
+func (oc *overloadedCallable) matchWithTraits(env *Environment,
+	ta *typeannotation.Annotation, fullproto string) bool {
+	// map the fullproto to a type annotation and make sure the
+	// number of arguments and parameters match
 	argta, err := typeannotation.ParseString(fullproto)
 	if err != nil {
 		return false
 	}
-
-	// ensure we actually have a sequence
-	//
-	// TODO(bassosimone): this should somehow be encoded into the type system
-	// either in Go style or in Haskell style.
-	if len(args) < 1 {
+	if len(argta.Params) != len(ta.Params) {
 		return false
 	}
-	if _, ok := args[0].(SequenceTrait); !ok {
-		return false
-	}
-
-	// we need at least one parameter to rewrite
 	if len(argta.Params) < 1 {
 		return false
 	}
 
-	// rewrite the param and retry matching
-	argta.Params[0] = "Sequence"
-	return ta.MatchesArgumentsAnnotationPrefix(argta.ArgumentsAnnotationPrefix())
-}
-
-// matchWithValue tries to make the fullproto with a type annotation containing
-// all values, which is a custom check to implement `cons`.
-func (oc *overloadedCallable) matchWithValue(ta *typeannotation.Annotation, fullproto string) bool {
-	// TODO(bassosimone): implement more comprehensive
-	// approach to type traits inference here.
-	argta, err := typeannotation.ParseString(fullproto)
-	if err != nil {
-		return false
+	// check whether each argument in the callable type can
+	// become the corresponding type annotation trait
+	for idx := 0; idx < len(ta.Params); idx++ {
+		if !env.GetImplements(argta.Params[idx], ta.Params[idx]) {
+			return false
+		}
 	}
-	for idx := 0; idx < len(argta.Params); idx++ {
-		argta.Params[idx] = "Value"
-	}
-	return ta.MatchesArgumentsAnnotationPrefix(argta.ArgumentsAnnotationPrefix())
+	return true
 }
 
 // TypeAnnotationPrefix implements CallableTrait.

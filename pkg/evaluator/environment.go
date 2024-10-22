@@ -19,6 +19,10 @@ type Environment struct {
 	// flags contains flags describing this environment.
 	flags int
 
+	// implements contains the map of which trait is implemented
+	// by which value type in this environment.
+	implements map[string]map[string]struct{}
+
 	// output is the writer used to write output.
 	output io.Writer
 
@@ -34,10 +38,11 @@ type Environment struct {
 // NewEnvironment creates a new [*Environment] instance.
 func NewEnvironment(output io.Writer) *Environment {
 	return &Environment{
-		flags:   0,
-		output:  output,
-		parent:  nil,
-		symbols: make(map[string]Value),
+		flags:      0,
+		implements: map[string]map[string]struct{}{},
+		output:     output,
+		parent:     nil,
+		symbols:    make(map[string]Value),
 	}
 }
 
@@ -175,4 +180,22 @@ func (env *Environment) SetValue(symbol string, value Value) error {
 
 	// as a base case, say that the symbol does not exist
 	return fmt.Errorf("symbol %s not defined", symbol)
+}
+
+// SetImplements registers that a value type implements a trait.
+func (env *Environment) SetImplements(value string, trait string) bool {
+	if _, ok := env.implements[value]; !ok {
+		env.implements[value] = make(map[string]struct{})
+	}
+	env.implements[value][trait] = struct{}{}
+	return true
+}
+
+// GetImplements returns true if a value type implements a trait.
+func (env *Environment) GetImplements(value string, trait string) bool {
+	if traits, ok := env.implements[value]; ok {
+		_, ok := traits[trait]
+		return ok
+	}
+	return false
 }

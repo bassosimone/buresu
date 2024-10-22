@@ -39,7 +39,7 @@ func (v *ConsCellValue) String() string {
 
 // Type implements Value.
 func (*ConsCellValue) Type() string {
-	return "<cons cell>"
+	return "ConsCell"
 }
 
 var _ SequenceTrait = (*ConsCellValue)(nil)
