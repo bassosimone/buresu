@@ -68,7 +68,7 @@ func TestEval(t *testing.T) {
 
 			// Evaluate the parsed nodes
 			ctx := context.Background()
-			env := evaluator.NewEnvironment(io.Discard)
+			env := evaluator.NewGlobalEnvironment(io.Discard)
 			var result evaluator.Value
 			for _, node := range nodes {
 				result, err = evaluator.Eval(ctx, env, node)
