@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 package dumper
 
 import (
@@ -27,12 +29,6 @@ func TestNodeWrapper(t *testing.T) {
 	expectedString := "(IntLiteral 42)"
 	if wrappedNode.String() != expectedString {
 		t.Errorf("expected %s, got %s", expectedString, wrappedNode.String())
-	}
-
-	// Test Clone method
-	clonedNode := wrappedNode.Clone()
-	if clonedNode.String() != expectedString {
-		t.Errorf("expected %s, got %s", expectedString, clonedNode.String())
 	}
 
 	// Test MarshalJSON method

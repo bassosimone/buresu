@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // Package dumper provides functionality to serialize and print
 // Abstract Syntax Tree (AST) nodes and tokens in JSON format.
 //

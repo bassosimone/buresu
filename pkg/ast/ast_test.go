@@ -19,12 +19,6 @@ func TestBlockExpr(t *testing.T) {
 			t.Errorf("expected %s, got %s", expected, expr.String())
 		}
 	})
-	t.Run("cloning", func(t *testing.T) {
-		clonedExpr := expr.Clone()
-		if clonedExpr.String() != expected {
-			t.Errorf("expected %s, got %s", expected, clonedExpr.String())
-		}
-	})
 }
 
 func TestCallExpr(t *testing.T) {
@@ -37,12 +31,6 @@ func TestCallExpr(t *testing.T) {
 	t.Run("serialization", func(t *testing.T) {
 		if expr.String() != expected {
 			t.Errorf("expected %s, got %s", expected, expr.String())
-		}
-	})
-	t.Run("cloning", func(t *testing.T) {
-		clonedExpr := expr.Clone()
-		if clonedExpr.String() != expected {
-			t.Errorf("expected %s, got %s", expected, clonedExpr.String())
 		}
 	})
 }
@@ -62,12 +50,6 @@ func TestCondExpr(t *testing.T) {
 			t.Errorf("expected %s, got %s", expected, expr.String())
 		}
 	})
-	t.Run("cloning", func(t *testing.T) {
-		clonedExpr := expr.Clone()
-		if clonedExpr.String() != expected {
-			t.Errorf("expected %s, got %s", expected, clonedExpr.String())
-		}
-	})
 }
 
 func TestDefineExpr(t *testing.T) {
@@ -79,12 +61,6 @@ func TestDefineExpr(t *testing.T) {
 			t.Errorf("expected %s, got %s", expected, expr.String())
 		}
 	})
-	t.Run("cloning", func(t *testing.T) {
-		clonedExpr := expr.Clone()
-		if clonedExpr.String() != expected {
-			t.Errorf("expected %s, got %s", expected, clonedExpr.String())
-		}
-	})
 }
 
 func TestFloatLiteral(t *testing.T) {
@@ -94,12 +70,6 @@ func TestFloatLiteral(t *testing.T) {
 	t.Run("serialization", func(t *testing.T) {
 		if expr.String() != expected {
 			t.Errorf("expected %s, got %s", expected, expr.String())
-		}
-	})
-	t.Run("cloning", func(t *testing.T) {
-		clonedExpr := expr.Clone()
-		if clonedExpr.String() != expected {
-			t.Errorf("expected %s, got %s", expected, clonedExpr.String())
 		}
 	})
 }
@@ -115,12 +85,6 @@ func TestLambdaExpr(t *testing.T) {
 			t.Errorf("expected %s, got %s", expected, expr.String())
 		}
 	})
-	t.Run("cloning", func(t *testing.T) {
-		clonedExpr := expr.Clone()
-		if clonedExpr.String() != expected {
-			t.Errorf("expected %s, got %s", expected, clonedExpr.String())
-		}
-	})
 }
 
 func TestQuoteExpr(t *testing.T) {
@@ -130,12 +94,6 @@ func TestQuoteExpr(t *testing.T) {
 	t.Run("serialization", func(t *testing.T) {
 		if expr.String() != expected {
 			t.Errorf("expected %s, got %s", expected, expr.String())
-		}
-	})
-	t.Run("cloning", func(t *testing.T) {
-		clonedExpr := expr.Clone()
-		if clonedExpr.String() != expected {
-			t.Errorf("expected %s, got %s", expected, clonedExpr.String())
 		}
 	})
 }
@@ -149,12 +107,6 @@ func TestReturnStmt(t *testing.T) {
 			t.Errorf("expected %s, got %s", expected, expr.String())
 		}
 	})
-	t.Run("cloning", func(t *testing.T) {
-		clonedExpr := expr.Clone()
-		if clonedExpr.String() != expected {
-			t.Errorf("expected %s, got %s", expected, clonedExpr.String())
-		}
-	})
 }
 
 func TestSetExpr(t *testing.T) {
@@ -164,12 +116,6 @@ func TestSetExpr(t *testing.T) {
 	t.Run("serialization", func(t *testing.T) {
 		if expr.String() != expected {
 			t.Errorf("expected %s, got %s", expected, expr.String())
-		}
-	})
-	t.Run("cloning", func(t *testing.T) {
-		clonedExpr := expr.Clone()
-		if clonedExpr.String() != expected {
-			t.Errorf("expected %s, got %s", expected, clonedExpr.String())
 		}
 	})
 }
@@ -183,12 +129,6 @@ func TestUnitExpr(t *testing.T) {
 			t.Errorf("expected %s, got %s", expected, expr.String())
 		}
 	})
-	t.Run("cloning", func(t *testing.T) {
-		clonedExpr := expr.Clone()
-		if clonedExpr.String() != expected {
-			t.Errorf("expected %s, got %s", expected, clonedExpr.String())
-		}
-	})
 }
 
 func TestWhileExpr(t *testing.T) {
@@ -200,12 +140,6 @@ func TestWhileExpr(t *testing.T) {
 	t.Run("serialization", func(t *testing.T) {
 		if expr.String() != expected {
 			t.Errorf("expected %s, got %s", expected, expr.String())
-		}
-	})
-	t.Run("cloning", func(t *testing.T) {
-		clonedExpr := expr.Clone()
-		if clonedExpr.String() != expected {
-			t.Errorf("expected %s, got %s", expected, clonedExpr.String())
 		}
 	})
 }

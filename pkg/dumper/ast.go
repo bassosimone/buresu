@@ -44,14 +44,6 @@ func (nw *nodeWrapper) String() string {
 	return fmt.Sprintf("(%s %s)", nw.Type, nw.Value.String())
 }
 
-// Clone creates a deep copy of the NodeWrapper.
-func (nw *nodeWrapper) Clone() ast.Node {
-	return &nodeWrapper{
-		Type:  nw.Type,
-		Value: nw.Value.Clone(),
-	}
-}
-
 // wrapNode wraps a single node with its type and value.
 func wrapNode(node ast.Node) ast.Node {
 	switch n := node.(type) {
