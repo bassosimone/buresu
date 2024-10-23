@@ -63,11 +63,11 @@ func (oc *overloadedCallable) Type() string {
 
 // Call implements CallableTrait.
 func (oc *overloadedCallable) Call(ctx context.Context, env *Environment, args ...Value) (Value, error) {
-	prefix := buildArgsAnnotationPrefix(args)
+	argsPrefix := buildArgsAnnotationPrefix(args)
 
-	callable, err := oc.findCallable(env, prefix)
+	callable, err := oc.findCallable(env, argsPrefix)
 	if err != nil {
-		return nil, fmt.Errorf("no callable found for prefix: %q", prefix)
+		return nil, fmt.Errorf("no callable found for args prefix: %q", argsPrefix)
 	}
 
 	return callable.Call(ctx, env, args...)
@@ -75,30 +75,30 @@ func (oc *overloadedCallable) Call(ctx context.Context, env *Environment, args .
 
 // buildArgsAnnotationPrefix constructs the annotation prefix from the given arguments.
 func buildArgsAnnotationPrefix(args []Value) *typeannotation.Annotation {
-	annot := &typeannotation.Annotation{
+	prefix := &typeannotation.Annotation{
 		Params:     []typeannotation.Type{},
 		ReturnType: typeannotation.Type{Name: ""},
 	}
 	for _, arg := range args {
-		annot.Params = append(annot.Params, typeannotation.Type{Name: arg.Type()})
+		prefix.Params = append(prefix.Params, typeannotation.Type{Name: arg.Type()})
 	}
-	return annot
+	return prefix
 }
 
-func (oc *overloadedCallable) findCallable(env *Environment, prefix *typeannotation.Annotation) (CallableTrait, error) {
+func (oc *overloadedCallable) findCallable(env *Environment, argsPrefix *typeannotation.Annotation) (CallableTrait, error) {
 	for _, callable := range oc.callables {
-		ta, err := typeannotation.ParseString(callable.TypeAnnotationPrefix())
+		callablePrefix, err := typeannotation.ParseString(callable.TypeAnnotationPrefix())
 		if err != nil {
 			continue
 		}
 
 		// direct match
-		if ta.MatchesArgumentsAnnotationPrefix(prefix) {
+		if callablePrefix.MatchesArgumentsAnnotationPrefix(argsPrefix) {
 			return callable, nil
 		}
 
 		// attempt using traits
-		if oc.matchWithTraits(env, ta, prefix) {
+		if oc.matchWithTraits(env, callablePrefix, argsPrefix) {
 			return callable, nil
 		}
 	}
@@ -108,7 +108,7 @@ func (oc *overloadedCallable) findCallable(env *Environment, prefix *typeannotat
 	callable, ok := oc.callables[""]
 	if !ok {
 		var buffer strings.Builder
-		fmt.Fprintf(&buffer, "no callable found for prefix: %q\n", prefix)
+		fmt.Fprintf(&buffer, "no callable found for prefix: %q\n", argsPrefix)
 		fmt.Fprintf(&buffer, "candidate callables:\n")
 		for _, callable := range oc.callables {
 			fmt.Fprintf(&buffer, "  %s\n", callable.String())
@@ -120,13 +120,13 @@ func (oc *overloadedCallable) findCallable(env *Environment, prefix *typeannotat
 
 // matchWithTraits checks whether each argument in the callable type
 // can become a type trait in the type annotation. If so, we return true.
-func (oc *overloadedCallable) matchWithTraits(env *Environment,
-	ta *typeannotation.Annotation, prefix *typeannotation.Annotation) bool {
-	if len(prefix.Params) != len(ta.Params) {
+func (oc *overloadedCallable) matchWithTraits(
+	env *Environment, callablePrefix, argsPrefix *typeannotation.Annotation) bool {
+	if len(argsPrefix.Params) != len(callablePrefix.Params) {
 		return false
 	}
-	for idx := 0; idx < len(ta.Params); idx++ {
-		if !env.GetImplements(prefix.Params[idx].Name, ta.Params[idx].Name) {
+	for idx := 0; idx < len(callablePrefix.Params); idx++ {
+		if !env.GetImplements(argsPrefix.Params[idx].Name, callablePrefix.Params[idx].Name) {
 			return false
 		}
 	}
