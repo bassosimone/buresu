@@ -3,11 +3,8 @@
 package parser
 
 import (
-	"errors"
-
 	"github.com/bassosimone/buresu/pkg/ast"
 	"github.com/bassosimone/buresu/pkg/token"
-	"github.com/bassosimone/buresu/pkg/typeannotation"
 )
 
 func (p *parser) parseCall(tok token.Token) (ast.Node, error) {
@@ -72,19 +69,6 @@ func (p *parser) parseLambda(tok token.Token) (ast.Node, error) {
 	if p.currentToken().TokenType == token.STRING {
 		docs = p.currentToken().Value
 		p.advance()
-	}
-	annot, err := typeannotation.ParseDocs(docs)
-	if err != nil && !errors.Is(err, typeannotation.ErrNoTypeAnnotationFound) {
-		return nil, newError(tok, "type annotation: %v", err)
-	}
-	if annot != nil && len(annot.Params) != len(params) {
-		return nil, newError(
-			tok,
-			"lambda has %d params, annotation has %d",
-			len(params), len(annot.Params),
-		)
-		// annotation is good, the typechecker will pick
-		// it up and perform supplementary checks
 	}
 
 	// 3. <expr> CLOSE
