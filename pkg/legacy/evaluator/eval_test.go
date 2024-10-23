@@ -13,7 +13,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"golang.org/x/tools/txtar"
 
-	"github.com/bassosimone/buresu/pkg/evaluator"
+	"github.com/bassosimone/buresu/pkg/legacy/evaluator"
 	"github.com/bassosimone/buresu/pkg/parser"
 	"github.com/bassosimone/buresu/pkg/scanner"
 )

@@ -7,7 +7,7 @@ import (
 	"io"
 
 	"github.com/bassosimone/buresu/pkg/ast"
-	"github.com/bassosimone/buresu/pkg/runtime"
+	"github.com/bassosimone/buresu/pkg/legacy/runtime"
 )
 
 // MockEnvironment is a mock implementation of the runtime.Environment interface.

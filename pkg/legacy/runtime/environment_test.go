@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/bassosimone/buresu/pkg/runtime"
-	"github.com/bassosimone/buresu/pkg/runtimemock"
+	"github.com/bassosimone/buresu/pkg/legacy/runtime"
+	"github.com/bassosimone/buresu/pkg/legacy/runtimemock"
 )
 
 func newInitRootScopeMockEnvironment(errOnDefine map[string]bool) *runtimemock.MockEnvironment {

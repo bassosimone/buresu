@@ -6,7 +6,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/bassosimone/buresu/pkg/runtime"
+	"github.com/bassosimone/buresu/pkg/legacy/runtime"
 )
 
 func TestConsCell(t *testing.T) {

@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/bassosimone/buresu/pkg/ast"
-	"github.com/bassosimone/buresu/pkg/runtime"
+	"github.com/bassosimone/buresu/pkg/legacy/runtime"
 )
 
 func TestQuoteValue(t *testing.T) {

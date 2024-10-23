@@ -5,7 +5,7 @@ package runtime_test
 import (
 	"testing"
 
-	"github.com/bassosimone/buresu/pkg/runtime"
+	"github.com/bassosimone/buresu/pkg/legacy/runtime"
 )
 
 func TestUnitValue(t *testing.T) {

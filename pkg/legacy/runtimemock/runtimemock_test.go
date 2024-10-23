@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"github.com/bassosimone/buresu/pkg/ast"
-	"github.com/bassosimone/buresu/pkg/runtime"
-	"github.com/bassosimone/buresu/pkg/runtimemock"
+	"github.com/bassosimone/buresu/pkg/legacy/runtime"
+	"github.com/bassosimone/buresu/pkg/legacy/runtimemock"
 )
 
 func TestMockEnvironmentImplementsEnvironment(t *testing.T) {

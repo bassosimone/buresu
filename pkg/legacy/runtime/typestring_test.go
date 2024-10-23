@@ -5,10 +5,8 @@ package runtime_test
 import (
 	"testing"
 
-	"github.com/bassosimone/buresu/pkg/runtime"
+	"github.com/bassosimone/buresu/pkg/legacy/runtime"
 )
-
-
 
 func TestStringValue(t *testing.T) {
 	v := &runtime.StringValue{Value: "hello"}
