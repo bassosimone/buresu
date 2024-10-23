@@ -1,4 +1,4 @@
 -- input.code --
 "Helo, admin"
 -- expected_output.txt --
-"Helo, admin"
+Helo, admin

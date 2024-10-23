@@ -1,4 +1,4 @@
 -- input.code --
 (cons 1 2 3)
 -- expected_error.txt --
-no callable found for prefix: "Int -> Int -> Int => "
+no callable found for args prefix: "Int -> Int -> Int => "
