@@ -25,3 +25,19 @@ func BuiltInAddFloat64(ctx context.Context, env *Environment, args ...Value) (Va
 	}
 	return NewFloat64Value(sum), nil
 }
+
+var builtInAddIntTypeAnnotation = optional.Some(&typeannotation.Annotation{
+	Params:     []typeannotation.Type{{Name: "Int"}, {Name: "Int"}},
+	ReturnType: typeannotation.Type{Name: "Int"},
+})
+
+// BuiltInAddInt is a built-in function that adds integers.
+func BuiltInAddInt(ctx context.Context, env *Environment, args ...Value) (Value, error) {
+	var sum int
+	for _, arg := range args {
+		_, ok := arg.(*IntValue)
+		rtx.Assert(ok, "expected Int")
+		sum += arg.(*IntValue).Value
+	}
+	return NewIntValue(sum), nil
+}
