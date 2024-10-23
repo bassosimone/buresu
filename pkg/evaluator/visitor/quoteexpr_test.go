@@ -51,4 +51,41 @@ func TestEvalQuoteExpr(t *testing.T) {
 			t.Errorf("expected %v, got %v", "(quote \"hello\")", result.String())
 		}
 	})
+
+	t.Run("boolean literal", func(t *testing.T) {
+		// Test with a boolean literal
+		boolLiteral := &ast.TrueLiteral{
+			Token: token.Token{TokenType: token.ATOM, Value: "true"},
+		}
+		quoteExpr := &ast.QuoteExpr{
+			Token: token.Token{TokenType: token.ATOM, Value: "quote"},
+			Expr:  boolLiteral,
+		}
+		result, err := evalQuoteExpr(ctx, env, quoteExpr)
+		if err != nil {
+			t.Errorf("expected no error, got %v", err)
+		}
+		if result.String() != "(quote true)" {
+			t.Errorf("expected %v, got %v", "(quote true)", result.String())
+		}
+	})
+
+	t.Run("float literal", func(t *testing.T) {
+		// Test with a float literal
+		floatLiteral := &ast.FloatLiteral{
+			Token: token.Token{TokenType: token.NUMBER, Value: "3.14"},
+			Value: "3.14",
+		}
+		quoteExpr := &ast.QuoteExpr{
+			Token: token.Token{TokenType: token.ATOM, Value: "quote"},
+			Expr:  floatLiteral,
+		}
+		result, err := evalQuoteExpr(ctx, env, quoteExpr)
+		if err != nil {
+			t.Errorf("expected no error, got %v", err)
+		}
+		if result.String() != "(quote 3.14)" {
+			t.Errorf("expected %v, got %v", "(quote 3.14)", result.String())
+		}
+	})
 }

@@ -59,4 +59,19 @@ func TestEvalStringLiteral(t *testing.T) {
 			t.Errorf("expected %v, got %v", expected, result)
 		}
 	})
+
+	t.Run("string literal with unicode characters", func(t *testing.T) {
+		strLiteral := &ast.StringLiteral{
+			Token: token.Token{TokenType: token.STRING, Value: "\"Hello, 世界!\""},
+			Value: "Hello, 世界!",
+		}
+		result, err := evalStringLiteral(ctx, env, strLiteral)
+		if err != nil {
+			t.Errorf("expected no error, got %v", err)
+		}
+		expected := env.NewStringValue("Hello, 世界!")
+		if result.String() != expected.String() {
+			t.Errorf("expected %v, got %v", expected, result)
+		}
+	})
 }

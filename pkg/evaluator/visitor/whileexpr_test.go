@@ -47,17 +47,53 @@ func TestEvalWhileExpr(t *testing.T) {
 		return env.NewUnitValue(), nil
 	}))
 
-	_, err := evalWhileExpr(ctx, env, while)
-	if err != nil {
-		t.Errorf("expected no error, got %v", err)
-	}
+	t.Run("basic while loop", func(t *testing.T) {
+		_, err := evalWhileExpr(ctx, env, while)
+		if err != nil {
+			t.Errorf("expected no error, got %v", err)
+		}
 
-	val, err := env.GetValue("counter")
-	if err != nil {
-		t.Errorf("expected no error, got %v", err)
-	}
+		val, err := env.GetValue("counter")
+		if err != nil {
+			t.Errorf("expected no error, got %v", err)
+		}
 
-	if val.String() != env.NewIntValue(10).String() {
-		t.Errorf("expected %v, got %v", env.NewIntValue(10), val)
-	}
+		if val.String() != env.NewIntValue(10).String() {
+			t.Errorf("expected %v, got %v", env.NewIntValue(10), val)
+		}
+	})
+
+	t.Run("while loop with initial counter 5", func(t *testing.T) {
+		env.SetValue("counter", env.NewIntValue(5))
+		_, err := evalWhileExpr(ctx, env, while)
+		if err != nil {
+			t.Errorf("expected no error, got %v", err)
+		}
+
+		val, err := env.GetValue("counter")
+		if err != nil {
+			t.Errorf("expected no error, got %v", err)
+		}
+
+		if val.String() != env.NewIntValue(10).String() {
+			t.Errorf("expected %v, got %v", env.NewIntValue(10), val)
+		}
+	})
+
+	t.Run("while loop with initial counter 10", func(t *testing.T) {
+		env.SetValue("counter", env.NewIntValue(10))
+		_, err := evalWhileExpr(ctx, env, while)
+		if err != nil {
+			t.Errorf("expected no error, got %v", err)
+		}
+
+		val, err := env.GetValue("counter")
+		if err != nil {
+			t.Errorf("expected no error, got %v", err)
+		}
+
+		if val.String() != env.NewIntValue(10).String() {
+			t.Errorf("expected %v, got %v", env.NewIntValue(10), val)
+		}
+	})
 }
