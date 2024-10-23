@@ -10,14 +10,14 @@ import (
 	"github.com/bassosimone/buresu/pkg/typeannotation"
 )
 
+var builtInNotTypeAnnotation = optional.Some(&typeannotation.Annotation{
+	Params:     []typeannotation.Type{{Name: "Bool"}},
+	ReturnType: typeannotation.Type{Name: "Bool"},
+})
+
 func BuiltInNot(ctx context.Context, env *Environment, args ...Value) (Value, error) {
 	rtx.Assert(len(args) == 1, "expected 1 argument")
 	boolVal, ok := args[0].(*BoolValue)
 	rtx.Assert(ok, "expected Bool")
 	return NewBoolValue(!boolVal.Value), nil
 }
-
-var builtInNotTypeAnnotation = optional.Some(&typeannotation.Annotation{
-	Params:     []typeannotation.Type{{Name: "Bool"}},
-	ReturnType: typeannotation.Type{Name: "Bool"},
-})

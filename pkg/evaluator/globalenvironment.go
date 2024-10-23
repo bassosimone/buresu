@@ -36,6 +36,7 @@ func NewGlobalEnvironment(output io.Writer) *Environment {
 	rtx.Must(defineBuiltIn(global, ">", builtInGtFloat64TypeAnnotation, BuiltInGtFloat64))
 	rtx.Must(defineBuiltIn(global, "and", builtInAndTypeAnnotation, BuiltInAnd))
 	rtx.Must(defineBuiltIn(global, "cons", builtInConsTypeAnnotation, BuiltInCons))
+	rtx.Must(defineBuiltIn(global, "format", builtInFormatTypeAnnotation, BuiltInFormat))
 	rtx.Must(defineBuiltIn(global, "length", builtInLengthTypeAnnotation, BuiltInLength))
 	rtx.Must(defineBuiltIn(global, "display", builtInDisplayTypeAnnotation, BuiltInDisplay))
 	rtx.Must(defineBuiltIn(global, "not", builtInNotTypeAnnotation, BuiltInNot))

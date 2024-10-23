@@ -2,11 +2,6 @@
 
 package evaluator
 
-import (
-	"encoding/json"
-	"fmt"
-)
-
 // StringValue represents a string value.
 //
 // Construct using NewStringValue.
@@ -23,8 +18,7 @@ func NewStringValue(value string) *StringValue {
 
 // String returns the string representation of the string value.
 func (v *StringValue) String() string {
-	repr, _ := json.Marshal(v.Value)
-	return fmt.Sprintf("%s", repr)
+	return v.Value
 }
 
 // Type implements Value.
