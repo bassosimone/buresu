@@ -10,13 +10,21 @@ import (
 // parser is a structure that holds the tokens to be parsed and
 // the current position in the token list.
 type parser struct {
-	tokens  []token.Token
+	// current is the current position in the tokens list.
 	current int
+
+	// lambdadepth is the current depth of lambda expressions: if zero
+	// we're at top-level, if one we're inside a lambda, if two we're
+	// inside a lambda inside a lambda, and so on.
+	lambdadepth int
+
+	// tokens contains the tokens to be parsed.
+	tokens []token.Token
 }
 
 // newParser creates a new parser instance with the provided tokens.
 func newParser(tokens []token.Token) *parser {
-	return &parser{tokens: tokens, current: 0}
+	return &parser{tokens: tokens, current: 0, lambdadepth: 0}
 }
 
 // Parse processes the tokens and returns a slice of AST nodes.

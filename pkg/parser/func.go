@@ -72,10 +72,15 @@ func (p *parser) parseLambda(tok token.Token) (ast.Node, error) {
 	}
 
 	// 3. <expr> CLOSE
+	//
+	// Track the depth inside lambdas so we know when it
+	// is legal to accept a return statement.
+	p.lambdadepth++
 	expr, err := p.parseAtomOrForm()
 	if err != nil {
 		return nil, err
 	}
+	p.lambdadepth--
 	if _, err := p.consumeTokenWithType(token.CLOSE); err != nil {
 		return nil, err
 	}

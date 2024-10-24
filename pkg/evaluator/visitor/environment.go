@@ -25,10 +25,6 @@ type Environment interface {
 	// environments are searched recursively.
 	GetValue(symbol string) (Value, error)
 
-	// IsInsideFunc returns true if the environment is a function scope
-	// or any of the parent environments is a function scope.
-	IsInsideFunc() bool
-
 	// NewBoolValue returns a new bool value instance.
 	NewBoolValue(value bool) Value
 

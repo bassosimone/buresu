@@ -45,17 +45,6 @@ func NewEnvironment() *Environment {
 	}
 }
 
-// IsInsideFunc implements [visitor.Environment].
-func (env *Environment) IsInsideFunc() bool {
-	if env.flags&environmentFlagScopeFunc != 0 {
-		return true
-	}
-	if env.parent != nil {
-		return env.parent.IsInsideFunc()
-	}
-	return false
-}
-
 // PushFunctionScope implements [visitor.Environment].
 func (env *Environment) PushFunctionScope() visitor.Environment {
 	return env.pushScope(environmentFlagScopeFunc)

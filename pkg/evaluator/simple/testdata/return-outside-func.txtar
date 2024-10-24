@@ -1,5 +1,0 @@
--- input.txt --
-(return! 0)
-
--- expected_error.txt --
-input.code:1:1: interpreter: return statement outside of function

@@ -44,29 +44,4 @@ func TestEvalReturnStmt(t *testing.T) {
 			t.Errorf("expected %v, got %v", env.NewIntValue(42), err.(*errReturn).value)
 		}
 	})
-
-	t.Run("return outside function", func(t *testing.T) {
-		// Setup the context for testing return outside function
-		env.insideFunc = false
-		ret := &ast.ReturnStmt{
-			Token: token.Token{TokenType: token.ATOM, Value: "return!"},
-			Expr: &ast.IntLiteral{
-				Token: token.Token{TokenType: token.NUMBER, Value: "42"},
-				Value: "42",
-			},
-		}
-
-		// Evaluate the return statement
-		_, err := evalReturnStmt(ctx, env, ret)
-
-		// Check for expected error
-		if err == nil {
-			t.Errorf("expected error, got nil")
-		}
-
-		// Check if the error is not of type errReturn
-		if _, ok := err.(*errReturn); ok {
-			t.Errorf("expected non-errReturn error, got errReturn")
-		}
-	})
 }

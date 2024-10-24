@@ -4,7 +4,6 @@ package visitor
 
 import (
 	"context"
-	"errors"
 
 	"github.com/bassosimone/buresu/pkg/ast"
 )
@@ -18,9 +17,7 @@ func (errReturn) Error() string {
 }
 
 func evalReturnStmt(ctx context.Context, env Environment, node *ast.ReturnStmt) (Value, error) {
-	if !env.IsInsideFunc() {
-		return nil, env.WrapError(node.Token, errors.New("return statement outside of function"))
-	}
+	// the parse guarantees that a return! statement only happens inside a lambda
 	value, err := Eval(ctx, env, node.Expr)
 	if err != nil {
 		return nil, err

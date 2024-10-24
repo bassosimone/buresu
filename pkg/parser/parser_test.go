@@ -33,10 +33,10 @@ func TestParser(t *testing.T) {
 			shouldFail:     false,
 		},
 		{
-			input:          "(block true (return! false) false)",
+			input:          "(lambda () (block true (return! false) false))",
 			expectedOutput: "",
 			shouldFail:     true,
-			expectedError:  "<stdin>:1:1: parser: unreachable code",
+			expectedError:  "<stdin>:1:12: parser: unreachable code",
 		},
 
 		// call tests
@@ -260,19 +260,30 @@ func TestParser(t *testing.T) {
 		{
 			input:          "(return! 42)",
 			expectedOutput: "(return! 42)",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:1: parser: return! outside of lambda",
+		},
+		{
+			input:          "(lambda () (return! 42))",
+			expectedOutput: "(lambda () \"\" (return! 42))",
 			shouldFail:     false,
 		},
 		{
-			input:          "(return!",
-			expectedOutput: "",
-			shouldFail:     true,
-			expectedError:  "<stdin>:1:8: parser: unexpected token EOF",
+			input:          "(lambda () (lambda () (return! 42)))",
+			expectedOutput: "(lambda () \"\" (lambda () \"\" (return! 42)))",
+			shouldFail:     false,
 		},
 		{
-			input:          "(return! 42",
+			input:          "(lambda () (return!",
 			expectedOutput: "",
 			shouldFail:     true,
-			expectedError:  "<stdin>:1:11: parser: expected token CLOSE, found EOF",
+			expectedError:  "<stdin>:1:19: parser: unexpected token EOF",
+		},
+		{
+			input:          "(lambda () (return! 42",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:22: parser: expected token CLOSE, found EOF",
 		},
 
 		// while tests
