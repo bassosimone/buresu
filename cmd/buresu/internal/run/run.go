@@ -81,7 +81,6 @@ func (cmd command) Main(ctx context.Context, argv ...string) error {
 	// 6. create a map of enabled features
 	enabledFeatures := make(map[string]struct{})
 	for _, feature := range features {
-		fmt.Fprintf(os.Stderr, "buresu run: enabling feature: %s\n", feature)
 		enabledFeatures[feature] = struct{}{}
 	}
 
@@ -116,15 +115,26 @@ func (cmd command) Main(ctx context.Context, argv ...string) error {
 	rootScope := evaluator.NewGlobalEnvironment(os.Stdout)
 	tcEnv := typechecker.NewGlobalEnvironment()
 
-	// 10. potentially typecheck and evaluate the script
-	for _, node := range nodes {
-		if _, ok := enabledFeatures["typechecker"]; ok {
-			if _, err := typechecker.Check(ctx, tcEnv, node); err != nil {
+	// 10. potentially typecheck
+	if _, ok := enabledFeatures["typechecker"]; ok {
+		for _, node := range nodes {
+			kind, err := typechecker.Check(ctx, tcEnv, node)
+			if err != nil {
 				fmt.Fprintf(os.Stderr, "buresu run: %s\n", err.Error())
 				return err
 			}
+			if emit == "typechecker" {
+				fmt.Fprintf(os.Stdout, ";; %s\n", kind.String())
+				fmt.Fprintf(os.Stdout, "%s\n\n", node.String())
+			}
 		}
+		if emit == "typechecker" {
+			return nil
+		}
+	}
 
+	// 11. evaluate the script
+	for _, node := range nodes {
 		if _, err := evaluator.Eval(ctx, rootScope, node); err != nil {
 			fmt.Fprintf(os.Stderr, "buresu run: %s\n", err.Error())
 			return err // already wrapped

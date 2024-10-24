@@ -82,7 +82,6 @@ func (cmd command) Main(_ context.Context, argv ...string) error {
 	// 6. create a map of enabled features
 	enabledFeatures := make(map[string]struct{})
 	for _, feature := range features {
-		fmt.Fprintf(os.Stderr, "buresu repl: enabling feature: %s\n", feature)
 		enabledFeatures[feature] = struct{}{}
 	}
 
