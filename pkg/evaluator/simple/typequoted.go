@@ -9,7 +9,7 @@ import (
 	"github.com/bassosimone/buresu/pkg/evaluator/visitor"
 )
 
-// NewQuotedValue creates a new [*Quoted] instance.
+// NewQuotedValue implements [visitor.Environment].
 func (env *Environment) NewQuotedValue(node *ast.QuoteExpr) visitor.Value {
 	return &Quoted{node}
 }
