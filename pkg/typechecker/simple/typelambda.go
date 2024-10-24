@@ -4,6 +4,7 @@ package simple
 
 import (
 	"context"
+	"errors"
 
 	"github.com/bassosimone/buresu/internal/rtx"
 	"github.com/bassosimone/buresu/pkg/ast"
@@ -43,8 +44,19 @@ func (env *Environment) NewLambdaType(node *ast.LambdaExpr) (visitor.Type, error
 		lambda.ParamsTypes = append(lambda.ParamsTypes, &Any{})
 	}
 
-	// TODO(bassosimone): here we should parse the lambda type
-	// annotation, if any, and properly fill the params
+	annot, err := ParseTypeAnnotationFromDocs(node.Docs)
+	if err != nil && !errors.Is(err, ErrNoTypeAnnotationFound) {
+		return nil, err
+	}
+	if annot != nil {
+		lambda.ReturnType = annot.ReturnType
+		for idx, param := range annot.ParamsTypes {
+			if idx >= len(lambda.ParamsTypes) {
+				return nil, errors.New("too many parameters in the type annotation")
+			}
+			lambda.ParamsTypes[idx] = param
+		}
+	}
 
 	return lambda, nil
 }

@@ -1,0 +1,11 @@
+-- input.txt --
+(define fx (lambda (x y) ":: (Callable (Int Int) (Union Int Unit))" (block
+    (if (< x 0) (block (return! ())))
+    (if (< y 10) (block (return! ())))
+    (* x y)
+)))
+(fx 10 100)
+
+-- expected_output.txt --
+(Callable (Int Int) (Union Int Unit))
+(Union Int Unit)

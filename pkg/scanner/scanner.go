@@ -250,7 +250,7 @@ func (s *scanner) scanString(pos token.Position) (token.Token, error) {
 		// Allow all valid Unicode characters
 		//
 		// We support multiline strings
-		if !unicode.IsPrint(chr) && chr != '\n' {
+		if !unicode.IsPrint(chr) && chr != '\n' && chr != '\t' {
 			err := newError(pos, fmt.Sprintf("expected printable character, found: %U '%c'", chr, chr))
 			return token.Token{}, err
 		}

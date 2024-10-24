@@ -1,0 +1,29 @@
+-- input.txt --
+(define makeCounter (lambda (x) ":: (Callable (Int) (Callable () (Union Int Unit)))"
+	(lambda () ":: (Callable () (Union Int Unit))" (block
+    	(if (< x 1) (block (return! ())))
+    	(set! x (+ x -1))
+    	x))))
+
+(define total 3)
+
+(define counter (makeCounter total))
+
+(counter)
+(counter)
+(counter)
+(counter)
+(counter)
+
+total
+
+-- expected_output.txt --
+(Callable (Int) (Callable () (Union Int Unit)))
+Int
+(Callable () (Union Int Unit))
+(Union Int Unit)
+(Union Int Unit)
+(Union Int Unit)
+(Union Int Unit)
+(Union Int Unit)
+Int
