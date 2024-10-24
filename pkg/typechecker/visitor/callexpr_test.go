@@ -9,29 +9,63 @@ import (
 )
 
 func TestCheckCallExpr(t *testing.T) {
-	ctx := context.Background()
 	env := &mockEnvironment{}
 
-	t.Run("simple call expression", func(t *testing.T) {
-		callable := &ast.SymbolName{Token: token.Token{TokenType: token.ATOM, Value: "myFunction"}, Value: "myFunction"}
-		arg := &ast.IntLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "42"}, Value: "42"}
-		node := &ast.CallExpr{Token: token.Token{TokenType: token.ATOM, Value: "call"}, Callable: callable, Args: []ast.Node{arg}}
+	tests := []struct {
+		name    string
+		ctxFunc func() context.Context
+		node    *ast.CallExpr
+		wantErr bool
+	}{
+		{
+			name:    "simple call expression with normal context",
+			ctxFunc: normalContext,
+			node: &ast.CallExpr{
+				Token:    token.Token{TokenType: token.ATOM, Value: "call"},
+				Callable: &ast.SymbolName{Token: token.Token{TokenType: token.ATOM, Value: "myFunction"}, Value: "myFunction"},
+				Args:     []ast.Node{&ast.IntLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "42"}, Value: "42"}},
+			},
+			wantErr: false,
+		},
+		{
+			name:    "simple call expression with canceled context",
+			ctxFunc: canceledContext,
+			node: &ast.CallExpr{
+				Token:    token.Token{TokenType: token.ATOM, Value: "call"},
+				Callable: &ast.SymbolName{Token: token.Token{TokenType: token.ATOM, Value: "myFunction"}, Value: "myFunction"},
+				Args:     []ast.Node{&ast.IntLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "42"}, Value: "42"}},
+			},
+			wantErr: true,
+		},
+		{
+			name:    "call expression with multiple arguments and normal context",
+			ctxFunc: normalContext,
+			node: &ast.CallExpr{
+				Token:    token.Token{TokenType: token.ATOM, Value: "call"},
+				Callable: &ast.SymbolName{Token: token.Token{TokenType: token.ATOM, Value: "myFunction"}, Value: "myFunction"},
+				Args:     []ast.Node{&ast.IntLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "42"}, Value: "42"}, &ast.FloatLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "3.14"}, Value: "3.14"}},
+			},
+			wantErr: false,
+		},
+		{
+			name:    "call expression with multiple arguments and canceled context",
+			ctxFunc: canceledContext,
+			node: &ast.CallExpr{
+				Token:    token.Token{TokenType: token.ATOM, Value: "call"},
+				Callable: &ast.SymbolName{Token: token.Token{TokenType: token.ATOM, Value: "myFunction"}, Value: "myFunction"},
+				Args:     []ast.Node{&ast.IntLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "42"}, Value: "42"}, &ast.FloatLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "3.14"}, Value: "3.14"}},
+			},
+			wantErr: true,
+		},
+	}
 
-		_, err := checkCallExpr(ctx, env, node)
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
-	})
-
-	t.Run("call expression with multiple arguments", func(t *testing.T) {
-		callable := &ast.SymbolName{Token: token.Token{TokenType: token.ATOM, Value: "myFunction"}, Value: "myFunction"}
-		arg1 := &ast.IntLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "42"}, Value: "42"}
-		arg2 := &ast.FloatLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "3.14"}, Value: "3.14"}
-		node := &ast.CallExpr{Token: token.Token{TokenType: token.ATOM, Value: "call"}, Callable: callable, Args: []ast.Node{arg1, arg2}}
-
-		_, err := checkCallExpr(ctx, env, node)
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
-	})
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx := tt.ctxFunc()
+			_, err := checkCallExpr(ctx, env, tt.node)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("checkCallExpr() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
 }

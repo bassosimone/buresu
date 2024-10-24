@@ -9,14 +9,6 @@ import (
 	"github.com/bassosimone/buresu/pkg/ast"
 )
 
-type errReturn struct {
-	value Type
-}
-
-func (errReturn) Error() string {
-	return "return statement"
-}
-
 func checkReturnStmt(ctx context.Context, env Environment, node *ast.ReturnStmt) (Type, error) {
 	rvType, err := Check(ctx, env, node.Expr)
 	if err != nil {

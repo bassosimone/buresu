@@ -11,12 +11,14 @@ import (
 func TestCheckDefineExpr(t *testing.T) {
 	tests := []struct {
 		name     string
+		ctxFunc  func() context.Context
 		node     *ast.DefineExpr
 		expected Type
 		err      error
 	}{
 		{
-			name: "define int",
+			name:    "define int with normal context",
+			ctxFunc: normalContext,
 			node: &ast.DefineExpr{
 				Token:  token.Token{TokenType: token.ATOM, Value: "define"},
 				Symbol: "x",
@@ -26,7 +28,8 @@ func TestCheckDefineExpr(t *testing.T) {
 			err:      nil,
 		},
 		{
-			name: "define float",
+			name:    "define float with normal context",
+			ctxFunc: normalContext,
 			node: &ast.DefineExpr{
 				Token:  token.Token{TokenType: token.ATOM, Value: "define"},
 				Symbol: "pi",
@@ -35,16 +38,28 @@ func TestCheckDefineExpr(t *testing.T) {
 			expected: &mockType{"Float64"},
 			err:      nil,
 		},
+		{
+			name:    "define int with canceled context",
+			ctxFunc: canceledContext,
+			node: &ast.DefineExpr{
+				Token:  token.Token{TokenType: token.ATOM, Value: "define"},
+				Symbol: "x",
+				Expr:   &ast.IntLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "42"}, Value: "42"},
+			},
+			expected: nil,
+			err:      context.Canceled,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			env := &mockEnvironment{}
-			result, err := checkDefineExpr(context.Background(), env, tt.node)
+			ctx := tt.ctxFunc()
+			result, err := checkDefineExpr(ctx, env, tt.node)
 			if err != tt.err {
 				t.Errorf("expected error %v, got %v", tt.err, err)
 			}
-			if result.String() != tt.expected.String() {
+			if result != nil && result.String() != tt.expected.String() {
 				t.Errorf("expected %v, got %v", tt.expected, result)
 			}
 		})

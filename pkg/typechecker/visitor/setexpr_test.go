@@ -9,7 +9,6 @@ import (
 )
 
 func TestCheckSetExpr(t *testing.T) {
-	ctx := context.Background()
 	env := &mockEnvironment{}
 
 	tok := token.Token{TokenType: token.ATOM, Value: "set!"}
@@ -19,13 +18,33 @@ func TestCheckSetExpr(t *testing.T) {
 
 	expectedType := &mockType{name: "Int"}
 
-	t.Run("successful set expression", func(t *testing.T) {
-		typ, err := checkSetExpr(ctx, env, setExpr)
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
-		if typ.String() != expectedType.String() {
-			t.Errorf("expected %s, got %s", expectedType.String(), typ.String())
-		}
-	})
+	tests := []struct {
+		name    string
+		ctxFunc func() context.Context
+		wantErr bool
+	}{
+		{
+			name:    "successful set expression with normal context",
+			ctxFunc: normalContext,
+			wantErr: false,
+		},
+		{
+			name:    "set expression with canceled context",
+			ctxFunc: canceledContext,
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx := tt.ctxFunc()
+			typ, err := checkSetExpr(ctx, env, setExpr)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("checkSetExpr() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if !tt.wantErr && typ.String() != expectedType.String() {
+				t.Errorf("expected %s, got %s", expectedType.String(), typ.String())
+			}
+		})
+	}
 }

@@ -7,6 +7,16 @@ import (
 	"github.com/bassosimone/buresu/pkg/token"
 )
 
+func normalContext() context.Context {
+	return context.Background()
+}
+
+func canceledContext() context.Context {
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	return ctx
+}
+
 type mockEnvironment struct {
 	returnType Type
 	err        error
