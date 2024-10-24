@@ -32,6 +32,12 @@ func TestParser(t *testing.T) {
 			expectedOutput: "()",
 			shouldFail:     false,
 		},
+		{
+			input:          "(block true (return! false) false)",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:1: parser: unreachable code",
+		},
 
 		// call tests
 		{

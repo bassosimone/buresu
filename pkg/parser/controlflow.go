@@ -10,18 +10,35 @@ import (
 // parseBlock parses a block form into an AST node.
 func (p *parser) parseBlock(tok token.Token) (ast.Node, error) {
 	// Syntax: ... <expr>* CLOSE
-	var exprs []ast.Node
+	var (
+		exprs   []ast.Node
+		seenret bool
+	)
 	for p.currentToken().TokenType != token.CLOSE {
+		// make sure nothing follows a return statement
+		if seenret {
+			return nil, newError(tok, "unreachable code")
+		}
+
 		expr, err := p.parseAtomOrForm()
 		if err != nil {
 			return nil, err
 		}
+
+		// remember if we've seen a return statement
+		if _, ok := expr.(*ast.ReturnStmt); ok {
+			seenret = true
+		}
+
 		exprs = append(exprs, expr)
 	}
+
 	_, _ = p.consumeTokenWithType(token.CLOSE) // can't fail
+
 	if len(exprs) <= 0 {
 		return &ast.UnitExpr{Token: tok}, nil
 	}
+
 	return &ast.BlockExpr{Token: tok, Exprs: exprs}, nil
 }
 
