@@ -9,19 +9,19 @@ import (
 	"github.com/bassosimone/buresu/pkg/evaluator/visitor"
 )
 
-// NewBuiltInAdd creates a new built-in function that adds two numbers.
-func NewBuiltInAdd() *BuiltInFuncValue {
+// NewBuiltInMul creates a new built-in function that multiplies two numbers.
+func NewBuiltInMul() *BuiltInFuncValue {
 	return &BuiltInFuncValue{
-		Name: "+",
+		Name: "*",
 		Fx: func(ctx context.Context, args ...visitor.Value) (visitor.Value, error) {
 			if len(args) != 2 {
-				return nil, fmt.Errorf("+: %w", ErrWrongNumberOfArguments)
+				return nil, fmt.Errorf("*: %w", ErrWrongNumberOfArguments)
 			}
 			num, ok := args[0].(Num)
 			if !ok {
-				return nil, fmt.Errorf("+: %w", ErrWrongArgumentType)
+				return nil, fmt.Errorf("*: %w", ErrWrongArgumentType)
 			}
-			return num.Add(args[1])
+			return num.Mul(args[1])
 		},
 	}
 }

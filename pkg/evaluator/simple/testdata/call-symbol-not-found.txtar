@@ -1,0 +1,5 @@
+-- input.txt --
+(foo)
+
+-- expected_error.txt --
+symbol not found: foo

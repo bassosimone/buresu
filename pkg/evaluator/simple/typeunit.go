@@ -24,6 +24,6 @@ func (*Unit) String() string {
 var _ Seq = (*Unit)(nil)
 
 // Length implements [Seq].
-func (*Unit) Length() int {
-	return 0
+func (*Unit) Length() (visitor.Value, error) {
+	return &Int{0}, nil
 }

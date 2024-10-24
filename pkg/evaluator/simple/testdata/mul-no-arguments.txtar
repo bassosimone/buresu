@@ -1,0 +1,5 @@
+-- input.txt --
+(*)
+
+-- expected_error.txt --
+*: wrong number of arguments

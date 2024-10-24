@@ -1,0 +1,5 @@
+-- input.txt --
+(if "a" true)
+
+-- expected_error.txt --
+input.code:1:1: interpreter: expected a boolean value, got *simple.String

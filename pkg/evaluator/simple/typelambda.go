@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/bassosimone/buresu/internal/rtx"
 	"github.com/bassosimone/buresu/pkg/ast"
 	"github.com/bassosimone/buresu/pkg/evaluator/visitor"
 )
@@ -39,9 +40,9 @@ func (lv *Lambda) Call(ctx context.Context, args ...visitor.Value) (visitor.Valu
 	// of the closure environment with the parameters bound to the arguments
 	closure := lv.Closure.PushFunctionScope()
 	for idx, arg := range args {
-		if err := closure.DefineValue(lv.Node.Params[idx], arg); err != nil {
-			return nil, err
-		}
+		// the parser guarantees that params names are not duplicated
+		// so I do not see how this define could fail
+		rtx.Must(closure.DefineValue(lv.Node.Params[idx], arg))
 	}
 
 	// 3. evaluate the body of the lambda function in the new environment

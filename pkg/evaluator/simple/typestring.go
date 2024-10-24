@@ -26,6 +26,6 @@ func (v *String) String() string {
 var _ Seq = (*String)(nil)
 
 // Length implements [Seq].
-func (v *String) Length() int {
-	return len(v.Value)
+func (v *String) Length() (visitor.Value, error) {
+	return &Int{len(v.Value)}, nil
 }

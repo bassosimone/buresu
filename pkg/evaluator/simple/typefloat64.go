@@ -30,10 +30,40 @@ func (v *Float64) String() string {
 var _ Num = (*Float64)(nil)
 
 // Add implements Num.
-func (v *Float64) Add(other visitor.Value) (Num, error) {
+func (v *Float64) Add(other visitor.Value) (visitor.Value, error) {
 	num, ok := other.(*Float64)
 	if !ok {
 		return nil, ErrWrongArgumentType
 	}
 	return &Float64{v.Value + num.Value}, nil
+}
+
+// Mul implements Num.
+func (v *Float64) Mul(other visitor.Value) (visitor.Value, error) {
+	num, ok := other.(*Float64)
+	if !ok {
+		return nil, ErrWrongArgumentType
+	}
+	return &Float64{v.Value * num.Value}, nil
+}
+
+// Ensure Float64 implements [Ord].
+var _ Ord = (*Float64)(nil)
+
+// Gt implements Ord.
+func (v *Float64) Gt(other visitor.Value) (visitor.Value, error) {
+	num, ok := other.(*Float64)
+	if !ok {
+		return nil, ErrWrongArgumentType
+	}
+	return &Bool{v.Value > num.Value}, nil
+}
+
+// Lt implements Ord.
+func (v *Float64) Lt(other visitor.Value) (visitor.Value, error) {
+	num, ok := other.(*Float64)
+	if !ok {
+		return nil, ErrWrongArgumentType
+	}
+	return &Bool{v.Value < num.Value}, nil
 }

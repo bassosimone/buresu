@@ -1,0 +1,5 @@
+-- input.txt --
+(length 1)
+
+-- expected_error.txt --
+length: wrong argument type

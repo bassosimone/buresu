@@ -2,8 +2,10 @@
 
 package simple
 
-// Seq represents a sequence.
+import "github.com/bassosimone/buresu/pkg/evaluator/visitor"
+
+// Seq is the sequence type class.
 type Seq interface {
 	// Length returns the length of the sequence.
-	Length() int
+	Length() (visitor.Value, error)
 }

@@ -24,5 +24,5 @@ var _ visitor.Value = (*Quoted)(nil)
 
 // String implements Value.
 func (q *Quoted) String() string {
-	return fmt.Sprintf("(quote %s)", q.Value.String())
+	return fmt.Sprintf("%s", q.Value.String())
 }

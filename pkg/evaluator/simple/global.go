@@ -15,6 +15,10 @@ func NewGlobalEnvironment(writer io.Writer) *Environment {
 	builtins := []*BuiltInFuncValue{
 		NewBuiltInAdd(),
 		NewBuiltInDisplay(writer),
+		NewBuiltInGt(),
+		NewBuiltInLength(),
+		NewBuiltInLt(),
+		NewBuiltInMul(),
 	}
 	for _, builtin := range builtins {
 		rtx.Must(env.DefineValue(builtin.Name, builtin))

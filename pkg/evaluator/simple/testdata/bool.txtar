@@ -1,0 +1,5 @@
+-- input.txt --
+true
+
+-- expected_output.txt --
+true
