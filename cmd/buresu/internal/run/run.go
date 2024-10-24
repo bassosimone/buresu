@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: GPL-3.0-or-later
-
 package run
 
 import (
@@ -14,6 +12,7 @@ import (
 	"github.com/bassosimone/buresu/pkg/evaluator"
 	"github.com/bassosimone/buresu/pkg/parser"
 	"github.com/bassosimone/buresu/pkg/scanner"
+	"github.com/bassosimone/buresu/pkg/typechecker"
 	"github.com/kballard/go-shellquote"
 	"github.com/spf13/pflag"
 )
@@ -49,7 +48,9 @@ func (cmd command) Main(ctx context.Context, argv ...string) error {
 
 	// 3. add options to the parser
 	var emit string
+	var features []string
 	clip.StringVarP(&emit, "emit", "E", "", "Emit specific output (tokens, ast)")
+	clip.StringArrayVarP(&features, "feature", "X", []string{}, "Enable experimental features (e.g., typechecker)")
 
 	// 4. parse the command line
 	if err := clip.Parse(argv[1:]); err != nil {
@@ -75,7 +76,14 @@ func (cmd command) Main(ctx context.Context, argv ...string) error {
 	}
 	scriptFile := args[0]
 
-	// 6. scan the script to produce tokens
+	// 6. create a map of enabled features
+	enabledFeatures := make(map[string]struct{})
+	for _, feature := range features {
+		fmt.Fprintf(os.Stderr, "buresu run: enabling feature: %s\n", feature)
+		enabledFeatures[feature] = struct{}{}
+	}
+
+	// 7. scan the script to produce tokens
 	filep, err := os.Open(scriptFile)
 	if err != nil {
 		err := fmt.Errorf("buresu: cannot open script: %s", err.Error())
@@ -92,7 +100,7 @@ func (cmd command) Main(ctx context.Context, argv ...string) error {
 		return dumper.DumpTokens(os.Stdout, tokens)
 	}
 
-	// 7. parse the tokens to produce an AST
+	// 8. parse the tokens to produce an AST
 	nodes, err := parser.Parse(tokens)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "buresu run: %s\n", err.Error())
@@ -102,11 +110,19 @@ func (cmd command) Main(ctx context.Context, argv ...string) error {
 		return dumper.DumpAST(os.Stdout, nodes)
 	}
 
-	// 8. create the runtime environment
+	// 9. create the runtime environment
 	rootScope := evaluator.NewGlobalEnvironment(os.Stdout)
+	tcEnv := typechecker.NewGlobalEnvironment()
 
-	// 9. evaluate the AST
+	// 10. potentially typecheck and evaluate the script
 	for _, node := range nodes {
+		if _, ok := enabledFeatures["typechecker"]; ok {
+			if _, err := typechecker.Check(ctx, tcEnv, node); err != nil {
+				fmt.Fprintf(os.Stderr, "buresu run: %s\n", err.Error())
+				return err
+			}
+		}
+
 		if _, err := evaluator.Eval(ctx, rootScope, node); err != nil {
 			fmt.Fprintf(os.Stderr, "buresu run: %s\n", err.Error())
 			return err // already wrapped

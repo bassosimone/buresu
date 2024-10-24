@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/bassosimone/buresu/pkg/evaluator/visitor"
 )
@@ -15,7 +16,14 @@ func NewBuiltInDisplay(writer io.Writer) *BuiltInFuncValue {
 	return &BuiltInFuncValue{
 		Name: "display",
 		Fx: func(ctx context.Context, args ...visitor.Value) (visitor.Value, error) {
-			_, err := fmt.Fprintln(writer, args)
+			var buffer strings.Builder
+			for idx, arg := range args {
+				fmt.Printf("%s", arg.String())
+				if idx < len(args)-1 {
+					fmt.Printf(" ")
+				}
+			}
+			_, err := fmt.Fprintln(writer, buffer.String())
 			return &Unit{}, err
 		},
 	}

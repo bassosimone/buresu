@@ -69,7 +69,7 @@ func TestCheck(t *testing.T) {
 
 			// Evaluate the parsed nodes
 			ctx := context.Background()
-			env := simple.NewGlobalEnvironment(os.Stdout)
+			env := simple.NewGlobalEnvironment()
 			var (
 				results []string
 				result  visitor.Type

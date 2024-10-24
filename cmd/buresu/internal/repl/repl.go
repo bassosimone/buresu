@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: GPL-3.0-or-later
-
 package repl
 
 import (
@@ -18,6 +16,7 @@ import (
 	"github.com/bassosimone/buresu/pkg/evaluator"
 	"github.com/bassosimone/buresu/pkg/parser"
 	"github.com/bassosimone/buresu/pkg/scanner"
+	"github.com/bassosimone/buresu/pkg/typechecker"
 	"github.com/chzyer/readline"
 	"github.com/kballard/go-shellquote"
 	"github.com/spf13/pflag"
@@ -58,14 +57,18 @@ func (cmd command) Main(_ context.Context, argv ...string) error {
 	// 2. create command-line parser
 	clip := pflag.NewFlagSet("buresu repl", pflag.ContinueOnError)
 
-	// 3. parse the command line
+	// 3. add options to the parser
+	var features []string
+	clip.StringArrayVarP(&features, "feature", "X", []string{}, "Enable experimental features (e.g., typechecker)")
+
+	// 4. parse the command line
 	if err := clip.Parse(argv[1:]); err != nil {
 		fmt.Fprintf(os.Stderr, "buresu repl: %s\n", err.Error())
 		fmt.Fprintf(os.Stderr, "Run `buresu repl --help` for usage.\n")
 		return err
 	}
 
-	// 4. parse positional arguments
+	// 5. parse positional arguments
 	args := clip.Args()
 	if len(args) > 0 {
 		err := fmt.Errorf("expected no argument, got: %v", shellquote.Join(args...))
@@ -74,17 +77,25 @@ func (cmd command) Main(_ context.Context, argv ...string) error {
 		return err
 	}
 
-	// 5. initialize the readline library
+	// 6. create a map of enabled features
+	enabledFeatures := make(map[string]struct{})
+	for _, feature := range features {
+		fmt.Fprintf(os.Stderr, "buresu repl: enabling feature: %s\n", feature)
+		enabledFeatures[feature] = struct{}{}
+	}
+
+	// 7. initialize the readline library
 	rl, err := readline.New("> ")
 	if err != nil {
 		return fmt.Errorf("buresu repl: failed to initialize readline: %w", err)
 	}
 	defer rl.Close()
 
-	// 6. create the runtime environment
+	// 8. create the runtime environment
 	rootScope := evaluator.NewGlobalEnvironment(os.Stdout)
+	tcEnv := typechecker.NewGlobalEnvironment()
 
-	// 7. arrange for buffer and prompt reset
+	// 9. arrange for buffer and prompt reset
 	buffer := ""
 	prompt := ">>> "
 	resetBufferAndPrompt := func() {
@@ -92,7 +103,7 @@ func (cmd command) Main(_ context.Context, argv ...string) error {
 		prompt = ">>> "
 	}
 
-	// 8. start the REPL loop
+	// 10. start the REPL loop
 	for {
 		rl.SetPrompt(prompt)
 		line, err := rl.Readline()
@@ -127,12 +138,16 @@ func (cmd command) Main(_ context.Context, argv ...string) error {
 			continue
 		}
 
-		evaluate(rootScope, nodes)
+		evaluate(rootScope, tcEnv, nodes, enabledFeatures)
 		resetBufferAndPrompt()
 	}
 }
 
-func evaluate(rootScope *evaluator.Environment, nodes []ast.Node) {
+func evaluate(
+	rootScope *evaluator.Environment,
+	tcEnv *typechecker.Environment,
+	nodes []ast.Node,
+	enabledFeatures map[string]struct{}) {
 	// 1. create cancellable context for interrupt evaluation
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -149,13 +164,21 @@ func evaluate(rootScope *evaluator.Environment, nodes []ast.Node) {
 		}
 	}()
 
-	// 3. evaluate all nodes and print them on stdout
+	// 3. possibly typecheck, then evaluate all nodes and print them on stdout
 	for _, node := range nodes {
+		if _, typecheckerEnabled := enabledFeatures["typechecker"]; typecheckerEnabled {
+			if _, err := typechecker.Check(ctx, tcEnv, node); err != nil {
+				fmt.Fprintf(os.Stderr, "typechecking error: %s\n", err.Error())
+				return
+			}
+		}
+
 		value, err := evaluator.Eval(ctx, rootScope, node)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "evaluation error: %s\n", err.Error())
 			return
 		}
+
 		fmt.Printf("%s\n", value.String())
 	}
 }

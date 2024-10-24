@@ -4,13 +4,12 @@ package simple
 
 import (
 	"context"
-	"io"
 
 	"github.com/bassosimone/buresu/pkg/typechecker/visitor"
 )
 
 // NewGlobalEnvironment creates a new global environment.
-func NewGlobalEnvironment(writer io.Writer) *Environment {
+func NewGlobalEnvironment() *Environment {
 	env := NewEnvironment()
 
 	// define the `Num` type class for `Int` and `Float64`

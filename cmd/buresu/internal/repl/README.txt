@@ -1,4 +1,4 @@
-usage: buresu repl
+usage: buresu repl [flags]
 
 The `buresu repl` command starts an interactive Read-Eval-Print Loop, also
 known as a REPL, that reads Buresu Lisp code and evaluates it on the fly.
@@ -24,6 +24,13 @@ expression that is taking too long to complete.
 Apart from this, the REPL behaves as if you typed the code in a file and
 executed it with the `buresu run` command.
 
-Currently, no command line flags are supported.
+We support the following flags:
+
+    -X, --feature <feature>
+            Enable experimental features (e.g., typechecker).
+            Can be used multiple times.
+
+    -h, --help
+            Show this help message and exit.
 
 This command exits with `0` on success and `1` on failure.
