@@ -7,7 +7,7 @@ import (
 
 	"github.com/bassosimone/buresu/internal/optional"
 	"github.com/bassosimone/buresu/internal/rtx"
-	"github.com/bassosimone/buresu/pkg/typeannotation"
+	"github.com/bassosimone/buresu/pkg/legacy/typeannotation"
 )
 
 var builtInAddFloat64TypeAnnotation = optional.Some(&typeannotation.Annotation{

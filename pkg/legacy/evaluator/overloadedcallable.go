@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bassosimone/buresu/pkg/typeannotation"
+	"github.com/bassosimone/buresu/pkg/legacy/typeannotation"
 )
 
 // overloadedCallable is an environment entry containing

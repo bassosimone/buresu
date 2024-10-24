@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	"github.com/bassosimone/buresu/pkg/ast"
-	"github.com/bassosimone/buresu/pkg/typeannotation"
+	"github.com/bassosimone/buresu/pkg/legacy/typeannotation"
 )
 
 // IntValue represents a lambda value.
