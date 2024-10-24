@@ -1,0 +1,5 @@
+-- input.txt --
+3.14159
+
+-- expected_output.txt --
+Float64

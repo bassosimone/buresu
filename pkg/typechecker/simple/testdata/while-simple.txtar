@@ -1,0 +1,5 @@
+-- input.txt --
+(while true "foobar")
+
+-- expected_output.txt --
+Unit

@@ -1,0 +1,15 @@
+-- input.txt --
+
+(define fx (lambda (x)
+    (if (> x 1000)
+        (block (return! 3))
+        (if (> x 100)
+            (block (return! 2))
+            (if (> x 10)
+                (block (return! 1)))))))
+
+(fx 1)
+
+-- expected_output.txt --
+(Callable (Any) Any)
+(Union Int Unit)

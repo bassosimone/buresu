@@ -1,0 +1,9 @@
+-- input.txt --
+(define fx (lambda (x) (if (> x 0) true)))
+(fx 1)
+(fx 100)
+
+-- expected_output.txt --
+(Callable (Any) Any)
+(Union Bool Unit)
+(Union Bool Unit)

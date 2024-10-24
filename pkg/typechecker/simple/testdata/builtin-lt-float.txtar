@@ -1,0 +1,5 @@
+-- input.txt --
+(< 10.1 5.1)
+
+-- expected_output.txt --
+Bool

@@ -1,0 +1,7 @@
+-- input.txt --
+(define pi 3.14159)
+(set! pi 3.0)
+
+-- expected_output.txt --
+Float64
+Float64

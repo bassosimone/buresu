@@ -1,0 +1,13 @@
+-- input.txt --
+(define fx (lambda (x) x))
+(fx 10)
+(fx "hello")
+(fx ())
+(fx false)
+
+-- expected_output.txt --
+(Callable (Any) Any)
+Int
+String
+Unit
+Bool
