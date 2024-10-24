@@ -1,6 +1,6 @@
 -- input.txt --
 (define makeCounter (lambda (x) (lambda () (block
-    (if (< x 1) (return! ())
+    (if (< x 1) (block (return! ()))
     (set! x (+ x -1))
     x
 ))))
@@ -17,9 +17,9 @@
 total
 
 -- expected_output.txt --
-(lambda (x) "" (lambda () "" (block (cond ((< x 1) (return! ())) (else (set! x (+ x -1)))) x)))
+(lambda (x) "" (lambda () "" (block (cond ((< x 1) (block (return! ()))) (else (set! x (+ x -1)))) x)))
 3
-(lambda () "" (block (cond ((< x 1) (return! ())) (else (set! x (+ x -1)))) x))
+(lambda () "" (block (cond ((< x 1) (block (return! ()))) (else (set! x (+ x -1)))) x))
 2
 1
 0

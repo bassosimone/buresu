@@ -1,10 +1,10 @@
 -- input.ast --
-(block (define x 42) (return! x))
+(lambda () (block (define x 42) (return! x)))
 
 -- expected_output.json --
 [
   {
-    "Type": "BlockExpr",
+    "Type": "LambdaExpr",
     "Value": {
       "Token": {
         "TokenPos": {
@@ -15,67 +15,83 @@
         "TokenType": "OPEN",
         "Value": "("
       },
-      "Exprs": [
-        {
-          "Type": "DefineExpr",
-          "Value": {
-            "Token": {
-              "TokenPos": {
-                "FileName": "input.ast",
-                "LineNumber": 1,
-                "LineColumn": 8
-              },
-              "TokenType": "OPEN",
-              "Value": "("
+      "Params": null,
+      "Docs": "",
+      "Expr": {
+        "Type": "BlockExpr",
+        "Value": {
+          "Token": {
+            "TokenPos": {
+              "FileName": "input.ast",
+              "LineNumber": 1,
+              "LineColumn": 12
             },
-            "Symbol": "x",
-            "Expr": {
-              "Type": "IntLiteral",
+            "TokenType": "OPEN",
+            "Value": "("
+          },
+          "Exprs": [
+            {
+              "Type": "DefineExpr",
               "Value": {
                 "Token": {
                   "TokenPos": {
                     "FileName": "input.ast",
                     "LineNumber": 1,
-                    "LineColumn": 18
+                    "LineColumn": 19
                   },
-                  "TokenType": "NUMBER",
-                  "Value": "42"
+                  "TokenType": "OPEN",
+                  "Value": "("
                 },
-                "Value": "42"
+                "Symbol": "x",
+                "Expr": {
+                  "Type": "IntLiteral",
+                  "Value": {
+                    "Token": {
+                      "TokenPos": {
+                        "FileName": "input.ast",
+                        "LineNumber": 1,
+                        "LineColumn": 29
+                      },
+                      "TokenType": "NUMBER",
+                      "Value": "42"
+                    },
+                    "Value": "42"
+                  }
+                }
               }
-            }
-          }
-        },
-        {
-          "Type": "ReturnStmt",
-          "Value": {
-            "Token": {
-              "TokenPos": {
-                "FileName": "input.ast",
-                "LineNumber": 1,
-                "LineColumn": 22
-              },
-              "TokenType": "OPEN",
-              "Value": "("
             },
-            "Expr": {
-              "Type": "SymbolName",
+            {
+              "Type": "ReturnStmt",
               "Value": {
                 "Token": {
                   "TokenPos": {
                     "FileName": "input.ast",
                     "LineNumber": 1,
-                    "LineColumn": 31
+                    "LineColumn": 33
                   },
-                  "TokenType": "ATOM",
-                  "Value": "x"
+                  "TokenType": "OPEN",
+                  "Value": "("
                 },
-                "Value": "x"
+                "Expr": {
+                  "Type": "SymbolName",
+                  "Value": {
+                    "Token": {
+                      "TokenPos": {
+                        "FileName": "input.ast",
+                        "LineNumber": 1,
+                        "LineColumn": 42
+                      },
+                      "TokenType": "ATOM",
+                      "Value": "x"
+                    },
+                    "Value": "x"
+                  }
+                }
               }
             }
-          }
+          ]
         }
-      ]
+      }
     }
   }
 ]

@@ -1,6 +1,5 @@
--- lambda_test.txtar --
 -- input.ast --
-(lambda (x) "This is a test lambda" (block (false) (()) (while false (return! x))))
+(lambda (x) "This is a test lambda" (block (false) (()) (while false (block (return! x)))))
 
 -- expected_output.json --
 [
@@ -118,7 +117,7 @@
                   }
                 },
                 "Expr": {
-                  "Type": "ReturnStmt",
+                  "Type": "BlockExpr",
                   "Value": {
                     "Token": {
                       "TokenPos": {
@@ -129,21 +128,37 @@
                       "TokenType": "OPEN",
                       "Value": "("
                     },
-                    "Expr": {
-                      "Type": "SymbolName",
-                      "Value": {
-                        "Token": {
-                          "TokenPos": {
-                            "FileName": "input.ast",
-                            "LineNumber": 1,
-                            "LineColumn": 79
+                    "Exprs": [
+                      {
+                        "Type": "ReturnStmt",
+                        "Value": {
+                          "Token": {
+                            "TokenPos": {
+                              "FileName": "input.ast",
+                              "LineNumber": 1,
+                              "LineColumn": 77
+                            },
+                            "TokenType": "OPEN",
+                            "Value": "("
                           },
-                          "TokenType": "ATOM",
-                          "Value": "x"
-                        },
-                        "Value": "x"
+                          "Expr": {
+                            "Type": "SymbolName",
+                            "Value": {
+                              "Token": {
+                                "TokenPos": {
+                                  "FileName": "input.ast",
+                                  "LineNumber": 1,
+                                  "LineColumn": 86
+                                },
+                                "TokenType": "ATOM",
+                                "Value": "x"
+                              },
+                              "Value": "x"
+                            }
+                          }
+                        }
                       }
-                    }
+                    ]
                   }
                 }
               }
