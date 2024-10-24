@@ -11,7 +11,7 @@ import (
 
 	"github.com/bassosimone/buresu/cmd/internal/cliutils"
 	"github.com/bassosimone/buresu/pkg/dumper"
-	"github.com/bassosimone/buresu/pkg/legacy/evaluator"
+	"github.com/bassosimone/buresu/pkg/evaluator"
 	"github.com/bassosimone/buresu/pkg/parser"
 	"github.com/bassosimone/buresu/pkg/scanner"
 	"github.com/kballard/go-shellquote"

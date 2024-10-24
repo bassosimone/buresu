@@ -15,7 +15,7 @@ import (
 
 	"github.com/bassosimone/buresu/cmd/internal/cliutils"
 	"github.com/bassosimone/buresu/pkg/ast"
-	evaluator "github.com/bassosimone/buresu/pkg/evaluator/simple"
+	"github.com/bassosimone/buresu/pkg/evaluator"
 	"github.com/bassosimone/buresu/pkg/parser"
 	"github.com/bassosimone/buresu/pkg/scanner"
 	"github.com/chzyer/readline"
