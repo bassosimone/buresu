@@ -20,7 +20,7 @@ func (p *parser) parseBlock(tok token.Token) (ast.Node, error) {
 			return nil, newError(tok, "unreachable code")
 		}
 
-		expr, err := p.parseAtomOrForm()
+		expr, err := p.parseAtomOrExpressionOrStatement()
 		if err != nil {
 			return nil, err
 		}
@@ -57,7 +57,7 @@ func (p *parser) parseCond(tok token.Token) (ast.Node, error) {
 
 		if p.currentToken().TokenType == token.ATOM && p.currentToken().Value == "else" {
 			p.advance()
-			elseExpr, err = p.parseAtomOrForm()
+			elseExpr, err = p.parseAtomOrExpression()
 			if err != nil {
 				return nil, err
 			}
@@ -67,12 +67,12 @@ func (p *parser) parseCond(tok token.Token) (ast.Node, error) {
 			break // no need to parse more cases
 		}
 
-		predicate, err := p.parseAtomOrForm()
+		predicate, err := p.parseAtomOrExpression()
 		if err != nil {
 			return nil, err
 		}
 
-		expr, err := p.parseAtomOrForm()
+		expr, err := p.parseAtomOrExpression()
 		if err != nil {
 			return nil, err
 		}
@@ -113,11 +113,11 @@ func (p *parser) parseIf(tok token.Token) (ast.Node, error) {
 	// Syntax: ... <predicate> <then-expr> <else-expr>? CLOSE
 
 	// 1. collect predicate and then
-	predicate, err := p.parseAtomOrForm()
+	predicate, err := p.parseAtomOrExpression()
 	if err != nil {
 		return nil, err
 	}
-	thenExpr, err := p.parseAtomOrForm()
+	thenExpr, err := p.parseAtomOrExpression()
 	if err != nil {
 		return nil, err
 	}
@@ -125,7 +125,7 @@ func (p *parser) parseIf(tok token.Token) (ast.Node, error) {
 	// 2. add else branch if present and consume final CLOSE
 	var elseExpr ast.Node = &ast.UnitExpr{Token: tok}
 	if p.currentToken().TokenType != token.CLOSE {
-		elseExpr, err = p.parseAtomOrForm()
+		elseExpr, err = p.parseAtomOrExpression()
 		if err != nil {
 			return nil, err
 		}
@@ -137,36 +137,14 @@ func (p *parser) parseIf(tok token.Token) (ast.Node, error) {
 	return &ast.CondExpr{Token: tok, Cases: cases, ElseExpr: elseExpr}, nil
 }
 
-// parseReturn parses a return form into an AST node.
-func (p *parser) parseReturn(tok token.Token) (ast.Node, error) {
-	// Syntax: ... <expr> CLOSE
-
-	// 1. reject return outside of any lambda
-	if p.lambdadepth <= 0 {
-		return nil, newError(tok, "return! outside of lambda")
-	}
-
-	// 2. <expr>
-	expr, err := p.parseAtomOrForm()
-	if err != nil {
-		return nil, err
-	}
-
-	// 3. CLOSE
-	if _, err := p.consumeTokenWithType(token.CLOSE); err != nil {
-		return nil, err
-	}
-	return &ast.ReturnStmt{Token: tok, Expr: expr}, nil
-}
-
 // parseWhile parses a while form into an AST node.
 func (p *parser) parseWhile(tok token.Token) (ast.Node, error) {
 	// Syntax: ... <predicate> <expr> CLOSE
-	predicate, err := p.parseAtomOrForm()
+	predicate, err := p.parseAtomOrExpression()
 	if err != nil {
 		return nil, err
 	}
-	expr, err := p.parseAtomOrForm()
+	expr, err := p.parseAtomOrExpression()
 	if err != nil {
 		return nil, err
 	}

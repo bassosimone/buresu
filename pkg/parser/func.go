@@ -12,14 +12,14 @@ func (p *parser) parseCall(tok token.Token) (ast.Node, error) {
 	var args []ast.Node
 
 	// <callable>
-	callable, err := p.parseAtomOrForm()
+	callable, err := p.parseAtomOrExpression()
 	if err != nil {
 		return nil, err
 	}
 
 	// <expr> [COMMA] ... CLOSE
 	for p.currentToken().TokenType != token.CLOSE {
-		expr, err := p.parseAtomOrForm()
+		expr, err := p.parseAtomOrExpression()
 		if err != nil {
 			return nil, err
 		}
@@ -48,7 +48,7 @@ func (p *parser) parseLambda(tok token.Token) (ast.Node, error) {
 		return nil, err
 	}
 	for p.currentToken().TokenType != token.CLOSE {
-		paramName, err := p.parseAtomOrForm()
+		paramName, err := p.parseAtomOrExpression()
 		if err != nil {
 			return nil, err
 		}
@@ -76,7 +76,7 @@ func (p *parser) parseLambda(tok token.Token) (ast.Node, error) {
 	// Track the depth inside lambdas so we know when it
 	// is legal to accept a return statement.
 	p.lambdadepth++
-	expr, err := p.parseAtomOrForm()
+	expr, err := p.parseAtomOrExpression()
 	if err != nil {
 		return nil, err
 	}

@@ -30,7 +30,7 @@ func (p *parser) parseDefineOrSet(
 	if err != nil {
 		return nil, err
 	}
-	expr, err := p.parseAtomOrForm()
+	expr, err := p.parseAtomOrExpression()
 	if err != nil {
 		return nil, err
 	}

@@ -31,7 +31,7 @@ func newParser(tokens []token.Token) *parser {
 func (p *parser) Parse() ([]ast.Node, error) {
 	var nodes []ast.Node
 	for p.currentToken().TokenType != token.EOF {
-		node, err := p.parseAtomOrForm()
+		node, err := p.parseAtomOrExpression()
 		if err != nil {
 			return nil, err
 		}
@@ -68,8 +68,23 @@ func (p *parser) consumeTokenWithType(tt token.TokenType) (token.Token, error) {
 	return tok, nil
 }
 
-// parseAtomOrForm determines the type of the current token and delegates to the appropriate parsing function.
-func (p *parser) parseAtomOrForm() (ast.Node, error) {
+// parseAtomOrExpression determines the type of the current token and delegates
+// to the appropriate parsing function for parsing an expression or an atom, which
+// we consider as a self-evaluating expression for the sake of simplicity.
+func (p *parser) parseAtomOrExpression() (ast.Node, error) {
+	return p.parseWithFlags(0)
+}
+
+func (p *parser) parseAtomOrExpressionOrStatement() (ast.Node, error) {
+	return p.parseWithFlags(allowStmts)
+}
+
+const (
+	// allowStmts allows parseWithFlags to parse statements
+	allowStmts = 1 << iota
+)
+
+func (p *parser) parseWithFlags(flags int) (ast.Node, error) {
 	switch tp := p.currentToken(); tp.TokenType {
 	case token.ATOM:
 		return p.parseSymbol()
@@ -78,7 +93,7 @@ func (p *parser) parseAtomOrForm() (ast.Node, error) {
 	case token.STRING:
 		return p.parseString()
 	case token.OPEN:
-		return p.parseForm()
+		return p.parseForm(flags)
 	default:
 		err := newError(tp, "unexpected token %s", tp.TokenType)
 		if tp.TokenType == token.EOF {
@@ -88,8 +103,8 @@ func (p *parser) parseAtomOrForm() (ast.Node, error) {
 	}
 }
 
-// parseForm parses a form token into an AST node.
-func (p *parser) parseForm() (ast.Node, error) {
+// parseForm parses a form honouring the given flags.
+func (p *parser) parseForm(flags int) (ast.Node, error) {
 	tok := p.currentToken()
 	p.advance()
 
@@ -108,9 +123,12 @@ func (p *parser) parseForm() (ast.Node, error) {
 			"define":  p.parseDefine,
 			"lambda":  p.parseLambda,
 			"quote":   p.parseQuote,
-			"return!": p.parseReturn,
+			"return!": p.parseStmtNotAllowed(p.parseReturn),
 			"set!":    p.parseSet,
 			"while":   p.parseWhile,
+		}
+		if flags&allowStmts != 0 {
+			specialForms["return!"] = p.parseReturn
 		}
 		if parseFunc, found := specialForms[form.Value]; found {
 			p.advance() // consume the special form name

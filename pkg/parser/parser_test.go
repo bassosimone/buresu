@@ -264,14 +264,22 @@ func TestParser(t *testing.T) {
 			expectedError:  "<stdin>:1:1: parser: return! outside of lambda",
 		},
 		{
+			input:          "(block (return! 42))",
+			expectedOutput: "(return! 42)",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:8: parser: return! outside of lambda",
+		},
+		{
 			input:          "(lambda () (return! 42))",
-			expectedOutput: "(lambda () \"\" (return! 42))",
-			shouldFail:     false,
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:12: parser: statement not allowed in this context",
 		},
 		{
 			input:          "(lambda () (lambda () (return! 42)))",
 			expectedOutput: "(lambda () \"\" (lambda () \"\" (return! 42)))",
-			shouldFail:     false,
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:23: parser: statement not allowed in this context",
 		},
 		{
 			input:          "(lambda () (return!",

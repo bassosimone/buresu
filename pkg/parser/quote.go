@@ -10,7 +10,7 @@ import (
 // parseQuote parses the quote special form into an AST node.
 func (p *parser) parseQuote(tok token.Token) (ast.Node, error) {
 	// Syntax: ... <expr> CLOSE
-	expr, err := p.parseAtomOrForm()
+	expr, err := p.parseAtomOrExpression()
 	if err != nil {
 		return nil, err
 	}
