@@ -16,6 +16,7 @@ import (
 	"github.com/bassosimone/buresu/cmd/internal/cliutils"
 	"github.com/bassosimone/buresu/pkg/ast"
 	"github.com/bassosimone/buresu/pkg/evaluator"
+	"github.com/bassosimone/buresu/pkg/includer"
 	"github.com/bassosimone/buresu/pkg/parser"
 	"github.com/bassosimone/buresu/pkg/scanner"
 	"github.com/bassosimone/buresu/pkg/typechecker"
@@ -135,6 +136,13 @@ func (cmd command) Main(_ context.Context, argv ...string) error {
 				continue
 			}
 			fmt.Fprintf(os.Stderr, "syntax error: %s\n", err.Error())
+			resetBufferAndPrompt()
+			continue
+		}
+
+		nodes, err = includer.Include(nodes)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "include error: %s\n", err.Error())
 			resetBufferAndPrompt()
 			continue
 		}

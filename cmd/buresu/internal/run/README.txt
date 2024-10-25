@@ -16,10 +16,14 @@ which you can see by using `--emit tokens`.
 2. *parser*: takes the tokens as input and emits an abstract syntax tree,
 or AST, which you can see by using `--emit ast`.
 
-3. *typechecker*: takes the AST as input and checks for type errors,
+3. *includer*: services `(include "path/to/file")` top-level statements
+by including the given file content. You can inspect the AST after including
+other files using `--emit ast_after_include`.
+
+4. *typechecker*: takes the AST as input and checks for type errors,
 which you can enable by using `-X typechecker` or `--feature typechecker`.
 
-4. *interpreter*: takes the AST as input and executes the program.
+5. *interpreter*: takes the AST as input and executes the program.
 
 We support the following flags:
 

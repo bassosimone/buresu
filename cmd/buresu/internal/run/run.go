@@ -12,6 +12,7 @@ import (
 	"github.com/bassosimone/buresu/cmd/internal/cliutils"
 	"github.com/bassosimone/buresu/pkg/dumper"
 	"github.com/bassosimone/buresu/pkg/evaluator"
+	"github.com/bassosimone/buresu/pkg/includer"
 	"github.com/bassosimone/buresu/pkg/parser"
 	"github.com/bassosimone/buresu/pkg/scanner"
 	"github.com/bassosimone/buresu/pkg/typechecker"
@@ -111,11 +112,21 @@ func (cmd command) Main(ctx context.Context, argv ...string) error {
 		return dumper.DumpAST(os.Stdout, nodes)
 	}
 
-	// 9. create the runtime environment
+	// 9. service requests to include other files
+	nodes, err = includer.Include(nodes)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "buresu run: %s\n", err.Error())
+		return err // already wrapped
+	}
+	if emit == "ast_after_include" {
+		return dumper.DumpAST(os.Stdout, nodes)
+	}
+
+	// 10. create the runtime environment
 	rootScope := evaluator.NewGlobalEnvironment(os.Stdout)
 	tcEnv := typechecker.NewGlobalEnvironment()
 
-	// 10. potentially typecheck
+	// 11. potentially typecheck
 	if _, ok := enabledFeatures["typechecker"]; ok {
 		for _, node := range nodes {
 			kind, err := typechecker.Check(ctx, tcEnv, node)
@@ -133,7 +144,7 @@ func (cmd command) Main(ctx context.Context, argv ...string) error {
 		}
 	}
 
-	// 11. evaluate the script
+	// 12. evaluate the script
 	for _, node := range nodes {
 		if _, err := evaluator.Eval(ctx, rootScope, node); err != nil {
 			fmt.Fprintf(os.Stderr, "buresu run: %s\n", err.Error())
