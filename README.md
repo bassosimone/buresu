@@ -60,6 +60,8 @@ to run an interactive shell.
 
 ## Project Structure
 
+- `cmd`: Contains the source code for the command-line interface.
+- `internal`: Contains the internal packages.
 - `pkg/ast`: Contains the AST definitions.
 - `pkg/dumper`: Contains the AST dumper.
 - `pkg/includer`: Contains the includer that includes external scripts in the main script.
