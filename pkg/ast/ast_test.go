@@ -76,6 +76,17 @@ func TestFloatLiteral(t *testing.T) {
 	})
 }
 
+func TestIncludeStmt(t *testing.T) {
+	tok := token.Token{TokenType: token.ATOM, Value: "include"}
+	expr := &IncludeStmt{Token: tok, FilePath: "/path/to/file"}
+	expected := "(include \"/path/to/file\")"
+	t.Run("serialization", func(t *testing.T) {
+		if expr.String() != expected {
+			t.Errorf("expected %s, got %s", expected, expr.String())
+		}
+	})
+}
+
 func TestLambdaExpr(t *testing.T) {
 	tok := token.Token{TokenType: token.ATOM, Value: "lambda"}
 	param := "x"

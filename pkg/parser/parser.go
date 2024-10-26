@@ -31,7 +31,7 @@ func newParser(tokens []token.Token) *parser {
 func (p *parser) Parse() ([]ast.Node, error) {
 	var nodes []ast.Node
 	for p.peek().TokenType != token.EOF {
-		node, err := p.parseWithFlags(0)
+		node, err := p.parseWithFlags(allowInclude) // only at top-level
 		if err != nil {
 			return nil, err
 		}
@@ -101,6 +101,9 @@ func (p *parser) matchAtomWithName(name string) (token.Token, error) {
 const (
 	// allowReturn allows parseWithFlags to parse statements
 	allowReturn = 1 << iota
+
+	// allowInclude allows parseWithFlags to parse include
+	allowInclude
 )
 
 // parseWithFlags parses atoms, numbers, strings, expressions, and
@@ -143,13 +146,17 @@ func (p *parser) parseForm(flags int) (ast.Node, error) {
 		specialForms := map[string]func(token.Token) (ast.Node, error){
 			"block":   p.parseBlock,
 			"cond":    p.parseCond,
-			"if":      p.parseIf,
 			"define":  p.parseDefine,
+			"if":      p.parseIf,
+			"include": p.parseStmtNotAllowed("include", p.parseInclude),
 			"lambda":  p.parseLambda,
 			"quote":   p.parseQuote,
-			"return!": p.parseStmtNotAllowed(p.parseReturn),
+			"return!": p.parseStmtNotAllowed("return!", p.parseReturn),
 			"set!":    p.parseSet,
 			"while":   p.parseWhile,
+		}
+		if flags&allowInclude != 0 {
+			specialForms["include"] = p.parseInclude
 		}
 		if flags&allowReturn != 0 {
 			specialForms["return!"] = p.parseReturn

@@ -114,6 +114,17 @@ func (fltLit *FloatLiteral) String() string {
 	return fltLit.Value
 }
 
+// IncludeStmt represents an include expression with a file path.
+type IncludeStmt struct {
+	Token    token.Token
+	FilePath string
+}
+
+// String converts the IncludeExpr node back to lisp source code.
+func (inc *IncludeStmt) String() string {
+	return fmt.Sprintf("(include %s)", jsonMarshalWithoutEscaping(inc.FilePath))
+}
+
 // IntLiteral represents an integer value.
 type IntLiteral struct {
 	Token token.Token

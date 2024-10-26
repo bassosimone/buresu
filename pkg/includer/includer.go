@@ -61,61 +61,15 @@ func newIncluder() *includer {
 	}
 }
 
-// parseIncludeNode parses an include node and returns the file path if found.
-//
-// Returns:
-//
-// - filenode: the node containing the path to include (nil if the node is not
-// an include statement or if the node is an invalid include statement);
-//
-// - found: true if the node is an include statement, false otherwise or
-// if the node is an invalid include statement;
-//
-// - err: an error if the node is an invalid include statement, nil otherwise.
-func parseIncludeNode(node ast.Node) (filenode *ast.StringLiteral, found bool, err error) {
-	// This is the structure we're matching for:
-	//
-	//	CallExpr{
-	//		Callable: SymbolName{"include"},
-	//		Args: [
-	//			StringLiteral{"/path/to/file.brs"}]}
-	//
-	// Anything else is not an include statement.
-	//
-	// Also, the include statement needs to have a single argument
-	// and such an argument must be a string literal.
-	callExpr, ok := node.(*ast.CallExpr)
-	if !ok {
-		return nil, false, nil
-	}
-	symbol, ok := callExpr.Callable.(*ast.SymbolName)
-	if !ok || symbol.Value != "include" {
-		return nil, false, nil
-	}
-	if len(callExpr.Args) != 1 {
-		return nil, false, newError(callExpr.Token, "include expects exactly one argument")
-	}
-	arg0, ok := callExpr.Args[0].(*ast.StringLiteral)
-	if !ok {
-		return nil, false, newError(callExpr.Token, "include expects a string argument")
-	}
-	return arg0, true, nil
-}
-
 // includeNodes processes the given AST and handles include statements.
 func (inc *includer) includeNodes(nodes []ast.Node) ([]ast.Node, error) {
 	var result []ast.Node
 	for _, node := range nodes {
 
-		// filter include nodes and bail in case of error
-		filenode, found, err := parseIncludeNode(node)
-		if err != nil {
-			return nil, err
-		}
-
 		// if the node is an include expression, include the file
+		includenode, found := node.(*ast.IncludeStmt)
 		if found {
-			processedNodes, err := inc.includeFileOnce(filenode.Token, filenode.Value)
+			processedNodes, err := inc.includeFileOnce(includenode.Token, includenode.FilePath)
 			if err != nil {
 				return nil, err
 			}
@@ -123,10 +77,7 @@ func (inc *includer) includeNodes(nodes []ast.Node) ([]ast.Node, error) {
 			continue
 		}
 
-		// otherwise just make sure there are no nested includes expressions
-		if err := inc.validateNoNestedIncludes(node); err != nil {
-			return nil, err
-		}
+		// otherwise just append the node to the result
 		result = append(result, node)
 	}
 	return result, nil
@@ -184,76 +135,4 @@ func (inc *includer) includeFile(tok token.Token, filename string) ([]ast.Node, 
 	}
 
 	return includedNodes, nil
-}
-
-// validateNoNestedIncludes checks for nested include statements and returns an error if found.
-func (inc *includer) validateNoNestedIncludes(node ast.Node) error {
-	switch n := node.(type) {
-	// We need to inspect each node that may contain other nodes and make sure
-	// none of them contains a nested include.
-	case *ast.BlockExpr:
-		for _, expr := range n.Exprs {
-			if err := inc.validateNoNestedIncludes(expr); err != nil {
-				return err
-			}
-		}
-		return nil
-
-	case *ast.CondExpr:
-		for _, c := range n.Cases {
-			if err := inc.validateNoNestedIncludes(c.Predicate); err != nil {
-				return err
-			}
-			if err := inc.validateNoNestedIncludes(c.Expr); err != nil {
-				return err
-			}
-		}
-		if err := inc.validateNoNestedIncludes(n.ElseExpr); err != nil {
-			return err
-		}
-		return nil
-
-	case *ast.LambdaExpr:
-		return inc.validateNoNestedIncludes(n.Expr)
-
-	case *ast.WhileExpr:
-		if err := inc.validateNoNestedIncludes(n.Predicate); err != nil {
-			return err
-		}
-		if err := inc.validateNoNestedIncludes(n.Expr); err != nil {
-			return err
-		}
-		return nil
-
-	case *ast.CallExpr:
-		if _, found, err := parseIncludeNode(n); found || err != nil {
-			if err != nil {
-				return err
-			}
-			return newError(n.Token, "include statement must be at top level")
-		}
-
-		if err := inc.validateNoNestedIncludes(n.Callable); err != nil {
-			return err
-		}
-		for _, arg := range n.Args {
-			if err := inc.validateNoNestedIncludes(arg); err != nil {
-				return err
-			}
-		}
-		return nil
-
-	case *ast.ReturnStmt:
-		return inc.validateNoNestedIncludes(n.Expr)
-
-	case *ast.SetExpr:
-		return inc.validateNoNestedIncludes(n.Expr)
-
-	case *ast.DefineExpr:
-		return inc.validateNoNestedIncludes(n.Expr)
-
-	// Nothing to do for all other node types
-	default:
-		return nil
-	}
 }

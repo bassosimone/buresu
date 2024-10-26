@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: GPL-3.0-or-later
-
 package includer
 
 import (
@@ -39,9 +37,6 @@ func mockReadFile(filename string) ([]byte, error) {
 	case "fileZ.lisp":
 		return []byte(`(define z 44)`), nil
 
-	case "block_include.lisp":
-		return []byte(`(block (include "file1.lisp"))`), nil
-
 	default:
 		return nil, errors.New("file not found")
 	}
@@ -67,10 +62,9 @@ func TestInclude(t *testing.T) {
 		{
 			name: "simple include",
 			input: []ast.Node{
-				&ast.CallExpr{
+				&ast.IncludeStmt{
 					Token:    token.Token{TokenType: token.ATOM, Value: "include"},
-					Callable: &ast.SymbolName{Token: token.Token{TokenType: token.ATOM, Value: "include"}, Value: "include"},
-					Args:     []ast.Node{&ast.StringLiteral{Token: token.Token{TokenType: token.STRING, Value: "\"file1.lisp\""}, Value: "file1.lisp"}},
+					FilePath: "file1.lisp",
 				},
 			},
 			expected: []ast.Node{
@@ -87,10 +81,9 @@ func TestInclude(t *testing.T) {
 		{
 			name: "include with cycle",
 			input: []ast.Node{
-				&ast.CallExpr{
+				&ast.IncludeStmt{
 					Token:    token.Token{TokenType: token.ATOM, Value: "include"},
-					Callable: &ast.SymbolName{Token: token.Token{TokenType: token.ATOM, Value: "include"}, Value: "include"},
-					Args:     []ast.Node{&ast.StringLiteral{Token: token.Token{TokenType: token.STRING, Value: "\"cycle.lisp\""}, Value: "cycle.lisp"}},
+					FilePath: "cycle.lisp",
 				},
 			},
 			expected:     nil,
@@ -101,10 +94,9 @@ func TestInclude(t *testing.T) {
 		{
 			name: "read file error",
 			input: []ast.Node{
-				&ast.CallExpr{
+				&ast.IncludeStmt{
 					Token:    token.Token{TokenType: token.ATOM, Value: "include"},
-					Callable: &ast.SymbolName{Token: token.Token{TokenType: token.ATOM, Value: "include"}, Value: "include"},
-					Args:     []ast.Node{&ast.StringLiteral{Token: token.Token{TokenType: token.STRING, Value: "\"nonexistent.lisp\""}, Value: "nonexistent.lisp"}},
+					FilePath: "nonexistent.lisp",
 				},
 			},
 			expected:     nil,
@@ -115,10 +107,9 @@ func TestInclude(t *testing.T) {
 		{
 			name: "scanner error",
 			input: []ast.Node{
-				&ast.CallExpr{
+				&ast.IncludeStmt{
 					Token:    token.Token{TokenType: token.ATOM, Value: "include"},
-					Callable: &ast.SymbolName{Token: token.Token{TokenType: token.ATOM, Value: "include"}, Value: "include"},
-					Args:     []ast.Node{&ast.StringLiteral{Token: token.Token{TokenType: token.STRING, Value: "\"invalid_scan.lisp\""}, Value: "invalid_scan.lisp"}},
+					FilePath: "invalid_scan.lisp",
 				},
 			},
 			expected:     nil,
@@ -129,10 +120,9 @@ func TestInclude(t *testing.T) {
 		{
 			name: "parse error",
 			input: []ast.Node{
-				&ast.CallExpr{
+				&ast.IncludeStmt{
 					Token:    token.Token{TokenType: token.ATOM, Value: "include"},
-					Callable: &ast.SymbolName{Token: token.Token{TokenType: token.ATOM, Value: "include"}, Value: "include"},
-					Args:     []ast.Node{&ast.StringLiteral{Token: token.Token{TokenType: token.STRING, Value: "\"invalid_parse.lisp\""}, Value: "invalid_parse.lisp"}},
+					FilePath: "invalid_parse.lisp",
 				},
 			},
 			expected:     nil,
@@ -143,10 +133,9 @@ func TestInclude(t *testing.T) {
 		{
 			name: "nested includes with duplicate",
 			input: []ast.Node{
-				&ast.CallExpr{
+				&ast.IncludeStmt{
 					Token:    token.Token{TokenType: token.ATOM, Value: "include"},
-					Callable: &ast.SymbolName{Token: token.Token{TokenType: token.ATOM, Value: "include"}, Value: "include"},
-					Args:     []ast.Node{&ast.StringLiteral{Token: token.Token{TokenType: token.STRING, Value: "\"fileX.lisp\""}, Value: "fileX.lisp"}},
+					FilePath: "fileX.lisp",
 				},
 			},
 			expected: []ast.Node{
@@ -157,57 +146,6 @@ func TestInclude(t *testing.T) {
 				},
 			},
 			err:          "",
-			overrideSkip: false,
-		},
-
-		{
-			name: "callable not include",
-			input: []ast.Node{
-				&ast.CallExpr{
-					Token:    token.Token{TokenType: token.ATOM, Value: "notInclude"},
-					Callable: &ast.SymbolName{Token: token.Token{TokenType: token.ATOM, Value: "notInclude"}, Value: "notInclude"},
-					Args:     []ast.Node{&ast.StringLiteral{Token: token.Token{TokenType: token.STRING, Value: "\"file1.lisp\""}, Value: "file1.lisp"}},
-				},
-			},
-			expected: []ast.Node{
-				&ast.CallExpr{
-					Token:    token.Token{TokenType: token.ATOM, Value: "notInclude"},
-					Callable: &ast.SymbolName{Token: token.Token{TokenType: token.ATOM, Value: "notInclude"}, Value: "notInclude"},
-					Args:     []ast.Node{&ast.StringLiteral{Token: token.Token{TokenType: token.STRING, Value: "\"file1.lisp\""}, Value: "file1.lisp"}},
-				},
-			},
-			err:          "",
-			overrideSkip: false,
-		},
-
-		{
-			name: "include with wrong number of args",
-			input: []ast.Node{
-				&ast.CallExpr{
-					Token:    token.Token{TokenType: token.ATOM, Value: "include"},
-					Callable: &ast.SymbolName{Token: token.Token{TokenType: token.ATOM, Value: "include"}, Value: "include"},
-					Args: []ast.Node{
-						&ast.StringLiteral{Token: token.Token{TokenType: token.STRING, Value: "\"file1.lisp\""}, Value: "file1.lisp"},
-						&ast.StringLiteral{Token: token.Token{TokenType: token.STRING, Value: "\"file2.lisp\""}, Value: "file2.lisp"},
-					},
-				},
-			},
-			expected:     nil,
-			err:          "include expects exactly one argument",
-			overrideSkip: false,
-		},
-
-		{
-			name: "include with non-string argument",
-			input: []ast.Node{
-				&ast.CallExpr{
-					Token:    token.Token{TokenType: token.ATOM, Value: "include"},
-					Callable: &ast.SymbolName{Token: token.Token{TokenType: token.ATOM, Value: "include"}, Value: "include"},
-					Args:     []ast.Node{&ast.IntLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "42"}, Value: "42"}},
-				},
-			},
-			expected:     nil,
-			err:          "include expects a string argument",
 			overrideSkip: false,
 		},
 	}

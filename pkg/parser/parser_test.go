@@ -190,6 +190,32 @@ func TestParser(t *testing.T) {
 			expectedError:  "<stdin>:1:15: parser: unexpected token EOF",
 		},
 
+		// include tests
+		{
+			input:          "(include \"foobar\")",
+			expectedOutput: "(include \"foobar\")",
+			shouldFail:     false,
+			expectedError:  "",
+		},
+		{
+			input:          "(block (include \"foobar\"))",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:8: parser: include statement not allowed in this context",
+		},
+		{
+			input:          "(include ())",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:10: parser: expected token STRING, found OPEN",
+		},
+		{
+			input:          "(include \"foobar\"",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:17: parser: expected token CLOSE, found EOF",
+		},
+
 		// lambda tests
 		{
 			input:          "(lambda x)",
@@ -275,13 +301,13 @@ func TestParser(t *testing.T) {
 			input:          "(lambda () (return! 42))",
 			expectedOutput: "",
 			shouldFail:     true,
-			expectedError:  "<stdin>:1:12: parser: statement not allowed in this context",
+			expectedError:  "<stdin>:1:12: parser: return! statement not allowed in this context",
 		},
 		{
 			input:          "(lambda () (lambda () (return! 42)))",
 			expectedOutput: "(lambda () \"\" (lambda () \"\" (return! 42)))",
 			shouldFail:     true,
-			expectedError:  "<stdin>:1:23: parser: statement not allowed in this context",
+			expectedError:  "<stdin>:1:23: parser: return! statement not allowed in this context",
 		},
 		{
 			input:          "(lambda () (return!",
