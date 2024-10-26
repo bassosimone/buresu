@@ -4,17 +4,13 @@ package scanner_test
 
 import (
 	"bytes"
-	"encoding/json"
-	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
-	"golang.org/x/tools/txtar"
-
+	"github.com/bassosimone/buresu/internal/txtartesting"
 	"github.com/bassosimone/buresu/pkg/scanner"
 	"github.com/bassosimone/buresu/pkg/token"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestErrorString(t *testing.T) {
@@ -33,51 +29,18 @@ func TestErrorString(t *testing.T) {
 }
 
 func TestScanner(t *testing.T) {
-	testdataDir := filepath.Join("testdata")
-	files, err := os.ReadDir(testdataDir)
+	testCases, err := txtartesting.LoadTestCases("testdata")
 	if err != nil {
-		t.Fatalf("failed to read testdata directory: %v", err)
+		t.Fatalf("failed to load test cases: %v", err)
 	}
 
-	for _, file := range files {
-		if filepath.Ext(file.Name()) != ".txtar" {
-			continue
-		}
-
-		t.Run(file.Name(), func(t *testing.T) {
-			archivePath := filepath.Join(testdataDir, file.Name())
-			archiveData, err := os.ReadFile(archivePath)
-			if err != nil {
-				t.Fatalf("failed to read txtar file: %v", err)
-			}
-
-			archive := txtar.Parse(archiveData)
-
-			var (
-				inputSource    string
-				expectedOutput []byte
-				expectedError  string
-			)
-
-			for _, file := range archive.Files {
-				switch file.Name {
-				case "input.txt":
-					inputSource = string(file.Data)
-				case "expected_tokens.json":
-					expectedOutput = file.Data
-				case "expected_error.txt":
-					expectedError = string(file.Data)
-				}
-			}
-
+	for _, tc := range testCases {
+		t.Run(tc.Name, func(t *testing.T) {
 			// Run the scanner
-			tokens, err := scanner.Scan("input.txt", bytes.NewReader([]byte(inputSource)))
-			if expectedError != "" {
-				if err == nil {
-					t.Fatalf("expected error, got none")
-				}
-				if diff := cmp.Diff(strings.TrimSpace(expectedError), err.Error()); diff != "" {
-					t.Errorf("mismatch (-expected +got):\n%s", diff)
+			tokens, err := scanner.Scan("input.txt", bytes.NewReader([]byte(tc.Input)))
+			if tc.Error != "" {
+				if err := tc.CompareError(err); err != nil {
+					t.Fatal(err)
 				}
 				return
 			}
@@ -86,17 +49,9 @@ func TestScanner(t *testing.T) {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			// Serialize the tokens to JSON
-			var buf bytes.Buffer
-			encoder := json.NewEncoder(&buf)
-			encoder.SetIndent("", "  ")
-			if err := encoder.Encode(tokens); err != nil {
-				t.Fatalf("failed to encode tokens: %v", err)
-			}
-
 			// Compare the serialized output with the expected output
-			if diff := cmp.Diff(string(expectedOutput), buf.String()); diff != "" {
-				t.Errorf("mismatch (-expected +got):\n%s", diff)
+			if err := tc.CompareJSONOutput(tokens); err != nil {
+				t.Fatal(err)
 			}
 		})
 	}

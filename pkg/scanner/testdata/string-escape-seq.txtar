@@ -1,7 +1,7 @@
--- input.txt --
+-- input --
 "hello\nworld\t\"escaped\"\rnew\\line"
 
--- expected_tokens.json --
+-- output --
 [
   {
     "TokenPos": {
@@ -15,8 +15,8 @@
   {
     "TokenPos": {
       "FileName": "input.txt",
-      "LineNumber": 3,
-      "LineColumn": 0
+      "LineNumber": 1,
+      "LineColumn": 38
     },
     "TokenType": "EOF",
     "Value": ""

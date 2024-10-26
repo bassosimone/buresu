@@ -1,7 +1,7 @@
--- input.txt --
+-- input --
 atom!
 
--- expected_tokens.json --
+-- output --
 [
   {
     "TokenPos": {
@@ -15,8 +15,8 @@ atom!
   {
     "TokenPos": {
       "FileName": "input.txt",
-      "LineNumber": 3,
-      "LineColumn": 0
+      "LineNumber": 1,
+      "LineColumn": 5
     },
     "TokenType": "EOF",
     "Value": ""

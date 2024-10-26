@@ -1,5 +1,5 @@
--- input.txt --
+-- input --
 <<<<<<
 
--- expected_error.txt --
+-- error --
 input.txt:1:1: scanner: expected [ ()], found: U+003C '<'

@@ -1,5 +1,5 @@
--- input.txt --
+-- input --
 12.34.56
 
--- expected_error.txt --
+-- error --
 input.txt:1:1: scanner: multiple dots in number literal

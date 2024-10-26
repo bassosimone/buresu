@@ -1,11 +1,11 @@
--- input.txt --
+-- input --
 
--- expected_tokens.json --
+-- output --
 [
   {
     "TokenPos": {
       "FileName": "input.txt",
-      "LineNumber": 2,
+      "LineNumber": 1,
       "LineColumn": 0
     },
     "TokenType": "EOF",
