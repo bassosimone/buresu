@@ -169,17 +169,13 @@ func (s *scanner) Scan() ([]token.Token, error) {
 			tokens = append(tokens, token)
 			continue
 
-		case strings.ContainsRune("+*/<=>:.", chr): // `-` already handled above
+		default:
 			token, err := s.scanSymbolicAtom(pos)
 			if err != nil {
 				return nil, err
 			}
 			tokens = append(tokens, token)
 			continue
-
-		default:
-			err := newError(pos, fmt.Sprintf("unexpected char at top level: %U '%c'", chr, chr))
-			return nil, err
 		}
 	}
 }
@@ -318,38 +314,42 @@ func (s *scanner) scanAlphabeticAtom(pos token.Position) (token.Token, error) {
 
 // scanSymbolicAtom scans a symbolic atom token from the input.
 func (s *scanner) scanSymbolicAtom(pos token.Position) (token.Token, error) {
-	var value strings.Builder
-	value.WriteRune(s.current)
-	s.advance()
-
 	var tok token.Token
-	switch value.String() {
-	case "+":
+	switch s.current {
+	case '+':
+		s.advance()
 		tok = s.newToken(token.ATOM, pos, "+")
-	case "-":
+
+	case '-':
+		s.advance()
 		tok = s.newToken(token.ATOM, pos, "-")
-	case "*":
+
+	case '*':
+		s.advance()
 		tok = s.newToken(token.ATOM, pos, "*")
-	case "/":
+
+	case '/':
+		s.advance()
 		tok = s.newToken(token.ATOM, pos, "/")
-	case ".":
+
+	case '.':
+		s.advance()
 		tok = s.newToken(token.ATOM, pos, ".")
 
-	case "=":
+	case '=':
+		s.advance()
 		if s.current == '=' {
-			value.WriteRune(s.current)
 			s.advance()
 			tok = s.newToken(token.ATOM, pos, "==")
 		} else {
 			tok = s.newToken(token.ATOM, pos, "=")
 		}
 
-	case "<":
+	case '<':
+		s.advance()
 		if s.current == '=' {
-			value.WriteRune(s.current)
 			s.advance()
 			if s.current == '>' {
-				value.WriteRune(s.current)
 				s.advance()
 				tok = s.newToken(token.ATOM, pos, "<=>")
 			} else {
@@ -359,29 +359,33 @@ func (s *scanner) scanSymbolicAtom(pos token.Position) (token.Token, error) {
 			tok = s.newToken(token.ATOM, pos, "<")
 		}
 
-	case ">":
+	case '>':
+		s.advance()
 		if s.current == '=' {
-			value.WriteRune(s.current)
 			s.advance()
 			tok = s.newToken(token.ATOM, pos, ">=")
 		} else {
 			tok = s.newToken(token.ATOM, pos, ">")
 		}
 
-	case ":":
+	case ':':
+		s.advance()
 		if s.current == ':' {
-			value.WriteRune(s.current)
 			s.advance()
 			tok = s.newToken(token.ATOM, pos, "::")
 		} else {
 			tok = s.newToken(token.ATOM, pos, ":")
 		}
+
 	default:
-		return token.Token{}, newError(pos, fmt.Sprintf("unexpected symbolic atom: %s", value.String()))
+		return token.Token{}, newError(pos, fmt.Sprintf(
+			"unexpected symbolic atom: %U '%c'", s.current, s.current))
 	}
 
-	if s.current != 0 && !unicode.IsSpace(s.current) && !strings.ContainsRune("()", s.current) {
-		err := newError(pos, fmt.Sprintf("expected [ ()], found: %U '%c'", s.current, s.current))
+	if s.current != 0 && !unicode.IsSpace(s.current) &&
+		!strings.ContainsRune("()", s.current) {
+		err := newError(pos, fmt.Sprintf(
+			"expected [ ()], found: %U '%c'", s.current, s.current))
 		return token.Token{}, err
 	}
 

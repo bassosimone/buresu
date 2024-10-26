@@ -2,4 +2,4 @@
 @
 
 -- error --
-input.txt:1:1: scanner: unexpected char at top level: U+0040 '@'
+input.txt:1:1: scanner: unexpected symbolic atom: U+0040 '@'
