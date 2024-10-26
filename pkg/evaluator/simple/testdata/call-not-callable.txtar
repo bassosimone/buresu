@@ -1,6 +1,6 @@
--- input.txt --
+-- input --
 (define foo ())
 (foo)
 
--- expected_error.txt --
+-- error --
 expected a callable, got *simple.Unit

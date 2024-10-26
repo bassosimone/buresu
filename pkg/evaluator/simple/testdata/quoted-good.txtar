@@ -1,5 +1,5 @@
--- input.txt --
+-- input --
 (quote (if false true))
 
--- expected_output.txt --
+-- output --
 (quote (cond (false true) (else ())))

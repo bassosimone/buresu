@@ -1,5 +1,5 @@
--- input.txt --
+-- input --
 (+ 3 2)
 
--- expected_output.txt --
+-- output --
 5

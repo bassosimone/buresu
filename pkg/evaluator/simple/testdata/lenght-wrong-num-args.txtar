@@ -1,5 +1,5 @@
--- input.txt --
+-- input --
 (length)
 
--- expected_error.txt --
+-- error --
 length: wrong number of arguments

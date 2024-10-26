@@ -1,5 +1,5 @@
--- input.txt --
+-- input --
 (length "foo")
 
--- expected_output.txt --
+-- output --
 3

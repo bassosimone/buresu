@@ -1,6 +1,6 @@
--- input.txt --
+-- input --
 (define x 10)
 (define x 11)
 
--- expected_error.txt --
+-- error --
 input.code:2:1: interpreter: symbol already defined: x

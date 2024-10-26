@@ -1,5 +1,5 @@
--- input.txt --
+-- input --
 (display 0.5 "and" 0.5 "or" 1 +)
 
--- expected_output.txt --
+-- output --
 ()

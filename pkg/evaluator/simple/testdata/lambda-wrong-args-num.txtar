@@ -1,4 +1,4 @@
--- input.txt --
+-- input --
 ;; fact implements the factorial function in buresu
 (define fact (lambda (x) (block
     (if (< x 1) (block (return! 0)))
@@ -14,5 +14,5 @@
 
 (fact)
 
--- expected_error.txt --
+-- error --
 wrong number of arguments: expected 1, got 0

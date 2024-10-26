@@ -1,4 +1,4 @@
--- input.txt --
+-- input --
 ;; fact implements the factorial function in buresu
 (define fact (lambda (x) (block
     (if (< x 1) (block (return! 0)))
@@ -20,7 +20,7 @@
 (fact 4)
 (fact 5)
 
--- expected_output.txt --
+-- output --
 (lambda (x) "" (block (cond ((< x 1) (block (return! 0))) (else ())) (define total 1) (while (> x 1) (block (set! total (* total x)) (set! x (+ x -1)))) (return! total)))
 0
 0

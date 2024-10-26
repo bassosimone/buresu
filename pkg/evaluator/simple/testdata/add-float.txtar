@@ -1,5 +1,5 @@
--- input.txt --
+-- input --
 (+ 0.5 0.5)
 
--- expected_output.txt --
+-- output --
 1.000000

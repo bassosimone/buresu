@@ -1,5 +1,5 @@
--- input.txt --
+-- input --
 (> "" 1.1)
 
--- expected_error.txt --
+-- error --
 >: wrong argument type
