@@ -1,0 +1,17 @@
+-- input --
+(def x 42)
+
+-- output --
+
+{
+  "type": "DefineExpr",
+  "symbol": "x",
+  "expr": {
+    "type": "IntLiteral",
+    "value": "42"
+  }
+}
+
+-- unexpected --
+
+unexpected content
