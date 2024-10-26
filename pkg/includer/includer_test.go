@@ -53,11 +53,16 @@ func TestInclude(t *testing.T) {
 	readFile = mockReadFile
 	defer func() { readFile = os.ReadFile }()
 
+	// Allows to temporarily skip all tests such that we can
+	// only run the ones marked as overrideSkip
+	skipAll := false
+
 	tests := []struct {
-		name     string
-		input    []ast.Node
-		expected []ast.Node
-		err      string
+		name         string
+		input        []ast.Node
+		expected     []ast.Node
+		err          string
+		overrideSkip bool
 	}{
 		{
 			name: "simple include",
@@ -75,7 +80,8 @@ func TestInclude(t *testing.T) {
 					Expr:   &ast.IntLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "42"}, Value: "42"},
 				},
 			},
-			err: "",
+			err:          "",
+			overrideSkip: false,
 		},
 
 		{
@@ -87,8 +93,9 @@ func TestInclude(t *testing.T) {
 					Args:     []ast.Node{&ast.StringLiteral{Token: token.Token{TokenType: token.STRING, Value: "\"cycle.lisp\""}, Value: "cycle.lisp"}},
 				},
 			},
-			expected: nil,
-			err:      "inclusion cycle detected for file cycle.lisp",
+			expected:     nil,
+			err:          "inclusion cycle detected for file cycle.lisp",
+			overrideSkip: false,
 		},
 
 		{
@@ -100,8 +107,9 @@ func TestInclude(t *testing.T) {
 					Args:     []ast.Node{&ast.StringLiteral{Token: token.Token{TokenType: token.STRING, Value: "\"nonexistent.lisp\""}, Value: "nonexistent.lisp"}},
 				},
 			},
-			expected: nil,
-			err:      "failed to read file nonexistent.lisp",
+			expected:     nil,
+			err:          "failed to read file nonexistent.lisp",
+			overrideSkip: false,
 		},
 
 		{
@@ -113,8 +121,9 @@ func TestInclude(t *testing.T) {
 					Args:     []ast.Node{&ast.StringLiteral{Token: token.Token{TokenType: token.STRING, Value: "\"invalid_scan.lisp\""}, Value: "invalid_scan.lisp"}},
 				},
 			},
-			expected: nil,
-			err:      "failed to scan file invalid_scan.lisp",
+			expected:     nil,
+			err:          "failed to scan file invalid_scan.lisp",
+			overrideSkip: false,
 		},
 
 		{
@@ -126,8 +135,9 @@ func TestInclude(t *testing.T) {
 					Args:     []ast.Node{&ast.StringLiteral{Token: token.Token{TokenType: token.STRING, Value: "\"invalid_parse.lisp\""}, Value: "invalid_parse.lisp"}},
 				},
 			},
-			expected: nil,
-			err:      "failed to parse file invalid_parse.lisp",
+			expected:     nil,
+			err:          "failed to parse file invalid_parse.lisp",
+			overrideSkip: false,
 		},
 
 		{
@@ -146,7 +156,8 @@ func TestInclude(t *testing.T) {
 					Expr:   &ast.IntLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "44"}, Value: "44"},
 				},
 			},
-			err: "",
+			err:          "",
+			overrideSkip: false,
 		},
 
 		{
@@ -165,7 +176,8 @@ func TestInclude(t *testing.T) {
 					Args:     []ast.Node{&ast.StringLiteral{Token: token.Token{TokenType: token.STRING, Value: "\"file1.lisp\""}, Value: "file1.lisp"}},
 				},
 			},
-			err: "",
+			err:          "",
+			overrideSkip: false,
 		},
 
 		{
@@ -180,8 +192,9 @@ func TestInclude(t *testing.T) {
 					},
 				},
 			},
-			expected: nil,
-			err:      "include expects exactly one argument",
+			expected:     nil,
+			err:          "include expects exactly one argument",
+			overrideSkip: false,
 		},
 
 		{
@@ -193,13 +206,17 @@ func TestInclude(t *testing.T) {
 					Args:     []ast.Node{&ast.IntLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "42"}, Value: "42"}},
 				},
 			},
-			expected: nil,
-			err:      "include expects a string argument",
+			expected:     nil,
+			err:          "include expects a string argument",
+			overrideSkip: false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			if skipAll && !tt.overrideSkip {
+				t.Skip("skipAll is true and overrideSkip is false")
+			}
 			result, err := Include(tt.input)
 
 			if tt.err != "" {
