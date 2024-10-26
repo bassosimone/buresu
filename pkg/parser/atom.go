@@ -6,13 +6,16 @@ import (
 	"strings"
 
 	"github.com/bassosimone/buresu/pkg/ast"
+	"github.com/bassosimone/buresu/pkg/token"
 )
 
 // parseSymbol parses an atom token into an AST node.
 func (p *parser) parseSymbol() (ast.Node, error) {
 	// Syntax: ATOM
-	tok := p.currentToken()
-	p.advance()
+	tok, err := p.match(token.ATOM)
+	if err != nil {
+		return nil, err
+	}
 	var rv ast.Node
 	switch {
 	case tok.Value == "false":
@@ -28,8 +31,10 @@ func (p *parser) parseSymbol() (ast.Node, error) {
 // parseNumber parses a number token into an AST node.
 func (p *parser) parseNumber() (ast.Node, error) {
 	// Syntax: NUMBER
-	tok := p.currentToken()
-	p.advance()
+	tok, err := p.match(token.NUMBER)
+	if err != nil {
+		return nil, err
+	}
 	var rv ast.Node
 	if strings.Contains(tok.Value, ".") {
 		rv = &ast.FloatLiteral{Token: tok, Value: tok.Value}
@@ -42,8 +47,10 @@ func (p *parser) parseNumber() (ast.Node, error) {
 // parseString parses a string token into an AST node.
 func (p *parser) parseString() (ast.Node, error) {
 	// Syntax: STRING
-	tok := p.currentToken()
-	p.advance()
+	tok, err := p.match(token.STRING)
+	if err != nil {
+		return nil, err
+	}
 	rv := &ast.StringLiteral{Token: tok, Value: tok.Value}
 	return rv, nil
 }

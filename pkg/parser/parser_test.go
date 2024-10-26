@@ -212,13 +212,13 @@ func TestParser(t *testing.T) {
 			input:          "(lambda (",
 			expectedOutput: "",
 			shouldFail:     true,
-			expectedError:  "<stdin>:1:9: parser: unexpected token EOF",
+			expectedError:  "<stdin>:1:9: parser: expected token ATOM, found EOF",
 		},
 		{
 			input:          "(lambda (()",
 			expectedOutput: "",
 			shouldFail:     true,
-			expectedError:  "<stdin>:1:1: parser: lambda parameter name must be a symbol",
+			expectedError:  "<stdin>:1:10: parser: expected token ATOM, found OPEN",
 		},
 		{
 			input:          "(lambda (x))",

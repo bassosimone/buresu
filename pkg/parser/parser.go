@@ -30,8 +30,8 @@ func newParser(tokens []token.Token) *parser {
 // Parse processes the tokens and returns a slice of AST nodes.
 func (p *parser) Parse() ([]ast.Node, error) {
 	var nodes []ast.Node
-	for p.currentToken().TokenType != token.EOF {
-		node, err := p.parseAtomOrExpression()
+	for p.peek().TokenType != token.EOF {
+		node, err := p.parseExpression()
 		if err != nil {
 			return nil, err
 		}
@@ -49,14 +49,25 @@ func (p *parser) advance() {
 	}
 }
 
-// currentToken returns the current token being processed.
-func (p *parser) currentToken() token.Token {
-	return p.tokens[p.current]
+// peek returns the current token being processed.
+func (p *parser) peek() token.Token {
+	if p.current < len(p.tokens) {
+		return p.tokens[p.current]
+	}
+	return token.Token{}
 }
 
-// consumeTokenWithType consumes the current token if it matches the expected type.
-func (p *parser) consumeTokenWithType(tt token.TokenType) (token.Token, error) {
-	tok := p.currentToken()
+// peekNext returns the next token to be processed.
+func (p *parser) peekNext() token.Token {
+	if p.current+1 < len(p.tokens) {
+		return p.tokens[p.current+1]
+	}
+	return token.Token{}
+}
+
+// match consumes the current token if it matches the expected type.
+func (p *parser) match(tt token.TokenType) (token.Token, error) {
+	tok := p.peek()
 	if tok.TokenType != tt {
 		err := newError(tok, "expected token %s, found %s", tt, tok.TokenType)
 		if tok.TokenType == token.EOF {
@@ -68,14 +79,33 @@ func (p *parser) consumeTokenWithType(tt token.TokenType) (token.Token, error) {
 	return tok, nil
 }
 
-// parseAtomOrExpression determines the type of the current token and delegates
+// check returns true if the current token matches the expected type.
+func (p *parser) check(tt token.TokenType) bool {
+	return p.peek().TokenType == tt
+}
+
+// matchAtomWithName consumes the current token if it matches the expected type and name.
+func (p *parser) matchAtomWithName(name string) (token.Token, error) {
+	tok := p.peek()
+	if tok.TokenType != token.ATOM || tok.Value != name {
+		err := newError(tok, "expected atom with name %s, found %s", name, tok.Value)
+		if tok.TokenType == token.EOF {
+			err = ErrIncompleteInput{err}
+		}
+		return token.Token{}, err
+	}
+	p.advance()
+	return tok, nil
+}
+
+// parseExpression determines the type of the current token and delegates
 // to the appropriate parsing function for parsing an expression or an atom, which
 // we consider as a self-evaluating expression for the sake of simplicity.
-func (p *parser) parseAtomOrExpression() (ast.Node, error) {
+func (p *parser) parseExpression() (ast.Node, error) {
 	return p.parseWithFlags(0)
 }
 
-func (p *parser) parseAtomOrExpressionOrStatement() (ast.Node, error) {
+func (p *parser) parseStatement() (ast.Node, error) {
 	return p.parseWithFlags(allowStmts)
 }
 
@@ -85,7 +115,7 @@ const (
 )
 
 func (p *parser) parseWithFlags(flags int) (ast.Node, error) {
-	switch tp := p.currentToken(); tp.TokenType {
+	switch tp := p.peek(); tp.TokenType {
 	case token.ATOM:
 		return p.parseSymbol()
 	case token.NUMBER:
@@ -103,18 +133,17 @@ func (p *parser) parseWithFlags(flags int) (ast.Node, error) {
 	}
 }
 
-// parseForm parses a form honouring the given flags.
+// parseForm parses a form honoring the given flags.
 func (p *parser) parseForm(flags int) (ast.Node, error) {
-	tok := p.currentToken()
-	p.advance()
+	tok := p.peek()
 
-	if p.currentToken().TokenType == token.CLOSE {
-		p.advance()
-		rv := &ast.UnitExpr{Token: tok}
-		return rv, nil
+	if p.peekNext().TokenType == token.CLOSE {
+		p.advance() // consume OPEN
+		p.advance() // consume CLOSE
+		return &ast.UnitExpr{Token: tok}, nil
 	}
 
-	form := p.currentToken()
+	form := p.peekNext()
 	if form.TokenType == token.ATOM {
 		specialForms := map[string]func(token.Token) (ast.Node, error){
 			"block":   p.parseBlock,
@@ -131,7 +160,6 @@ func (p *parser) parseForm(flags int) (ast.Node, error) {
 			specialForms["return!"] = p.parseReturn
 		}
 		if parseFunc, found := specialForms[form.Value]; found {
-			p.advance() // consume the special form name
 			return parseFunc(tok)
 		}
 	}

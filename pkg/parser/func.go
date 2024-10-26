@@ -8,24 +8,28 @@ import (
 )
 
 func (p *parser) parseCall(tok token.Token) (ast.Node, error) {
-	// syntax: ... <callable> <expr> [COMMA] ... CLOSE
+	// Syntax: OPEN <callable> <expr> ... CLOSE
 	var args []ast.Node
 
+	if _, err := p.match(token.OPEN); err != nil {
+		return nil, err
+	}
+
 	// <callable>
-	callable, err := p.parseAtomOrExpression()
+	callable, err := p.parseExpression()
 	if err != nil {
 		return nil, err
 	}
 
-	// <expr> [COMMA] ... CLOSE
-	for p.currentToken().TokenType != token.CLOSE {
-		expr, err := p.parseAtomOrExpression()
+	// <expr> ... CLOSE
+	for p.peek().TokenType != token.CLOSE {
+		expr, err := p.parseExpression()
 		if err != nil {
 			return nil, err
 		}
 		args = append(args, expr)
 	}
-	_, _ = p.consumeTokenWithType(token.CLOSE) // cannot fail
+	_, _ = p.match(token.CLOSE) // cannot fail
 
 	rv := &ast.CallExpr{
 		Token:    tok,
@@ -36,24 +40,26 @@ func (p *parser) parseCall(tok token.Token) (ast.Node, error) {
 }
 
 func (p *parser) parseLambda(tok token.Token) (ast.Node, error) {
-	// Syntax: ... OPEN <param>* CLOSE [STRING] <expr>
-	var err error
+	// Syntax: OPEN "lambda" OPEN <param>* CLOSE [STRING] <expr> CLOSE
+	if _, err := p.match(token.OPEN); err != nil {
+		return nil, err
+	}
+	if _, err := p.matchAtomWithName("lambda"); err != nil {
+		return nil, err
+	}
 
 	// 1. parse OPEN <param>* CLOSE
 	var (
 		params  []string
 		uniqnam = make(map[string]struct{})
 	)
-	if _, err := p.consumeTokenWithType(token.OPEN); err != nil {
+	if _, err := p.match(token.OPEN); err != nil {
 		return nil, err
 	}
-	for p.currentToken().TokenType != token.CLOSE {
-		paramName, err := p.parseAtomOrExpression()
+	for p.peek().TokenType != token.CLOSE {
+		paramName, err := p.parseSymbol()
 		if err != nil {
 			return nil, err
-		}
-		if _, ok := paramName.(*ast.SymbolName); !ok {
-			return nil, newError(tok, "lambda parameter name must be a symbol")
 		}
 		name := paramName.(*ast.SymbolName).Value
 		if _, ok := uniqnam[name]; ok {
@@ -62,12 +68,12 @@ func (p *parser) parseLambda(tok token.Token) (ast.Node, error) {
 		uniqnam[name] = struct{}{}
 		params = append(params, name)
 	}
-	_, _ = p.consumeTokenWithType(token.CLOSE) // cannot fail
+	_, _ = p.match(token.CLOSE) // cannot fail
 
 	// 2. [STRING] including type annotations
 	var docs string
-	if p.currentToken().TokenType == token.STRING {
-		docs = p.currentToken().Value
+	if p.peek().TokenType == token.STRING {
+		docs = p.peek().Value
 		p.advance()
 	}
 
@@ -76,12 +82,12 @@ func (p *parser) parseLambda(tok token.Token) (ast.Node, error) {
 	// Track the depth inside lambdas so we know when it
 	// is legal to accept a return statement.
 	p.lambdadepth++
-	expr, err := p.parseAtomOrExpression()
+	expr, err := p.parseExpression()
 	if err != nil {
 		return nil, err
 	}
 	p.lambdadepth--
-	if _, err := p.consumeTokenWithType(token.CLOSE); err != nil {
+	if _, err := p.match(token.CLOSE); err != nil {
 		return nil, err
 	}
 

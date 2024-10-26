@@ -9,7 +9,7 @@ import (
 
 type parseFunc func(tok token.Token) (ast.Node, error)
 
-// parseStmtNowAllowed is a wrapper for statement parsing functions
+// parseStmtNotAllowed is a wrapper for statement parsing functions
 // that ensures we report an error if there's a statement in a context
 // in which it is not allowed by the grammar.
 func (p *parser) parseStmtNotAllowed(fx parseFunc) parseFunc {
@@ -23,7 +23,13 @@ func (p *parser) parseStmtNotAllowed(fx parseFunc) parseFunc {
 
 // parseReturn parses a return form into an AST node.
 func (p *parser) parseReturn(tok token.Token) (ast.Node, error) {
-	// Syntax: ... <expr> CLOSE
+	// Syntax: OPEN "return!" <expr> CLOSE
+	if _, err := p.match(token.OPEN); err != nil {
+		return nil, err
+	}
+	if _, err := p.matchAtomWithName("return!"); err != nil {
+		return nil, err
+	}
 
 	// 1. reject return outside of any lambda
 	if p.lambdadepth <= 0 {
@@ -31,13 +37,13 @@ func (p *parser) parseReturn(tok token.Token) (ast.Node, error) {
 	}
 
 	// 2. <expr>
-	expr, err := p.parseAtomOrExpression()
+	expr, err := p.parseExpression()
 	if err != nil {
 		return nil, err
 	}
 
 	// 3. CLOSE
-	if _, err := p.consumeTokenWithType(token.CLOSE); err != nil {
+	if _, err := p.match(token.CLOSE); err != nil {
 		return nil, err
 	}
 	return &ast.ReturnStmt{Token: tok, Expr: expr}, nil

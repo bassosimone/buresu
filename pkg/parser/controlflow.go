@@ -9,18 +9,25 @@ import (
 
 // parseBlock parses a block form into an AST node.
 func (p *parser) parseBlock(tok token.Token) (ast.Node, error) {
-	// Syntax: ... <expr>* CLOSE
+	// Syntax: OPEN "block" <expr>* CLOSE
+	if _, err := p.match(token.OPEN); err != nil {
+		return nil, err
+	}
+	if _, err := p.matchAtomWithName("block"); err != nil {
+		return nil, err
+	}
+
 	var (
 		exprs   []ast.Node
 		seenret bool
 	)
-	for p.currentToken().TokenType != token.CLOSE {
+	for p.peek().TokenType != token.CLOSE {
 		// make sure nothing follows a return statement
 		if seenret {
 			return nil, newError(tok, "unreachable code")
 		}
 
-		expr, err := p.parseAtomOrExpressionOrStatement()
+		expr, err := p.parseStatement()
 		if err != nil {
 			return nil, err
 		}
@@ -33,7 +40,7 @@ func (p *parser) parseBlock(tok token.Token) (ast.Node, error) {
 		exprs = append(exprs, expr)
 	}
 
-	_, _ = p.consumeTokenWithType(token.CLOSE) // can't fail
+	_, _ = p.match(token.CLOSE) // can't fail
 
 	if len(exprs) <= 0 {
 		return &ast.UnitExpr{Token: tok}, nil
@@ -44,7 +51,13 @@ func (p *parser) parseBlock(tok token.Token) (ast.Node, error) {
 
 // parseCond parses the cond special form into an AST node.
 func (p *parser) parseCond(tok token.Token) (ast.Node, error) {
-	// Syntax: ... (OPEN <predicate> <expr> CLOSE)* (OPEN "else" <expr> CLOSE)? CLOSE
+	// Syntax: OPEN "cond" (OPEN <predicate> <expr> CLOSE)* (OPEN "else" <expr> CLOSE)? CLOSE
+	if _, err := p.match(token.OPEN); err != nil {
+		return nil, err
+	}
+	if _, err := p.matchAtomWithName("cond"); err != nil {
+		return nil, err
+	}
 
 	// 1. (OPEN <predicate> <expr> CLOSE)* (OPEN "else" <expr> CLOSE)?
 	var (
@@ -52,32 +65,32 @@ func (p *parser) parseCond(tok token.Token) (ast.Node, error) {
 		elseExpr ast.Node
 		err      error
 	)
-	for p.currentToken().TokenType == token.OPEN {
+	for p.peek().TokenType == token.OPEN {
 		p.advance()
 
-		if p.currentToken().TokenType == token.ATOM && p.currentToken().Value == "else" {
+		if p.peek().TokenType == token.ATOM && p.peek().Value == "else" {
 			p.advance()
-			elseExpr, err = p.parseAtomOrExpression()
+			elseExpr, err = p.parseExpression()
 			if err != nil {
 				return nil, err
 			}
-			if _, err := p.consumeTokenWithType(token.CLOSE); err != nil {
+			if _, err := p.match(token.CLOSE); err != nil {
 				return nil, err
 			}
 			break // no need to parse more cases
 		}
 
-		predicate, err := p.parseAtomOrExpression()
+		predicate, err := p.parseExpression()
 		if err != nil {
 			return nil, err
 		}
 
-		expr, err := p.parseAtomOrExpression()
+		expr, err := p.parseExpression()
 		if err != nil {
 			return nil, err
 		}
 
-		if _, err := p.consumeTokenWithType(token.CLOSE); err != nil {
+		if _, err := p.match(token.CLOSE); err != nil {
 			return nil, err
 		}
 
@@ -85,7 +98,7 @@ func (p *parser) parseCond(tok token.Token) (ast.Node, error) {
 	}
 
 	// 2. CLOSE
-	if _, err := p.consumeTokenWithType(token.CLOSE); err != nil {
+	if _, err := p.match(token.CLOSE); err != nil {
 		return nil, err
 	}
 
@@ -110,27 +123,33 @@ func (p *parser) parseCond(tok token.Token) (ast.Node, error) {
 
 // parseIf parses an if form into an AST node.
 func (p *parser) parseIf(tok token.Token) (ast.Node, error) {
-	// Syntax: ... <predicate> <then-expr> <else-expr>? CLOSE
+	// Syntax: OPEN "if" <predicate> <then-expr> <else-expr>? CLOSE
+	if _, err := p.match(token.OPEN); err != nil {
+		return nil, err
+	}
+	if _, err := p.matchAtomWithName("if"); err != nil {
+		return nil, err
+	}
 
 	// 1. collect predicate and then
-	predicate, err := p.parseAtomOrExpression()
+	predicate, err := p.parseExpression()
 	if err != nil {
 		return nil, err
 	}
-	thenExpr, err := p.parseAtomOrExpression()
+	thenExpr, err := p.parseExpression()
 	if err != nil {
 		return nil, err
 	}
 
 	// 2. add else branch if present and consume final CLOSE
 	var elseExpr ast.Node = &ast.UnitExpr{Token: tok}
-	if p.currentToken().TokenType != token.CLOSE {
-		elseExpr, err = p.parseAtomOrExpression()
+	if p.peek().TokenType != token.CLOSE {
+		elseExpr, err = p.parseExpression()
 		if err != nil {
 			return nil, err
 		}
 	}
-	_, _ = p.consumeTokenWithType(token.CLOSE) // cannot fail
+	_, _ = p.match(token.CLOSE) // cannot fail
 
 	// 3. desugar `if` into a `cond`
 	cases := []ast.CondCase{{Predicate: predicate, Expr: thenExpr}}
@@ -139,16 +158,23 @@ func (p *parser) parseIf(tok token.Token) (ast.Node, error) {
 
 // parseWhile parses a while form into an AST node.
 func (p *parser) parseWhile(tok token.Token) (ast.Node, error) {
-	// Syntax: ... <predicate> <expr> CLOSE
-	predicate, err := p.parseAtomOrExpression()
+	// Syntax: OPEN "while" <predicate> <expr> CLOSE
+	if _, err := p.match(token.OPEN); err != nil {
+		return nil, err
+	}
+	if _, err := p.matchAtomWithName("while"); err != nil {
+		return nil, err
+	}
+
+	predicate, err := p.parseExpression()
 	if err != nil {
 		return nil, err
 	}
-	expr, err := p.parseAtomOrExpression()
+	expr, err := p.parseExpression()
 	if err != nil {
 		return nil, err
 	}
-	if _, err := p.consumeTokenWithType(token.CLOSE); err != nil {
+	if _, err := p.match(token.CLOSE); err != nil {
 		return nil, err
 	}
 	return &ast.WhileExpr{Token: tok, Predicate: predicate, Expr: expr}, nil
