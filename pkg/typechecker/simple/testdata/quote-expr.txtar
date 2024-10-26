@@ -1,5 +1,5 @@
--- input.txt --
+-- input --
 (quote pi)
 
--- expected_output.txt --
+-- output --
 Any

@@ -1,5 +1,5 @@
--- input.txt --
+-- input --
 (> 10 5)
 
--- expected_output.txt --
+-- output --
 Bool

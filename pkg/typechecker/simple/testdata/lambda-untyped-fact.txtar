@@ -1,4 +1,4 @@
--- input.txt --
+-- input --
 ;; fact implements the factorial function in buresu
 (define fact (lambda (x) (block
     (if (< x 1) (block (return! 0)))
@@ -14,6 +14,6 @@
 
 (fact 10)
 
--- expected_output.txt --
+-- output --
 (Callable (Any) Any)
 Int

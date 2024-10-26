@@ -1,10 +1,10 @@
--- input.txt --
+-- input --
 ;; sum3 sums three numbers
 (define sum3 (lambda (x y z) (+ (+ x y) z)))
 (sum3 1 2 3)
 (sum3 1.0 2.0 3.0)
 
--- expected_output.txt --
+-- output --
 (Callable (Any Any Any) Any)
 Int
 Float64

@@ -1,5 +1,5 @@
--- input.txt --
+-- input --
 (display 10 3.14 "hello" () false)
 
--- expected_output.txt --
+-- output --
 Unit

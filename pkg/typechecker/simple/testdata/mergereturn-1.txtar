@@ -1,4 +1,4 @@
--- input.txt --
+-- input --
 
 (define fx (lambda (x)
     (if (> x 1000)
@@ -10,6 +10,6 @@
 
 (fx 1)
 
--- expected_output.txt --
+-- output --
 (Callable (Any) Any)
 (Union Int Unit)

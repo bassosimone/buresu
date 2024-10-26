@@ -1,9 +1,9 @@
--- input.txt --
+-- input --
 (define fx (lambda (x) (if (> x 0) true "antani")))
 (fx 1)
 (fx 100)
 
--- expected_output.txt --
+-- output --
 (Callable (Any) Any)
 (Union Bool String)
 (Union Bool String)

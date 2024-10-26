@@ -1,5 +1,5 @@
--- input.txt --
+-- input --
 "foobar"
 
--- expected_output.txt --
+-- output --
 String

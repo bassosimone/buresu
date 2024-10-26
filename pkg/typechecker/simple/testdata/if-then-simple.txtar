@@ -1,5 +1,5 @@
--- input.txt --
+-- input --
 (if false 0)
 
--- expected_output.txt --
+-- output --
 (Union Int Unit)

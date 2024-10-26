@@ -1,4 +1,4 @@
--- input.txt --
+-- input --
 (define fact (lambda (x)
 	"fact implements the factorial function in buresu.
 	:: (Callable (Int) Int)"
@@ -16,6 +16,6 @@
 
 (fact 10)
 
--- expected_output.txt --
+-- output --
 (Callable (Int) Int)
 Int

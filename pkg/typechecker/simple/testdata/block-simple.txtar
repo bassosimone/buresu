@@ -1,5 +1,5 @@
--- input.txt --
+-- input --
 (block false true 0 1 "foobar")
 
--- expected_output.txt --
+-- output --
 String

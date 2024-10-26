@@ -5,14 +5,12 @@ package simple_test
 import (
 	"bytes"
 	"context"
-	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"golang.org/x/tools/txtar"
 
+	"github.com/bassosimone/buresu/internal/txtartesting"
 	"github.com/bassosimone/buresu/pkg/parser"
 	"github.com/bassosimone/buresu/pkg/scanner"
 	"github.com/bassosimone/buresu/pkg/typechecker/simple"
@@ -20,45 +18,15 @@ import (
 )
 
 func TestCheck(t *testing.T) {
-	testdataDir := "testdata"
-	files, err := os.ReadDir(testdataDir)
+	testCases, err := txtartesting.LoadTestCases("testdata")
 	if err != nil {
-		t.Fatalf("failed to read testdata directory: %v", err)
+		t.Fatalf("failed to load test cases: %v", err)
 	}
 
-	for _, file := range files {
-		if filepath.Ext(file.Name()) != ".txtar" {
-			continue
-		}
-
-		t.Run(file.Name(), func(t *testing.T) {
-			archivePath := filepath.Join(testdataDir, file.Name())
-			archiveData, err := os.ReadFile(archivePath)
-			if err != nil {
-				t.Fatalf("failed to read txtar file: %v", err)
-			}
-
-			archive := txtar.Parse(archiveData)
-
-			var (
-				inputCode      []byte
-				expectedOutput []byte
-				expectedError  []byte
-			)
-
-			for _, file := range archive.Files {
-				switch file.Name {
-				case "input.txt":
-					inputCode = file.Data
-				case "expected_output.txt":
-					expectedOutput = bytes.TrimSpace(file.Data)
-				case "expected_error.txt":
-					expectedError = bytes.TrimSpace(file.Data)
-				}
-			}
-
+	for _, tc := range testCases {
+		t.Run(tc.Name, func(t *testing.T) {
 			// Scan and parse the input code
-			tokens, err := scanner.Scan("input.code", bytes.NewReader(inputCode))
+			tokens, err := scanner.Scan("input.code", bytes.NewReader([]byte(tc.Input)))
 			if err != nil {
 				t.Fatalf("failed to scan input code: %v", err)
 			}
@@ -84,13 +52,13 @@ func TestCheck(t *testing.T) {
 				results = append(results, result.String())
 			}
 
-			if expectedError != nil {
+			if tc.Error != "" {
 				// If an error is expected, check if the actual error matches the expected error
 				if err == nil {
 					t.Fatalf("expected an error but got none")
 				}
 				actualError := err.Error()
-				if diff := cmp.Diff(string(expectedError), actualError); diff != "" {
+				if diff := cmp.Diff(tc.Error, actualError); diff != "" {
 					t.Errorf("error mismatch (-expected +got):\n%s", diff)
 				}
 				return
@@ -101,7 +69,7 @@ func TestCheck(t *testing.T) {
 				t.Fatalf("unexpected error: %v", err)
 			}
 			actualOutput := strings.Join(results, "\n")
-			if diff := cmp.Diff(string(expectedOutput), actualOutput); diff != "" {
+			if diff := cmp.Diff(tc.Output, actualOutput); diff != "" {
 				t.Errorf("output mismatch (-expected +got):\n%s", diff)
 			}
 		})

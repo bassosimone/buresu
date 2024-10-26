@@ -1,7 +1,7 @@
--- input.txt --
+-- input --
 (> 10 ())
 
--- expected_error.txt --
+-- error --
 failed to call (Callable (Int Int) Bool):
     wrong argument type for param #2 expected Int, got Unit
 failed to call (Callable (Float64 Float64) Bool):

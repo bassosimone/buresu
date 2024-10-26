@@ -1,4 +1,4 @@
--- input.txt --
+-- input --
 (define makeCounter (lambda (x) (lambda () (block
     (if (< x 1) (block (return! ())))
     (set! x (+ x -1))
@@ -17,7 +17,7 @@
 
 total
 
--- expected_output.txt --
+-- output --
 (Callable (Any) Any)
 Int
 (Callable () Any)
