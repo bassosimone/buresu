@@ -6,13 +6,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"os"
-	"path/filepath"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
-	"golang.org/x/tools/txtar"
-
+	"github.com/bassosimone/buresu/internal/txtartesting"
 	"github.com/bassosimone/buresu/pkg/ast"
 	"github.com/bassosimone/buresu/pkg/dumper"
 	"github.com/bassosimone/buresu/pkg/parser"
@@ -21,61 +17,33 @@ import (
 )
 
 func TestDumpAST(t *testing.T) {
-	testdataDir := filepath.Join("testdata", "ast")
-	files, err := os.ReadDir(testdataDir)
+	testCases, err := txtartesting.LoadTestCases("testdata/ast")
 	if err != nil {
-		t.Fatalf("failed to read testdata directory: %v", err)
+		t.Fatal(err)
 	}
 
-	for _, file := range files {
-		if filepath.Ext(file.Name()) != ".txtar" {
-			continue
-		}
-
-		t.Run(file.Name(), func(t *testing.T) {
-			archivePath := filepath.Join(testdataDir, file.Name())
-			archiveData, err := os.ReadFile(archivePath)
+	for _, tc := range testCases {
+		t.Run(tc.Name, func(t *testing.T) {
+			tokens, err := scanner.Scan("input.ast", bytes.NewReader([]byte(tc.Input)))
 			if err != nil {
-				t.Fatalf("failed to read txtar file: %v", err)
+				t.Fatal(err)
+			}
+			nodes, err := parser.Parse(tokens)
+			if err != nil {
+				t.Fatal(err)
 			}
 
-			archive := txtar.Parse(archiveData)
-
-			var (
-				inputAST       []ast.Node
-				expectedOutput []byte
-			)
-
-			for _, file := range archive.Files {
-				switch file.Name {
-				case "input.ast":
-					tokens, err := scanner.Scan("input.ast", bytes.NewReader(file.Data))
-					if err != nil {
-						t.Fatal(err)
-					}
-					nodes, err := parser.Parse(tokens)
-					if err != nil {
-						t.Fatal(err)
-					}
-					inputAST = nodes
-				case "expected_output.json":
-					expectedOutput = file.Data
-				}
-			}
-
-			// Serialize the input AST to JSON
 			var buf bytes.Buffer
-			err = dumper.DumpAST(&buf, inputAST)
+			err = dumper.DumpAST(&buf, nodes)
 			if err != nil {
 				t.Fatalf("failed to dump AST: %v", err)
 			}
 
-			// Compare the serialized output with the expected output
 			if !json.Valid(buf.Bytes()) {
 				t.Fatalf("invalid JSON output: %s", buf.String())
 			}
-			if diff := cmp.Diff(string(expectedOutput), buf.String()); diff != "" {
-				t.Errorf("mismatch (-expected +got):\n%s", diff)
+			if err := tc.CompareTextOutput(buf.String()); err != nil {
+				t.Error(err)
 			}
 		})
 	}

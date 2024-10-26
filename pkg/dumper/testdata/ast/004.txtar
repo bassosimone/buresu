@@ -1,7 +1,7 @@
--- input.ast --
+-- input --
 (block (set! x 3.14))
 
--- expected_output.json --
+-- output --
 [
   {
     "Type": "BlockExpr",

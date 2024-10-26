@@ -1,7 +1,7 @@
--- input.ast --
+-- input --
 (call myFunction 42)
 
--- expected_output.json --
+-- output --
 [
   {
     "Type": "CallExpr",

@@ -1,7 +1,7 @@
--- input.ast --
+-- input --
 (lambda (x) "This is a test lambda" (block (false) (()) (while false (block (return! x)))))
 
--- expected_output.json --
+-- output --
 [
   {
     "Type": "LambdaExpr",

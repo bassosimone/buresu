@@ -1,7 +1,7 @@
--- input.ast --
+-- input --
 (quote (if (lt x 0) 0 x))
 
--- expected_output.json --
+-- output --
 [
   {
     "Type": "QuoteExpr",

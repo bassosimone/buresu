@@ -1,7 +1,7 @@
--- input.txt --
+-- input --
 (define x 42)
 
--- expected_tokens.json --
+-- output --
 [
   {
     "TokenPos": {
@@ -51,8 +51,8 @@
   {
     "TokenPos": {
       "FileName": "input.txt",
-      "LineNumber": 3,
-      "LineColumn": 0
+      "LineNumber": 1,
+      "LineColumn": 13
     },
     "TokenType": "EOF",
     "Value": ""

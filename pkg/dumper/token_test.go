@@ -4,67 +4,40 @@ package dumper_test
 
 import (
 	"bytes"
-	"os"
+	"encoding/json"
 	"path/filepath"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
-	"golang.org/x/tools/txtar"
-
+	"github.com/bassosimone/buresu/internal/txtartesting"
 	"github.com/bassosimone/buresu/pkg/dumper"
 	"github.com/bassosimone/buresu/pkg/scanner"
 	"github.com/bassosimone/buresu/pkg/token"
 )
 
 func TestDumpTokens(t *testing.T) {
-	testdataDir := filepath.Join("testdata", "token")
-	files, err := os.ReadDir(testdataDir)
+	testCases, err := txtartesting.LoadTestCases(filepath.Join("testdata", "token"))
 	if err != nil {
-		t.Fatalf("failed to read testdata directory: %v", err)
+		t.Fatal(err)
 	}
 
-	for _, file := range files {
-		if filepath.Ext(file.Name()) != ".txtar" {
-			continue
-		}
-
-		t.Run(file.Name(), func(t *testing.T) {
-			archivePath := filepath.Join(testdataDir, file.Name())
-			archiveData, err := os.ReadFile(archivePath)
+	for _, tc := range testCases {
+		t.Run(tc.Name, func(t *testing.T) {
+			tokens, err := scanner.Scan("input.txt", bytes.NewReader([]byte(tc.Input)))
 			if err != nil {
-				t.Fatalf("failed to read txtar file: %v", err)
+				t.Fatal(err)
 			}
 
-			archive := txtar.Parse(archiveData)
-
-			var (
-				inputTokens    []token.Token
-				expectedOutput []byte
-			)
-
-			for _, file := range archive.Files {
-				switch file.Name {
-				case "input.txt":
-					tokens, err := scanner.Scan("input.txt", bytes.NewReader(file.Data))
-					if err != nil {
-						t.Fatal(err)
-					}
-					inputTokens = tokens
-				case "expected_tokens.json":
-					expectedOutput = file.Data
-				}
-			}
-
-			// Serialize the input tokens to JSON
 			var buf bytes.Buffer
-			err = dumper.DumpTokens(&buf, inputTokens)
+			err = dumper.DumpTokens(&buf, tokens)
 			if err != nil {
 				t.Fatalf("failed to dump tokens: %v", err)
 			}
+			if !json.Valid(buf.Bytes()) {
+				t.Fatalf("invalid JSON output: %s", buf.String())
+			}
 
-			// Compare the serialized output with the expected output
-			if diff := cmp.Diff(string(expectedOutput), buf.String()); diff != "" {
-				t.Errorf("mismatch (-expected +got):\n%s", diff)
+			if err := tc.CompareTextOutput(buf.String()); err != nil {
+				t.Error(err)
 			}
 		})
 	}

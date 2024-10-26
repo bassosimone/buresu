@@ -147,7 +147,7 @@ func (tc *TestCase) CompareError(err error) error {
 
 // CompareTextOutput compares the obtained output with the expected output.
 func (tc *TestCase) CompareTextOutput(output string) error {
-	if diff := cmp.Diff(tc.Output, output); diff != "" {
+	if diff := cmp.Diff(tc.Output, trimEmptyLines(output)); diff != "" {
 		return fmt.Errorf("output mismatch in test case %s (-expected +got):\n%s", tc.Name, diff)
 	}
 	return nil

@@ -1,7 +1,7 @@
--- input.ast --
+-- input --
 (lambda () (block (define x 42) (return! x)))
 
--- expected_output.json --
+-- output --
 [
   {
     "Type": "LambdaExpr",
