@@ -17,7 +17,7 @@ func (p *parser) parseQuote(tok token.Token) (ast.Node, error) {
 		return nil, err
 	}
 
-	expr, err := p.parseExpression()
+	expr, err := p.parseWithFlags(0)
 	if err != nil {
 		return nil, err
 	}

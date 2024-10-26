@@ -31,7 +31,7 @@ func newParser(tokens []token.Token) *parser {
 func (p *parser) Parse() ([]ast.Node, error) {
 	var nodes []ast.Node
 	for p.peek().TokenType != token.EOF {
-		node, err := p.parseExpression()
+		node, err := p.parseWithFlags(0)
 		if err != nil {
 			return nil, err
 		}
@@ -98,22 +98,17 @@ func (p *parser) matchAtomWithName(name string) (token.Token, error) {
 	return tok, nil
 }
 
-// parseExpression determines the type of the current token and delegates
-// to the appropriate parsing function for parsing an expression or an atom, which
-// we consider as a self-evaluating expression for the sake of simplicity.
-func (p *parser) parseExpression() (ast.Node, error) {
-	return p.parseWithFlags(0)
-}
-
-func (p *parser) parseStatement() (ast.Node, error) {
-	return p.parseWithFlags(allowStmts)
-}
-
 const (
-	// allowStmts allows parseWithFlags to parse statements
-	allowStmts = 1 << iota
+	// allowReturn allows parseWithFlags to parse statements
+	allowReturn = 1 << iota
 )
 
+// parseWithFlags parses atoms, numbers, strings, expressions, and
+// statements. While some constructs are always allowed, some of them
+// are only allowed in specific contexts, like return! which is only
+// allowed inside a block expression, or include, which is only allowed
+// at the toplevel. The flags parameter controls when it is legal to
+// accept these context-dependent constructs.
 func (p *parser) parseWithFlags(flags int) (ast.Node, error) {
 	switch tp := p.peek(); tp.TokenType {
 	case token.ATOM:
@@ -156,7 +151,7 @@ func (p *parser) parseForm(flags int) (ast.Node, error) {
 			"set!":    p.parseSet,
 			"while":   p.parseWhile,
 		}
-		if flags&allowStmts != 0 {
+		if flags&allowReturn != 0 {
 			specialForms["return!"] = p.parseReturn
 		}
 		if parseFunc, found := specialForms[form.Value]; found {

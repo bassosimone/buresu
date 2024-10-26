@@ -37,7 +37,7 @@ func (p *parser) parseReturn(tok token.Token) (ast.Node, error) {
 	}
 
 	// 2. <expr>
-	expr, err := p.parseExpression()
+	expr, err := p.parseWithFlags(0)
 	if err != nil {
 		return nil, err
 	}

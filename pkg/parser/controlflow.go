@@ -27,7 +27,7 @@ func (p *parser) parseBlock(tok token.Token) (ast.Node, error) {
 			return nil, newError(tok, "unreachable code")
 		}
 
-		expr, err := p.parseStatement()
+		expr, err := p.parseWithFlags(allowReturn)
 		if err != nil {
 			return nil, err
 		}
@@ -70,7 +70,7 @@ func (p *parser) parseCond(tok token.Token) (ast.Node, error) {
 
 		if p.peek().TokenType == token.ATOM && p.peek().Value == "else" {
 			p.advance()
-			elseExpr, err = p.parseExpression()
+			elseExpr, err = p.parseWithFlags(0)
 			if err != nil {
 				return nil, err
 			}
@@ -80,12 +80,12 @@ func (p *parser) parseCond(tok token.Token) (ast.Node, error) {
 			break // no need to parse more cases
 		}
 
-		predicate, err := p.parseExpression()
+		predicate, err := p.parseWithFlags(0)
 		if err != nil {
 			return nil, err
 		}
 
-		expr, err := p.parseExpression()
+		expr, err := p.parseWithFlags(0)
 		if err != nil {
 			return nil, err
 		}
@@ -132,11 +132,11 @@ func (p *parser) parseIf(tok token.Token) (ast.Node, error) {
 	}
 
 	// 1. collect predicate and then
-	predicate, err := p.parseExpression()
+	predicate, err := p.parseWithFlags(0)
 	if err != nil {
 		return nil, err
 	}
-	thenExpr, err := p.parseExpression()
+	thenExpr, err := p.parseWithFlags(0)
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +144,7 @@ func (p *parser) parseIf(tok token.Token) (ast.Node, error) {
 	// 2. add else branch if present and consume final CLOSE
 	var elseExpr ast.Node = &ast.UnitExpr{Token: tok}
 	if p.peek().TokenType != token.CLOSE {
-		elseExpr, err = p.parseExpression()
+		elseExpr, err = p.parseWithFlags(0)
 		if err != nil {
 			return nil, err
 		}
@@ -166,11 +166,11 @@ func (p *parser) parseWhile(tok token.Token) (ast.Node, error) {
 		return nil, err
 	}
 
-	predicate, err := p.parseExpression()
+	predicate, err := p.parseWithFlags(0)
 	if err != nil {
 		return nil, err
 	}
-	expr, err := p.parseExpression()
+	expr, err := p.parseWithFlags(0)
 	if err != nil {
 		return nil, err
 	}
