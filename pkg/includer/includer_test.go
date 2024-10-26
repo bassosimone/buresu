@@ -12,35 +12,46 @@ import (
 	"github.com/bassosimone/buresu/pkg/token"
 )
 
+// mockReadFile is a mock implementation of the os.ReadFile function.
 func mockReadFile(filename string) ([]byte, error) {
 	switch filename {
 	case "file1.lisp":
 		return []byte(`(define x 42)`), nil
+
 	case "file2.lisp":
 		return []byte(`(define y 43)`), nil
+
 	case "cycle.lisp":
 		return []byte(`(include "cycle.lisp")`), nil
+
 	case "invalid_scan.lisp":
 		return []byte(`@`), nil
+
 	case "invalid_parse.lisp":
 		return []byte(`(if`), nil
+
 	case "fileX.lisp":
 		return []byte(`(include "fileY.lisp") (include "fileZ.lisp") (include "fileZ.lisp")`), nil
+
 	case "fileY.lisp":
 		return []byte(`(include "fileZ.lisp")`), nil
+
 	case "fileZ.lisp":
 		return []byte(`(define z 44)`), nil
+
 	case "block_include.lisp":
 		return []byte(`(block (include "file1.lisp"))`), nil
+
 	default:
 		return nil, errors.New("file not found")
 	}
 }
 
 func TestInclude(t *testing.T) {
-	// Override the os.ReadFile function with the mock
+	// Override the os.ReadFile function with the mock and restore
+	// the original function after the test
 	readFile = mockReadFile
-	defer func() { readFile = os.ReadFile }() // Restore the original function after the test
+	defer func() { readFile = os.ReadFile }()
 
 	tests := []struct {
 		name     string
@@ -66,6 +77,7 @@ func TestInclude(t *testing.T) {
 			},
 			err: "",
 		},
+
 		{
 			name: "include with cycle",
 			input: []ast.Node{
@@ -78,6 +90,7 @@ func TestInclude(t *testing.T) {
 			expected: nil,
 			err:      "inclusion cycle detected for file cycle.lisp",
 		},
+
 		{
 			name: "read file error",
 			input: []ast.Node{
@@ -90,6 +103,7 @@ func TestInclude(t *testing.T) {
 			expected: nil,
 			err:      "failed to read file nonexistent.lisp",
 		},
+
 		{
 			name: "scanner error",
 			input: []ast.Node{
@@ -102,6 +116,7 @@ func TestInclude(t *testing.T) {
 			expected: nil,
 			err:      "failed to scan file invalid_scan.lisp",
 		},
+
 		{
 			name: "parse error",
 			input: []ast.Node{
@@ -114,6 +129,7 @@ func TestInclude(t *testing.T) {
 			expected: nil,
 			err:      "failed to parse file invalid_parse.lisp",
 		},
+
 		{
 			name: "nested includes with duplicate",
 			input: []ast.Node{
@@ -132,6 +148,7 @@ func TestInclude(t *testing.T) {
 			},
 			err: "",
 		},
+
 		{
 			name: "callable not include",
 			input: []ast.Node{
@@ -150,6 +167,7 @@ func TestInclude(t *testing.T) {
 			},
 			err: "",
 		},
+
 		{
 			name: "include with wrong number of args",
 			input: []ast.Node{
@@ -165,6 +183,7 @@ func TestInclude(t *testing.T) {
 			expected: nil,
 			err:      "include expects exactly one argument",
 		},
+
 		{
 			name: "include with non-string argument",
 			input: []ast.Node{
@@ -182,23 +201,27 @@ func TestInclude(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result, err := Include(tt.input)
+
 			if tt.err != "" {
 				if err == nil || !strings.Contains(err.Error(), tt.err) {
 					t.Errorf("expected error %s, got %v", tt.err, err)
 				}
 				return
 			}
+
 			if err != nil {
 				t.Errorf("unexpected error: %v", err)
 				return
 			}
+
 			if len(result) != len(tt.expected) {
 				t.Errorf("expected %d nodes, got %d", len(tt.expected), len(result))
 				return
 			}
-			for i, node := range result {
-				if node.String() != tt.expected[i].String() {
-					t.Errorf("expected node %s, got %s", tt.expected[i].String(), node.String())
+
+			for idx, node := range result {
+				if node.String() != tt.expected[idx].String() {
+					t.Errorf("expected node %s, got %s", tt.expected[idx].String(), node.String())
 				}
 			}
 		})

@@ -46,7 +46,10 @@ func newError(tok token.Token, format string, args ...any) *Error {
 
 // includer processes the AST and handles include statements.
 type includer struct {
-	cycle   map[string]struct{}
+	// cycle is a temporary map to detect whether we are in an inclusion cycle.
+	cycle map[string]struct{}
+
+	// visited is a persistent map to detect whether we have already visited a file.
 	visited map[string]struct{}
 }
 
@@ -70,6 +73,17 @@ func newIncluder() *includer {
 //
 // - err: an error if the node is an invalid include statement, nil otherwise.
 func parseIncludeNode(node ast.Node) (filenode *ast.StringLiteral, found bool, err error) {
+	// This is the structure we're matching for:
+	//
+	//	CallExpr{
+	//		Callable: SymbolName{"include"},
+	//		Args: [
+	//			StringLiteral{"/path/to/file.brs"}]}
+	//
+	// Anything else is not an include statement.
+	//
+	// Also, the include statement needs to have a single argument
+	// and such an argument must be a string literal.
 	callExpr, ok := node.(*ast.CallExpr)
 	if !ok {
 		return nil, false, nil
@@ -126,30 +140,26 @@ func (inc *includer) includeFileOnce(tok token.Token, filename string) ([]ast.No
 		return nil, newError(tok, "inclusion cycle detected for file %s", filename)
 	}
 
-	// Make sure we have not already included this file
+	// Make sure we have not already visited this file
 	if _, ok := inc.visited[filename]; ok {
 		return nil, nil
 	}
 
-	// Mark the file as being under processing right now
+	// Mark the file as being under processing right now, then
+	// uncover the file and mark it as visited
 	inc.cycle[filename] = struct{}{}
-
-	// Unconditionally include
 	nodes, err := inc.includeFile(tok, filename)
 	if err != nil {
 		return nil, err
 	}
-
-	// Mark the file as visited
 	inc.visited[filename] = struct{}{}
 
 	// Recursively include based on the current set of nodes
 	result, err := inc.includeNodes(nodes)
 
-	// Stop visiting the file
+	// Stop visiting the file once we have finished
+	// recursively including all its nodes
 	delete(inc.cycle, filename)
-
-	// Return the results
 	return result, err
 }
 
@@ -179,6 +189,8 @@ func (inc *includer) includeFile(tok token.Token, filename string) ([]ast.Node, 
 // validateNoNestedIncludes checks for nested include statements and returns an error if found.
 func (inc *includer) validateNoNestedIncludes(node ast.Node) error {
 	switch n := node.(type) {
+	// We need to inspect each node that may contain other nodes and make sure
+	// none of them contains a nested include.
 	case *ast.BlockExpr:
 		for _, expr := range n.Exprs {
 			if err := inc.validateNoNestedIncludes(expr); err != nil {
