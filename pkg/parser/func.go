@@ -82,7 +82,7 @@ func (p *parser) parseLambda(tok token.Token) (ast.Node, error) {
 	// Track the depth inside lambdas so we know when it
 	// is legal to accept a return statement.
 	p.lambdadepth++
-	expr, err := p.parseWithFlags(0)
+	expr, err := p.parseWithFlags(allowEllipsis)
 	if err != nil {
 		return nil, err
 	}

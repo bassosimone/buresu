@@ -148,6 +148,14 @@ func TestParser(t *testing.T) {
 			expectedError:  "<stdin>:1:12: parser: expected token CLOSE, found EOF",
 		},
 
+		// ellipsis test
+		{
+			input:          "...",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:1: parser: unexpected ELLIPSIS token",
+		},
+
 		// if tests
 		{
 			input:          "(if true 1 0)",
@@ -263,6 +271,11 @@ func TestParser(t *testing.T) {
 			expectedOutput: "",
 			shouldFail:     true,
 			expectedError:  "<stdin>:1:1: parser: lambda parameter \"x\" is duplicated",
+		},
+		{
+			input:          "(lambda (x) ...)",
+			expectedOutput: "(lambda (x) \"\" ...)",
+			shouldFail:     false,
 		},
 
 		// quote tests

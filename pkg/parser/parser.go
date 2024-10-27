@@ -104,6 +104,9 @@ const (
 
 	// allowInclude allows parseWithFlags to parse include
 	allowInclude
+
+	// allowEllipsis allows parsing `...`
+	allowEllipsis
 )
 
 // parseWithFlags parses atoms, numbers, strings, expressions, and
@@ -122,6 +125,8 @@ func (p *parser) parseWithFlags(flags int) (ast.Node, error) {
 		return p.parseString()
 	case token.OPEN:
 		return p.parseForm(flags)
+	case token.ELLIPSIS:
+		return p.parseEllipsis(flags)
 	default:
 		err := newError(tp, "unexpected token %s", tp.TokenType)
 		if tp.TokenType == token.EOF {

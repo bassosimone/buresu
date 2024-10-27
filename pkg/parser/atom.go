@@ -9,6 +9,19 @@ import (
 	"github.com/bassosimone/buresu/pkg/token"
 )
 
+// parseEllipsis parses the `...` token in a lambda body.
+func (p *parser) parseEllipsis(flags int) (ast.Node, error) {
+	// Syntax: ELLIPSIS
+	tok, err := p.match(token.ELLIPSIS)
+	if err != nil {
+		return nil, err
+	}
+	if flags&allowEllipsis == 0 {
+		return nil, newError(tok, "unexpected ELLIPSIS token")
+	}
+	return &ast.EllipsisLiteral{Token: tok}, nil
+}
+
 // parseSymbol parses an atom token into an AST node.
 func (p *parser) parseSymbol() (ast.Node, error) {
 	// Syntax: ATOM
