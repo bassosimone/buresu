@@ -1,4 +1,4 @@
-(include "example/lib/fib.brs")
+(include! "example/lib/fib.brs")
 
 (define fib (fibgen))
 

@@ -122,7 +122,7 @@ type IncludeStmt struct {
 
 // String converts the IncludeExpr node back to lisp source code.
 func (inc *IncludeStmt) String() string {
-	return fmt.Sprintf("(include %s)", jsonMarshalWithoutEscaping(inc.FilePath))
+	return fmt.Sprintf("(include! %s)", jsonMarshalWithoutEscaping(inc.FilePath))
 }
 
 // IntLiteral represents an integer value.

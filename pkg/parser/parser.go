@@ -144,19 +144,19 @@ func (p *parser) parseForm(flags int) (ast.Node, error) {
 	form := p.peekNext()
 	if form.TokenType == token.ATOM {
 		specialForms := map[string]func(token.Token) (ast.Node, error){
-			"block":   p.parseBlock,
-			"cond":    p.parseCond,
-			"define":  p.parseDefine,
-			"if":      p.parseIf,
-			"include": p.parseStmtNotAllowed("include", p.parseInclude),
-			"lambda":  p.parseLambda,
-			"quote":   p.parseQuote,
-			"return!": p.parseStmtNotAllowed("return!", p.parseReturn),
-			"set!":    p.parseSet,
-			"while":   p.parseWhile,
+			"block":    p.parseBlock,
+			"cond":     p.parseCond,
+			"define":   p.parseDefine,
+			"if":       p.parseIf,
+			"include!": p.parseStmtNotAllowed("include!", p.parseInclude),
+			"lambda":   p.parseLambda,
+			"quote":    p.parseQuote,
+			"return!":  p.parseStmtNotAllowed("return!", p.parseReturn),
+			"set!":     p.parseSet,
+			"while":    p.parseWhile,
 		}
 		if flags&allowInclude != 0 {
-			specialForms["include"] = p.parseInclude
+			specialForms["include!"] = p.parseInclude
 		}
 		if flags&allowReturn != 0 {
 			specialForms["return!"] = p.parseReturn

@@ -20,7 +20,7 @@ func mockReadFile(filename string) ([]byte, error) {
 		return []byte(`(define y 43)`), nil
 
 	case "cycle.lisp":
-		return []byte(`(include "cycle.lisp")`), nil
+		return []byte(`(include! "cycle.lisp")`), nil
 
 	case "invalid_scan.lisp":
 		return []byte(`@`), nil
@@ -29,10 +29,10 @@ func mockReadFile(filename string) ([]byte, error) {
 		return []byte(`(if`), nil
 
 	case "fileX.lisp":
-		return []byte(`(include "fileY.lisp") (include "fileZ.lisp") (include "fileZ.lisp")`), nil
+		return []byte(`(include! "fileY.lisp") (include! "fileZ.lisp") (include! "fileZ.lisp")`), nil
 
 	case "fileY.lisp":
-		return []byte(`(include "fileZ.lisp")`), nil
+		return []byte(`(include! "fileZ.lisp")`), nil
 
 	case "fileZ.lisp":
 		return []byte(`(define z 44)`), nil
@@ -63,7 +63,7 @@ func TestInclude(t *testing.T) {
 			name: "simple include",
 			input: []ast.Node{
 				&ast.IncludeStmt{
-					Token:    token.Token{TokenType: token.ATOM, Value: "include"},
+					Token:    token.Token{TokenType: token.ATOM, Value: "include!"},
 					FilePath: "file1.lisp",
 				},
 			},
@@ -82,7 +82,7 @@ func TestInclude(t *testing.T) {
 			name: "include with cycle",
 			input: []ast.Node{
 				&ast.IncludeStmt{
-					Token:    token.Token{TokenType: token.ATOM, Value: "include"},
+					Token:    token.Token{TokenType: token.ATOM, Value: "include!"},
 					FilePath: "cycle.lisp",
 				},
 			},
@@ -95,7 +95,7 @@ func TestInclude(t *testing.T) {
 			name: "read file error",
 			input: []ast.Node{
 				&ast.IncludeStmt{
-					Token:    token.Token{TokenType: token.ATOM, Value: "include"},
+					Token:    token.Token{TokenType: token.ATOM, Value: "include!"},
 					FilePath: "nonexistent.lisp",
 				},
 			},
@@ -108,7 +108,7 @@ func TestInclude(t *testing.T) {
 			name: "scanner error",
 			input: []ast.Node{
 				&ast.IncludeStmt{
-					Token:    token.Token{TokenType: token.ATOM, Value: "include"},
+					Token:    token.Token{TokenType: token.ATOM, Value: "include!"},
 					FilePath: "invalid_scan.lisp",
 				},
 			},
@@ -121,7 +121,7 @@ func TestInclude(t *testing.T) {
 			name: "parse error",
 			input: []ast.Node{
 				&ast.IncludeStmt{
-					Token:    token.Token{TokenType: token.ATOM, Value: "include"},
+					Token:    token.Token{TokenType: token.ATOM, Value: "include!"},
 					FilePath: "invalid_parse.lisp",
 				},
 			},
@@ -134,7 +134,7 @@ func TestInclude(t *testing.T) {
 			name: "nested includes with duplicate",
 			input: []ast.Node{
 				&ast.IncludeStmt{
-					Token:    token.Token{TokenType: token.ATOM, Value: "include"},
+					Token:    token.Token{TokenType: token.ATOM, Value: "include!"},
 					FilePath: "fileX.lisp",
 				},
 			},

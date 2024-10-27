@@ -192,28 +192,28 @@ func TestParser(t *testing.T) {
 
 		// include tests
 		{
-			input:          "(include \"foobar\")",
-			expectedOutput: "(include \"foobar\")",
+			input:          "(include! \"foobar\")",
+			expectedOutput: "(include! \"foobar\")",
 			shouldFail:     false,
 			expectedError:  "",
 		},
 		{
-			input:          "(block (include \"foobar\"))",
+			input:          "(block (include! \"foobar\"))",
 			expectedOutput: "",
 			shouldFail:     true,
-			expectedError:  "<stdin>:1:8: parser: include statement not allowed in this context",
+			expectedError:  "<stdin>:1:8: parser: include! statement not allowed in this context",
 		},
 		{
-			input:          "(include ())",
+			input:          "(include! ())",
 			expectedOutput: "",
 			shouldFail:     true,
-			expectedError:  "<stdin>:1:10: parser: expected token STRING, found OPEN",
+			expectedError:  "<stdin>:1:11: parser: expected token STRING, found OPEN",
 		},
 		{
-			input:          "(include \"foobar\"",
+			input:          "(include! \"foobar\"",
 			expectedOutput: "",
 			shouldFail:     true,
-			expectedError:  "<stdin>:1:17: parser: expected token CLOSE, found EOF",
+			expectedError:  "<stdin>:1:18: parser: expected token CLOSE, found EOF",
 		},
 
 		// lambda tests

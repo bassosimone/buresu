@@ -16,7 +16,7 @@ which you can see by using `--emit tokens`.
 2. *parser*: takes the tokens as input and emits an abstract syntax tree,
 or AST, which you can see by using `--emit ast`.
 
-3. *includer*: services `(include "path/to/file")` top-level statements
+3. *includer*: services `(include! "path/to/file")` top-level statements
 by including the given file content. You can inspect the AST after including
 other files using `--emit ast_after_include`.
 

@@ -51,11 +51,11 @@ func (p *parser) parseReturn(tok token.Token) (ast.Node, error) {
 
 // parseInclude parses an include form into an AST node.
 func (p *parser) parseInclude(tok token.Token) (ast.Node, error) {
-	// Syntax: OPEN "include" STRING CLOSE
+	// Syntax: OPEN "include!" STRING CLOSE
 	if _, err := p.match(token.OPEN); err != nil {
 		return nil, err
 	}
-	if _, err := p.matchAtomWithName("include"); err != nil {
+	if _, err := p.matchAtomWithName("include!"); err != nil {
 		return nil, err
 	}
 
