@@ -1,5 +1,5 @@
 -- input --
-< <= = == <=> >= > + - * / . :: :
+< <= = == <=> >= > + - * / . :: : .. ...
 
 -- output --
 [
@@ -133,7 +133,25 @@
     "TokenPos": {
       "FileName": "input.txt",
       "LineNumber": 1,
-      "LineColumn": 33
+      "LineColumn": 35
+    },
+    "TokenType": "ATOM",
+    "Value": ".."
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 38
+    },
+    "TokenType": "ELLIPSIS",
+    "Value": "..."
+  },
+  {
+    "TokenPos": {
+      "FileName": "input.txt",
+      "LineNumber": 1,
+      "LineColumn": 40
     },
     "TokenType": "EOF",
     "Value": ""

@@ -334,7 +334,17 @@ func (s *scanner) scanSymbolicAtom(pos token.Position) (token.Token, error) {
 
 	case '.':
 		s.advance()
-		tok = s.newToken(token.ATOM, pos, ".")
+		if s.current == '.' {
+			s.advance()
+			if s.current == '.' {
+				s.advance()
+				tok = s.newToken(token.ELLIPSIS, pos, "...")
+			} else {
+				tok = s.newToken(token.ATOM, pos, "..")
+			}
+		} else {
+			tok = s.newToken(token.ATOM, pos, ".")
+		}
 
 	case '=':
 		s.advance()

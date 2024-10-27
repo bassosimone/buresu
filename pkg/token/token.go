@@ -30,6 +30,9 @@ const (
 
 	// STRING represents a string token.
 	STRING TokenType = "STRING"
+
+	// ELLIPSIS represents an ellipsis token.
+	ELLIPSIS TokenType = "ELLIPSIS"
 )
 
 // Position represents the position of a token in the source code.
