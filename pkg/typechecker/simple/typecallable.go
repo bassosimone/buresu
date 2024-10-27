@@ -79,6 +79,12 @@ func (c *Callable) call(ctx context.Context, args ...visitor.Type) (visitor.Type
 		return nil, err
 	}
 
+	// if the lambda evaluates to the ellipsis type, it means it has
+	// no body and therefore we trust the return type
+	if _, ok := rvType.(*Ellipsis); ok {
+		return c.ReturnType, nil
+	}
+
 	// make sure the return type is the expected return type
 	if !sameType(rvType, c.ReturnType) {
 		err := fmt.Errorf("%w: expected %s, got %s", ErrWrongReturnType, c.ReturnType.String(), rvType.String())

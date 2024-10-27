@@ -1,0 +1,7 @@
+-- input --
+(define fx (lambda (x) ...))
+(fx 10)
+
+-- output --
+(Callable (Any) Any)
+Any

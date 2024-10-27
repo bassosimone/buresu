@@ -38,14 +38,17 @@ type Environment interface {
 	// NewBoolType returns a new bool type instance.
 	NewBoolType() Type
 
-	// NewLambdaType returns a new lambda type instance.
-	NewLambdaType(node *ast.LambdaExpr) (Type, error)
+	// NewEllipsisType returns a new ellipsis type instance.
+	NewEllipsisType() Type
 
 	// NewFloat64Type returns a new float64 type instance.
 	NewFloat64Type() Type
 
 	// NewIntType returns a new int type instance.
 	NewIntType() Type
+
+	// NewLambdaType returns a new lambda type instance.
+	NewLambdaType(node *ast.LambdaExpr) (Type, error)
 
 	// NewQuotedType returns a new quoted type instance.
 	NewQuotedType(node *ast.QuoteExpr) Type

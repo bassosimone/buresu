@@ -37,6 +37,11 @@ func TestCheck(t *testing.T) {
 			want: &mockType{"Int"},
 		},
 		{
+			name: "EllipsisLiteral",
+			node: &ast.EllipsisLiteral{},
+			want: &mockType{"Ellipsis"},
+		},
+		{
 			name: "FalseLiteral",
 			node: &ast.FalseLiteral{},
 			want: &mockType{"Bool"},

@@ -52,8 +52,8 @@ func (m *mockEnvironment) NewBoolType() Type {
 	return &mockType{"Bool"}
 }
 
-func (m *mockEnvironment) NewLambdaType(node *ast.LambdaExpr) (Type, error) {
-	return nil, nil
+func (m *mockEnvironment) NewEllipsisType() Type {
+	return &mockType{"Ellipsis"}
 }
 
 func (m *mockEnvironment) NewFloat64Type() Type {
@@ -62,6 +62,10 @@ func (m *mockEnvironment) NewFloat64Type() Type {
 
 func (m *mockEnvironment) NewIntType() Type {
 	return &mockType{"Int"}
+}
+
+func (m *mockEnvironment) NewLambdaType(node *ast.LambdaExpr) (Type, error) {
+	return nil, nil
 }
 
 func (m *mockEnvironment) NewQuotedType(node *ast.QuoteExpr) Type {
