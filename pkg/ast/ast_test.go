@@ -65,6 +65,17 @@ func TestDefineExpr(t *testing.T) {
 	})
 }
 
+func TestEllipsisLiteral(t *testing.T) {
+	tok := token.Token{TokenType: token.ATOM, Value: "..."}
+	expr := &EllipsisLiteral{Token: tok}
+	expected := "..."
+	t.Run("serialization", func(t *testing.T) {
+		if expr.String() != expected {
+			t.Errorf("expected %s, got %s", expected, expr.String())
+		}
+	})
+}
+
 func TestFloatLiteral(t *testing.T) {
 	tok := token.Token{TokenType: token.NUMBER, Value: "3.14"}
 	expr := &FloatLiteral{Token: tok, Value: "3.14"}

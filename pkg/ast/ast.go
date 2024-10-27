@@ -93,6 +93,18 @@ func (def *DefineExpr) String() string {
 	return fmt.Sprintf("(define %s %s)", def.Symbol, def.Expr.String())
 }
 
+// EllipsisLiteral corresponds to the ELLIPSIS token.
+//
+// We use `...` to represent unspecified lambda bodies.
+type EllipsisLiteral struct {
+	Token token.Token
+}
+
+// String converts the Ellipsis node back to lisp source code.
+func (ell *EllipsisLiteral) String() string {
+	return "..."
+}
+
 // FalseLiteral represents a boolean false value.
 type FalseLiteral struct {
 	Token token.Token
