@@ -1,0 +1,6 @@
+-- input --
+(define fx (lambda () ...))
+(fx)
+
+-- error --
+input.code:1:23: interpreter: ellipsis cannot be used as a value
