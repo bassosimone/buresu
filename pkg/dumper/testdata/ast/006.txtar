@@ -1,0 +1,36 @@
+-- input --
+(lambda () ...)
+
+-- output --
+[
+  {
+    "Type": "LambdaExpr",
+    "Value": {
+      "Token": {
+        "TokenPos": {
+          "FileName": "input.ast",
+          "LineNumber": 1,
+          "LineColumn": 1
+        },
+        "TokenType": "OPEN",
+        "Value": "("
+      },
+      "Params": null,
+      "Docs": "",
+      "Expr": {
+        "Type": "EllipsisLiteral",
+        "Value": {
+          "Token": {
+            "TokenPos": {
+              "FileName": "input.ast",
+              "LineNumber": 1,
+              "LineColumn": 12
+            },
+            "TokenType": "ELLIPSIS",
+            "Value": "..."
+          }
+        }
+      }
+    }
+  }
+]

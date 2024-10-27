@@ -101,6 +101,14 @@ func wrapNode(node ast.Node) ast.Node {
 			},
 		}
 
+	case *ast.EllipsisLiteral:
+		return &nodeWrapper{
+			Type: "EllipsisLiteral",
+			Value: &ast.EllipsisLiteral{
+				Token: nx.Token,
+			},
+		}
+
 	case *ast.FalseLiteral:
 		return &nodeWrapper{
 			Type:  "FalseLiteral",
