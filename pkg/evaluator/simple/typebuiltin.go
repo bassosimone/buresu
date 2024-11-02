@@ -40,5 +40,5 @@ var _ visitor.Value = (*BuiltInFuncValue)(nil)
 
 // String implements [visitor.Value].
 func (bf *BuiltInFuncValue) String() string {
-	return fmt.Sprintf("<built-in function %s>", bf.Name)
+	return fmt.Sprintf("<built-in function %q>", bf.Name)
 }
