@@ -140,7 +140,7 @@ func (cmd command) Main(_ context.Context, argv ...string) error {
 			continue
 		}
 
-		nodes, err = includer.Include(nodes)
+		nodes, err = includer.Include(".", nodes)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "include error: %s\n", err.Error())
 			resetBufferAndPrompt()

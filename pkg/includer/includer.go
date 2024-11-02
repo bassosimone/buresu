@@ -5,6 +5,7 @@ package includer
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/bassosimone/buresu/pkg/ast"
@@ -17,8 +18,8 @@ import (
 var readFile = os.ReadFile
 
 // Include processes the given AST and handles include statements.
-func Include(nodes []ast.Node) ([]ast.Node, error) {
-	inc := newIncluder()
+func Include(basePath string, nodes []ast.Node) ([]ast.Node, error) {
+	inc := newIncluder(basePath)
 	return inc.includeNodes(nodes)
 }
 
@@ -46,6 +47,9 @@ func newError(tok token.Token, format string, args ...any) *Error {
 
 // includer processes the AST and handles include statements.
 type includer struct {
+	// basePath is the base path for all included files.
+	basePath string
+
 	// cycle is a temporary map to detect whether we are in an inclusion cycle.
 	cycle map[string]struct{}
 
@@ -54,10 +58,11 @@ type includer struct {
 }
 
 // newIncluder creates a new includer instance.
-func newIncluder() *includer {
+func newIncluder(basePath string) *includer {
 	return &includer{
-		cycle:   map[string]struct{}{},
-		visited: map[string]struct{}{},
+		basePath: basePath,
+		cycle:    map[string]struct{}{},
+		visited:  map[string]struct{}{},
 	}
 }
 
@@ -116,6 +121,9 @@ func (inc *includer) includeFileOnce(tok token.Token, filename string) ([]ast.No
 
 // includeFile includes a file and returns all its nodes.
 func (inc *includer) includeFile(tok token.Token, filename string) ([]ast.Node, error) {
+	// Obtain a file name within the basepath.
+	filename = filepath.Join(inc.basePath, filepath.FromSlash(filename))
+
 	// Load the file content.
 	content, err := readFile(filename)
 	if err != nil {

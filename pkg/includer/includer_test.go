@@ -155,7 +155,8 @@ func TestInclude(t *testing.T) {
 			if skipAll && !tt.overrideSkip {
 				t.Skip("skipAll is true and overrideSkip is false")
 			}
-			result, err := Include(tt.input)
+
+			result, err := Include(".", tt.input)
 
 			if tt.err != "" {
 				if err == nil || !strings.Contains(err.Error(), tt.err) {

@@ -113,7 +113,7 @@ func (cmd command) Main(ctx context.Context, argv ...string) error {
 	}
 
 	// 9. service requests to include other files
-	nodes, err = includer.Include(nodes)
+	nodes, err = includer.Include(".", nodes)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "buresu run: %s\n", err.Error())
 		return err // already wrapped
