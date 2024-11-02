@@ -10,7 +10,7 @@ import (
 
 // NewGlobalEnvironment creates a new global environment loading the
 // standard library runtime from the given base path.
-func NewGlobalEnvironment(basePath string) (*Environment, error) {
+func NewGlobalEnvironment(ctx context.Context, basePath string) (*Environment, error) {
 	env := NewEnvironment()
 
 	// define the `Num` type class for `Int` and `Float64`

@@ -38,7 +38,7 @@ func TestCheck(t *testing.T) {
 
 			// Evaluate the parsed nodes
 			ctx := context.Background()
-			env, err := simple.NewGlobalEnvironment(filepath.Join("..", "..", ".."))
+			env, err := simple.NewGlobalEnvironment(ctx, filepath.Join("..", "..", ".."))
 			if err != nil {
 				t.Fatalf("failed to create global environment: %v", err)
 			}

@@ -45,11 +45,12 @@ func (cmd command) Help(argv ...string) error {
 }
 
 // Main implements [cliutils.Command].
-func (cmd command) Main(_ context.Context, argv ...string) error {
-	// Implementation note: we ignore the main context, which
-	// is setup to handle ^C because we need a more granular
-	// control over its handling. For example, ^C is both used
-	// to interrupt long running evaluation and to stop the
+func (cmd command) Main(ctx context.Context, argv ...string) error {
+	// Implementation note: we only use the main context for loading the
+	// standard library runtime in the type checker. We do this because
+	// the main context is setup to handle ^C but we need a more granular
+	// control over signal handling in the REPL. For example, ^C is both
+	// used to interrupt long running evaluation and to interrupt the
 	// editing of an incomplete input line in the REPL.
 
 	// 1. intercept and handle -h, --help, help
@@ -97,7 +98,7 @@ func (cmd command) Main(_ context.Context, argv ...string) error {
 
 	// 8. create the runtime environment
 	rootScope := evaluator.NewGlobalEnvironment(os.Stdout)
-	tcEnv, err := typechecker.NewGlobalEnvironment(".")
+	tcEnv, err := typechecker.NewGlobalEnvironment(ctx, ".")
 	if err != nil {
 		err = fmt.Errorf("failed to load the standard library runtime: %w", err)
 		fmt.Fprintf(os.Stderr, "buresu repl: %s\n", err.Error())

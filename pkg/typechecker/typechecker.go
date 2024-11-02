@@ -21,8 +21,8 @@ type Environment = simple.Environment
 
 // NewGlobalEnvironment creates a new global environment loading the
 // standard library runtime from the given base path.
-func NewGlobalEnvironment(basePath string) (*Environment, error) {
-	return simple.NewGlobalEnvironment(basePath)
+func NewGlobalEnvironment(ctx context.Context, basePath string) (*Environment, error) {
+	return simple.NewGlobalEnvironment(ctx, basePath)
 }
 
 // Check evaluates the type of a node in the AST and returns the result.
