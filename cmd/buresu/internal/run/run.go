@@ -124,7 +124,12 @@ func (cmd command) Main(ctx context.Context, argv ...string) error {
 
 	// 10. create the runtime environment
 	rootScope := evaluator.NewGlobalEnvironment(os.Stdout)
-	tcEnv := typechecker.NewGlobalEnvironment()
+	tcEnv, err := typechecker.NewGlobalEnvironment(".")
+	if err != nil {
+		err = fmt.Errorf("failed to load the standard library runtime: %w", err)
+		fmt.Fprintf(os.Stderr, "buresu run: %s\n", err.Error())
+		return err
+	}
 
 	// 11. potentially typecheck
 	if _, ok := enabledFeatures["typechecker"]; ok {

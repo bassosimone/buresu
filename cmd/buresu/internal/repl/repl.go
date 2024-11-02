@@ -89,13 +89,20 @@ func (cmd command) Main(_ context.Context, argv ...string) error {
 	// 7. initialize the readline library
 	rl, err := readline.New("> ")
 	if err != nil {
-		return fmt.Errorf("buresu repl: failed to initialize readline: %w", err)
+		err = fmt.Errorf("failed to initialize readline: %w", err)
+		fmt.Fprintf(os.Stderr, "buresu repl: %s\n", err.Error())
+		return err
 	}
 	defer rl.Close()
 
 	// 8. create the runtime environment
 	rootScope := evaluator.NewGlobalEnvironment(os.Stdout)
-	tcEnv := typechecker.NewGlobalEnvironment()
+	tcEnv, err := typechecker.NewGlobalEnvironment(".")
+	if err != nil {
+		err = fmt.Errorf("failed to load the standard library runtime: %w", err)
+		fmt.Fprintf(os.Stderr, "buresu repl: %s\n", err.Error())
+		return err
+	}
 
 	// 9. arrange for buffer and prompt reset
 	buffer := ""

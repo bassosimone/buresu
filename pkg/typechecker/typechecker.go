@@ -19,9 +19,10 @@ type Type = visitor.Type
 // Environment is the execution environment used by the evaluator.
 type Environment = simple.Environment
 
-// NewGlobalEnvironment creates a new global environment.
-func NewGlobalEnvironment() *Environment {
-	return simple.NewGlobalEnvironment()
+// NewGlobalEnvironment creates a new global environment loading the
+// standard library runtime from the given base path.
+func NewGlobalEnvironment(basePath string) (*Environment, error) {
+	return simple.NewGlobalEnvironment(basePath)
 }
 
 // Check evaluates the type of a node in the AST and returns the result.

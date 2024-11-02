@@ -8,8 +8,9 @@ import (
 	"github.com/bassosimone/buresu/pkg/typechecker/visitor"
 )
 
-// NewGlobalEnvironment creates a new global environment.
-func NewGlobalEnvironment() *Environment {
+// NewGlobalEnvironment creates a new global environment loading the
+// standard library runtime from the given base path.
+func NewGlobalEnvironment(basePath string) (*Environment, error) {
 	env := NewEnvironment()
 
 	// define the `Num` type class for `Int` and `Float64`
@@ -34,5 +35,5 @@ func NewGlobalEnvironment() *Environment {
 		Previous: nil,
 	})
 
-	return env
+	return env, nil
 }

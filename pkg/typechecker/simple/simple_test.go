@@ -5,6 +5,7 @@ package simple_test
 import (
 	"bytes"
 	"context"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -37,7 +38,11 @@ func TestCheck(t *testing.T) {
 
 			// Evaluate the parsed nodes
 			ctx := context.Background()
-			env := simple.NewGlobalEnvironment()
+			env, err := simple.NewGlobalEnvironment(filepath.Join("..", "..", ".."))
+			if err != nil {
+				t.Fatalf("failed to create global environment: %v", err)
+			}
+
 			var (
 				results []string
 				result  visitor.Type
