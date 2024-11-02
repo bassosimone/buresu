@@ -4,7 +4,11 @@ package simple
 
 import (
 	"context"
+	"path/filepath"
 
+	"github.com/bassosimone/buresu/pkg/ast"
+	"github.com/bassosimone/buresu/pkg/includer"
+	"github.com/bassosimone/buresu/pkg/token"
 	"github.com/bassosimone/buresu/pkg/typechecker/visitor"
 )
 
@@ -12,18 +16,6 @@ import (
 // standard library runtime from the given base path.
 func NewGlobalEnvironment(ctx context.Context, basePath string) (*Environment, error) {
 	env := NewEnvironment()
-
-	// define the `Num` type class for `Int` and `Float64`
-	(&Num{&Float64{}}).Instantiate(env)
-	(&Num{&Int{}}).Instantiate(env)
-
-	// define the `Ord` type class for `Int` and `Float64`
-	(&Ord{&Float64{}}).Instantiate(env)
-	(&Ord{&Int{}}).Instantiate(env)
-
-	// define the `Seq` type class for `String` and `Unit`
-	(&Seq{&String{}}).Instantiate(env)
-	(&Seq{&Unit{}}).Instantiate(env)
 
 	// define the `display` built-in function
 	env.DefineType("display", &Callable{
@@ -35,5 +27,39 @@ func NewGlobalEnvironment(ctx context.Context, basePath string) (*Environment, e
 		Previous: nil,
 	})
 
-	return env, nil
+	// most of the standard library runtime is defined in the runtime.brs file
+	err := loadStdlibRuntime(ctx, basePath, env)
+	return env, err
+}
+
+// loadStdlibRuntime loads the standard library runtime.
+func loadStdlibRuntime(ctx context.Context, basePath string, tcEnv *Environment) error {
+	// manually create the AST node for including the runtime
+	runtime := &ast.IncludeStmt{
+		Token: token.Token{
+			TokenPos: token.Position{
+				FileName:   "<runtime>",
+				LineNumber: 1,
+				LineColumn: 1,
+			},
+			TokenType: token.ATOM,
+			Value:     "include",
+		},
+		FilePath: filepath.Join("stdlib", "runtime", "runtime.brs"),
+	}
+	nodes := []ast.Node{runtime}
+
+	// use the includer to pull the nodes from the runtime file(s)
+	nodes, err := includer.Include(basePath, nodes)
+	if err != nil {
+		return err
+	}
+
+	// run the typechecker on the runtime nodes
+	for _, node := range nodes {
+		if _, err := Check(ctx, tcEnv, node); err != nil {
+			return err
+		}
+	}
+	return nil
 }
