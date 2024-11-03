@@ -7,6 +7,33 @@ import (
 	"github.com/bassosimone/buresu/pkg/token"
 )
 
+// parseDeclare parses a declare form into an AST node.
+func (p *parser) parseDeclare(tok token.Token) (ast.Node, error) {
+	// Syntax: OPEN "declare" <symbol> <lambda> CLOSE
+	if _, err := p.match(token.OPEN); err != nil {
+		return nil, err
+	}
+	if _, err := p.matchAtomWithName("declare"); err != nil {
+		return nil, err
+	}
+
+	symbol, err := p.match(token.ATOM)
+	if err != nil {
+		return nil, err
+	}
+
+	lambda, err := p.parseLambda(tok)
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := p.match(token.CLOSE); err != nil {
+		return nil, err
+	}
+
+	return &ast.DeclareExpr{Token: tok, Symbol: symbol.Value, Expr: lambda}, nil
+}
+
 // parseDefine parses a define form into an AST node.
 func (p *parser) parseDefine(tok token.Token) (ast.Node, error) {
 	// Syntax: OPEN "define" <symbol> <expr> CLOSE

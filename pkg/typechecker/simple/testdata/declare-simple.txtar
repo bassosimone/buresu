@@ -1,0 +1,5 @@
+-- input --
+(declare fx (lambda (x) ":: (Callable (Int) Int)" ...))
+
+-- output --
+(Callable (Int) Int)

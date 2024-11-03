@@ -151,6 +151,7 @@ func (p *parser) parseForm(flags int) (ast.Node, error) {
 		specialForms := map[string]func(token.Token) (ast.Node, error){
 			"block":    p.parseBlock,
 			"cond":     p.parseCond,
+			"declare":  p.parseDeclare,
 			"define":   p.parseDefine,
 			"if":       p.parseIf,
 			"include!": p.parseStmtNotAllowed("include!", p.parseInclude),

@@ -1,0 +1,53 @@
+-- input --
+(declare fx (lambda (x) ...))
+
+-- output --
+[
+  {
+    "Type": "DeclareExpr",
+    "Value": {
+      "Token": {
+        "TokenPos": {
+          "FileName": "input.ast",
+          "LineNumber": 1,
+          "LineColumn": 1
+        },
+        "TokenType": "OPEN",
+        "Value": "("
+      },
+      "Symbol": "fx",
+      "Expr": {
+        "Type": "LambdaExpr",
+        "Value": {
+          "Token": {
+            "TokenPos": {
+              "FileName": "input.ast",
+              "LineNumber": 1,
+              "LineColumn": 1
+            },
+            "TokenType": "OPEN",
+            "Value": "("
+          },
+          "Params": [
+            "x"
+          ],
+          "Docs": "",
+          "Expr": {
+            "Type": "EllipsisLiteral",
+            "Value": {
+              "Token": {
+                "TokenPos": {
+                  "FileName": "input.ast",
+                  "LineNumber": 1,
+                  "LineColumn": 25
+                },
+                "TokenType": "ELLIPSIS",
+                "Value": "..."
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+]

@@ -2,7 +2,7 @@
 
 ;; Seq typeclass
 
-(define length (lambda (a)
+(declare length (lambda (a)
 	"Return the length of the unit.
 
 	:: (Callable (Unit) Int)"

@@ -54,6 +54,17 @@ func TestCondExpr(t *testing.T) {
 	})
 }
 
+func TestDeclareExpr(t *testing.T) {
+	tok := token.Token{TokenType: token.ATOM, Value: "declare"}
+	expr := &DeclareExpr{Token: tok, Symbol: "x", Expr: &IntLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "42"}, Value: "42"}}
+	expected := "(declare x 42)"
+	t.Run("serialization", func(t *testing.T) {
+		if expr.String() != expected {
+			t.Errorf("expected %s, got %s", expected, expr.String())
+		}
+	})
+}
+
 func TestDefineExpr(t *testing.T) {
 	tok := token.Token{TokenType: token.ATOM, Value: "define"}
 	expr := &DefineExpr{Token: tok, Symbol: "x", Expr: &IntLiteral{Token: token.Token{TokenType: token.NUMBER, Value: "42"}, Value: "42"}}

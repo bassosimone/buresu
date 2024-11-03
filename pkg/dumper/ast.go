@@ -91,6 +91,16 @@ func wrapNode(node ast.Node) ast.Node {
 			},
 		}
 
+	case *ast.DeclareExpr:
+		return &nodeWrapper{
+			Type: "DeclareExpr",
+			Value: &ast.DeclareExpr{
+				Token:  nx.Token,
+				Symbol: nx.Symbol,
+				Expr:   wrapNode(nx.Expr),
+			},
+		}
+
 	case *ast.DefineExpr:
 		return &nodeWrapper{
 			Type: "DefineExpr",

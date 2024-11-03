@@ -81,6 +81,18 @@ func (cond *CondExpr) String() string {
 	return fmt.Sprintf("(cond %s%s)", strings.Join(cases, " "), elseExpr)
 }
 
+// DeclareExpr declares a value in a variable within the current scope.
+type DeclareExpr struct {
+	Token  token.Token
+	Symbol string
+	Expr   Node
+}
+
+// String converts the DeclareExpr node back to lisp source code.
+func (decl *DeclareExpr) String() string {
+	return fmt.Sprintf("(declare %s %s)", decl.Symbol, decl.Expr.String())
+}
+
 // DefineExpr saves a value in a variable within the current scope.
 type DefineExpr struct {
 	Token  token.Token

@@ -143,6 +143,26 @@ func TestEval(t *testing.T) {
 		}
 	})
 
+	t.Run("declare expression", func(t *testing.T) {
+		declareExpr := &ast.DeclareExpr{
+			Token:  token.Token{TokenType: token.ATOM, Value: "declare"},
+			Symbol: "x",
+			Expr: &ast.IntLiteral{
+				Token: token.Token{TokenType: token.NUMBER, Value: "42"},
+				Value: "42",
+			},
+		}
+
+		result, err := Eval(ctx, env, declareExpr)
+
+		if err != nil {
+			t.Errorf("expected no error, got %v", err)
+		}
+		if result.String() != env.NewUnitValue().String() {
+			t.Errorf("expected %v, got %v", env.NewUnitValue(), result)
+		}
+	})
+
 	t.Run("define expression", func(t *testing.T) {
 		defineExpr := &ast.DefineExpr{
 			Token:  token.Token{TokenType: token.ATOM, Value: "define"},

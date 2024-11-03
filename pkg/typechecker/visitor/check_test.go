@@ -23,6 +23,7 @@ func TestCheck(t *testing.T) {
 			node: &ast.BlockExpr{},
 			want: &mockType{"Unit"},
 		},
+
 		{
 			name: "CondExpr",
 			node: &ast.CondExpr{
@@ -31,56 +32,73 @@ func TestCheck(t *testing.T) {
 			},
 			want: &mockType{"Union"},
 		},
+
+		{
+			name: "DeclareExpr",
+			node: &ast.DeclareExpr{Symbol: "x", Expr: &ast.IntLiteral{}},
+			want: &mockType{"Int"},
+		},
+
 		{
 			name: "DefineExpr",
 			node: &ast.DefineExpr{Symbol: "x", Expr: &ast.IntLiteral{}},
 			want: &mockType{"Int"},
 		},
+
 		{
 			name: "EllipsisLiteral",
 			node: &ast.EllipsisLiteral{},
 			want: &mockType{"Ellipsis"},
 		},
+
 		{
 			name: "FalseLiteral",
 			node: &ast.FalseLiteral{},
 			want: &mockType{"Bool"},
 		},
+
 		{
 			name: "FloatLiteral",
 			node: &ast.FloatLiteral{},
 			want: &mockType{"Float64"},
 		},
+
 		{
 			name: "IntLiteral",
 			node: &ast.IntLiteral{},
 			want: &mockType{"Int"},
 		},
+
 		{
 			name: "ReturnStmt",
 			node: &ast.ReturnStmt{Expr: &ast.IntLiteral{}},
 			want: &mockType{"Int"},
 		},
+
 		{
 			name: "SetExpr",
 			node: &ast.SetExpr{Symbol: "x", Expr: &ast.IntLiteral{}},
 			want: &mockType{"Int"},
 		},
+
 		{
 			name: "StringLiteral",
 			node: &ast.StringLiteral{},
 			want: &mockType{"String"},
 		},
+
 		{
 			name: "TrueLiteral",
 			node: &ast.TrueLiteral{},
 			want: &mockType{"Bool"},
 		},
+
 		{
 			name: "UnitExpr",
 			node: &ast.UnitExpr{},
 			want: &mockType{"Unit"},
 		},
+
 		{
 			name: "WhileExpr",
 			node: &ast.WhileExpr{Predicate: &ast.TrueLiteral{}, Expr: &ast.IntLiteral{}},

@@ -118,6 +118,31 @@ func TestParser(t *testing.T) {
 			shouldFail:     false,
 		},
 
+		// declare
+		{
+			input:          "(define fx (lambda (x) x))",
+			expectedOutput: "(define fx (lambda (x) \"\" x))",
+			shouldFail:     false,
+		},
+		{
+			input:          "(declare",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:8: parser: expected token ATOM, found EOF",
+		},
+		{
+			input:          "(declare x",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:10: parser: expected token OPEN, found EOF",
+		},
+		{
+			input:          "(declare x 42",
+			expectedOutput: "",
+			shouldFail:     true,
+			expectedError:  "<stdin>:1:12: parser: expected token OPEN, found NUMBER",
+		},
+
 		// define & set tests
 		{
 			input:          "(set! x 42)",

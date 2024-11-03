@@ -27,6 +27,9 @@ func Check(ctx context.Context, env Environment, node ast.Node) (Type, error) {
 	case *ast.CondExpr:
 		return checkCondExpr(ctx, env, node)
 
+	case *ast.DeclareExpr:
+		return checkDeclareExpr(ctx, env, node)
+
 	case *ast.DefineExpr:
 		return checkDefineExpr(ctx, env, node)
 

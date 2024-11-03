@@ -27,6 +27,9 @@ func Eval(ctx context.Context, env Environment, node ast.Node) (Value, error) {
 	case *ast.CondExpr:
 		return evalCondExpr(ctx, env, node)
 
+	case *ast.DeclareExpr:
+		return evalDeclareExpr(ctx, env, node)
+
 	case *ast.DefineExpr:
 		return evalDefineExpr(ctx, env, node)
 
