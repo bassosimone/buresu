@@ -1,4 +1,0 @@
--- input.code --
-((lambda (x y) (+ x y)) 1)
--- expected_error.txt --
-wrong number of arguments: expected 2, got 1

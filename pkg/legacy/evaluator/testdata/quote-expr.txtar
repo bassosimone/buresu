@@ -1,4 +1,0 @@
--- input.code --
-(quote (1 2 3))
--- expected_output.txt --
-(quote (1 2 3))

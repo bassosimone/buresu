@@ -1,4 +1,0 @@
--- input.code --
-(block (define x 10) (define y 20) (if (> x y) x y))
--- expected_output.txt --
-20

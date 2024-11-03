@@ -1,4 +1,0 @@
--- input.code --
-(cond (false 1) (false 2) (else 3))
--- expected_output.txt --
-3

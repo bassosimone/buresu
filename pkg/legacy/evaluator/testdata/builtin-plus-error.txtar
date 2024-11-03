@@ -1,4 +1,0 @@
--- input.code --
-(+ 1 2.2)
--- expected_error.txt --
-no callable found for args prefix: "Int -> Float64 => "

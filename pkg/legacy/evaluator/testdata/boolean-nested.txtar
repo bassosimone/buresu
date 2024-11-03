@@ -1,4 +1,0 @@
--- input.code --
-(or (and true false) (not false))
--- expected_output.txt --
-true

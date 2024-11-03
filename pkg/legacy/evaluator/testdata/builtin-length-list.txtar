@@ -1,4 +1,0 @@
--- input.code --
-(length (cons 1 (cons 2 (cons 3 ()))))
--- expected_output.txt --
-3

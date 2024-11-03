@@ -1,4 +1,0 @@
--- input.code --
-(length "hello")
--- expected_output.txt --
-5
